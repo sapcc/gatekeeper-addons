@@ -21,6 +21,8 @@ package main
 
 import (
 	"context"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -34,8 +36,8 @@ func main() {
 	}
 
 	http.HandleFunc("/healthcheck", handleHealthcheck)
-	http.HandleFunc("/v2", handleV2)
-	http.HandleFunc("/v3", handleV3)
+	http.HandleFunc("/v2", handleAPI("/v2", ParseHelm2Manifest))
+	http.HandleFunc("/v3", handleAPI("/v3", ParseHelm3Manifest))
 
 	logg.Info("listening on " + os.Args[1])
 	ctx := httpee.ContextWithSIGINT(context.Background())
@@ -53,30 +55,32 @@ func handleHealthcheck(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleV2(w http.ResponseWriter, r *http.Request) {
-	if invalidAPIAccess(w, r, "/v2") {
-		return
-	}
+func handleAPI(path string, parser func([]byte) (string, error)) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != path {
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
+		if r.Method != "POST" {
+			http.Error(w, "only POST requests are allowed", http.StatusMethodNotAllowed)
+			return
+		}
 
-	http.Error(w, "not implemented", http.StatusInternalServerError)
-}
+		//never read more than 4 MiB to avoid DoS
+		in, err := ioutil.ReadAll(io.LimitReader(r.Body, 4<<20))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		out, err := parser(in)
+		if err != nil {
+			logg.Info("HTTP 400: " + err.Error())
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
-func handleV3(w http.ResponseWriter, r *http.Request) {
-	if invalidAPIAccess(w, r, "/v3") {
-		return
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(out))
 	}
-
-	http.Error(w, "not implemented", http.StatusInternalServerError)
-}
-
-func invalidAPIAccess(w http.ResponseWriter, r *http.Request, path string) bool {
-	if r.URL.Path != path {
-		http.Error(w, "not found", http.StatusNotFound)
-		return true
-	}
-	if r.Method != "POST" {
-		http.Error(w, "only POST requests are allowed", http.StatusMethodNotAllowed)
-		return true
-	}
-	return false
 }
