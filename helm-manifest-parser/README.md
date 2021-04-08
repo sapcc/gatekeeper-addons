@@ -32,7 +32,7 @@ manifests). In both cases, the response body is a JSON document enumerating the 
       "spec": {
         ...
       },
-      "status: {
+      "status": {
         ...
       }
     },
