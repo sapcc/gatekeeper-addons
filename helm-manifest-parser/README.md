@@ -1,0 +1,44 @@
+# helm-manifest-parser
+
+Gatekeeper's Rego implementation does not have enough library functions to parse Helm manifests: A GZip decompression
+function would be required to parse Helm 3 manifests, and Helm 2 manifests use a custom binary format where we're even
+more out of luck. To add this missing parsing function, this helper program provides an HTTP endpoint that Rego
+expressions can call via the [`http.send` built-in](https://www.openpolicyagent.org/docs/latest/policy-reference/#http).
+
+## Usage
+
+The helper itself is completely stateless. The only configuration is the listen address for the HTTP server, which must
+be supplied as the only command-line argument:
+
+```bash
+$ helm-manifest-parser 0.0.0.0:8080
+```
+
+Even though Helm manifests often contain secrets, there aren't really any security considerations for this component: It
+only gets Helm manifests by the API. It doesn't read the Kubernetes database itself.
+
+## API
+
+The HTTP endpoint for manifest parsing is `POST /v2` for Helm 2 manifests and `POST /v3` for Helm 3 manifests. The
+request body must be the `data.release` field of the respective ConfigMap (for Helm 2 manifests) or Secret (for Helm 3
+manifests). In both cases, the response body is a JSON document enumerating the objects in the manifest like this:
+
+```json
+{
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "spec": {
+        ...
+      },
+      "status: {
+        ...
+      }
+    },
+    ...
+  ]
+}
+```
+
+Finally, a health check endpoint is provided at `GET /healthcheck`, which always returns the plain text string "OK".

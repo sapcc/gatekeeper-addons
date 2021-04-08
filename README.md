@@ -1,2 +1,3 @@
 # gatekeeper-addons
-Addons for our setup of OPA Gatekeeper
+
+Custom addons for our setup of [Open Policy Agent's Gatekeeper](https://github.com/open-policy-agent/gatekeeper). Check the README files in the subdirectories for details.
