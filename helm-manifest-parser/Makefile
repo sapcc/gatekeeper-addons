@@ -5,6 +5,13 @@
 
 default: build-all
 
+DOCKER_REPO = keppel.eu-de-1.cloud.sap/ccloud/helm-manifest-parser
+DOCKER_TAG  = $(shell git describe --abbrev=10 --always --dirty)
+
+push:
+	docker build -t $(DOCKER_REPO):$(DOCKER_TAG) .
+	docker push $(DOCKER_REPO):$(DOCKER_TAG)
+
 build-all: build/helm-manifest-parser
 
 GO_BUILDFLAGS = -mod vendor
