@@ -24,7 +24,6 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -64,7 +63,38 @@ func ParseHelm2Manifest(in []byte) (string, error) {
 
 //ParseHelm3Manifest parses the `data.release` field of a Helm 2 release ConfigMap.
 func ParseHelm3Manifest(in []byte) (string, error) {
-	return "", errors.New("unimplemented")
+	var err error
+
+	in, err = base64.StdEncoding.DecodeString(string(in))
+	if err != nil {
+		return "", fmt.Errorf("cannot decode Base64: %w", err)
+	}
+
+	in, err = base64.StdEncoding.DecodeString(string(in))
+	if err != nil {
+		return "", fmt.Errorf("cannot decode Base64: %w", err)
+	}
+
+	in, err = gunzip(in)
+	if err != nil {
+		return "", fmt.Errorf("cannot decompress GZip: %w", err)
+	}
+
+	var parsed struct {
+		Name     string `json:"name"`
+		Version  int    `json:"version"`
+		Manifest string `json:"manifest"`
+	}
+	err = json.Unmarshal(in, &parsed)
+	if err != nil {
+		return "", fmt.Errorf("cannot parse Protobuf: %w", err)
+	}
+
+	out, err := convertManifestToJSON([]byte(parsed.Manifest))
+	if err != nil {
+		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
+	}
+	return out, nil
 }
 
 func gunzip(in []byte) ([]byte, error) {
