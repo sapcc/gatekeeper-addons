@@ -35,13 +35,16 @@ func main() {
 		logg.Fatal("usage: %s <listen-address>", os.Args[0])
 	}
 
-	http.HandleFunc("/healthcheck", handleHealthcheck)
-	http.HandleFunc("/v2", handleAPI("/v2", ParseHelm2Manifest))
-	http.HandleFunc("/v3", handleAPI("/v3", ParseHelm3Manifest))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/healthcheck", handleHealthcheck)
+	mux.HandleFunc("/v2", handleAPI("/v2", ParseHelm2Manifest))
+	mux.HandleFunc("/v3", handleAPI("/v3", ParseHelm3Manifest))
+
+	handler := logg.Middleware{ExceptStatusCodes: []int{200}}.Wrap(mux)
 
 	logg.Info("listening on " + os.Args[1])
 	ctx := httpee.ContextWithSIGINT(context.Background())
-	err := httpee.ListenAndServeContext(ctx, os.Args[1], http.DefaultServeMux)
+	err := httpee.ListenAndServeContext(ctx, os.Args[1], handler)
 	if err != nil {
 		logg.Fatal(err.Error())
 	}
