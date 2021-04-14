@@ -24,5 +24,8 @@ To gather audit data, the uplink needs read access to the Kubernetes API for:
 
 ## Metrics
 
-A HTTP server is exposed on port 8080 providing a `/metrics` endpoint for Prometheus.
-The only metric presented is `doop_agent_last_successful_report`.
+A HTTP server is exposed providing a `/metrics` endpoint for Prometheus.
+The listen address for this server must be provided as the only command line argument.
+
+The only metric presented is `doop_agent_last_successful_report`, given as a
+UNIX timestamp in seconds (or 0 if no successful report was sent yet).
