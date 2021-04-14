@@ -24,6 +24,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gophercloud/gophercloud"
+	"github.com/gophercloud/gophercloud/openstack"
+	"github.com/gophercloud/utils/openstack/clientconfig"
+	"github.com/majewsky/schwift/gopherschwift"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/go-bits/httpee"
 	"github.com/sapcc/go-bits/logg"
@@ -34,13 +38,37 @@ func main() {
 		logg.Fatal("usage: %s <listen-address>", os.Args[0])
 	}
 
+	provider, err := clientconfig.AuthenticatedClient(nil)
+	must("initialize OpenStack client", err)
+	client, err := openstack.NewObjectStorageV1(provider, gophercloud.EndpointOpts{})
+	must("initialize Swift client", err)
+	account, err := gopherschwift.Wrap(client, nil)
+	must("initialize Schwift account", err)
+	swiftObj := account.Container(mustGetenv("REPORT_CONTAINER_NAME")).Object(mustGetenv("REPORT_OBJECT_NAME"))
+
+	_ = swiftObj
+
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 
 	logg.Info("listening on " + os.Args[1])
 	ctx := httpee.ContextWithSIGINT(context.Background())
-	err := httpee.ListenAndServeContext(ctx, os.Args[1], mux)
+	err = httpee.ListenAndServeContext(ctx, os.Args[1], mux)
 	if err != nil {
 		logg.Fatal(err.Error())
+	}
+}
+
+func mustGetenv(key string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		logg.Fatal("missing required environment variable: " + key)
+	}
+	return val
+}
+
+func must(task string, err error) {
+	if err != nil {
+		logg.Fatal("could not %s: %s", task, err.Error())
 	}
 }
