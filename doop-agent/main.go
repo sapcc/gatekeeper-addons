@@ -32,7 +32,6 @@ import (
 	"github.com/sapcc/go-bits/httpee"
 	"github.com/sapcc/go-bits/logg"
 	wsk "github.com/wercker/stern/kubernetes"
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
 
@@ -63,30 +62,36 @@ func main() {
 	swiftObj := account.Container(*flagContainer).Object(*flagObject)
 
 	//initialize Kubernetes client
-	var clientset *kubernetes.Clientset
+	var clientConfig *rest.Config
 	if *flagKubeconfig != "" {
-		clientConfig := wsk.NewClientConfig(*flagKubeconfig, *flagContext)
-		clientset, err = wsk.NewClientSet(clientConfig)
-		must("initialize Kubernetes client", err)
+		clientConfig, err = wsk.NewClientConfig(*flagKubeconfig, *flagContext).ClientConfig()
 	} else {
-		config, err := rest.InClusterConfig()
-		must("build Kubernetes config", err)
-		clientset, err = kubernetes.NewForConfig(config)
-		must("initialize Kubernetes client", err)
+		clientConfig, err = rest.InClusterConfig()
 	}
-
-	_ = clientset //TODO
-	_ = swiftObj  //TODO
+	must("build Kubernetes config", err)
+	clientset := NewClientSet(clientConfig) //NOTE: not kubernetes.NewForConfig() !
 
 	//start HTTP server for Prometheus metrics
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	logg.Info("listening on " + *flagListenAddress)
 	ctx := httpee.ContextWithSIGINT(context.Background())
-	err = httpee.ListenAndServeContext(ctx, *flagListenAddress, mux)
-	if err != nil {
-		logg.Fatal(err.Error())
+	go func() {
+		err = httpee.ListenAndServeContext(ctx, *flagListenAddress, mux)
+		if err != nil {
+			logg.Fatal(err.Error())
+		}
+	}()
+
+	//TODO do the following stuff in a loop
+	_ = swiftObj //TODO
+
+	templates := clientset.ListConstraintTemplates(ctx)
+	logg.Info("found %d ConstraintTemplates", len(templates))
+	for _, template := range templates {
+		logg.Info(">> %s", template.Metadata.Name)
 	}
+
 }
 
 func must(task string, err error) {
