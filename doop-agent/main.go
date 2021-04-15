@@ -21,8 +21,8 @@ package main
 
 import (
 	"context"
+	"flag"
 	"net/http"
-	"os"
 
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
@@ -31,40 +31,62 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/go-bits/httpee"
 	"github.com/sapcc/go-bits/logg"
+	wsk "github.com/wercker/stern/kubernetes"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		logg.Fatal("usage: %s <listen-address>", os.Args[0])
+	var flagKubeconfig = flag.String("kubeconfig", "", "path to kubeconfig (required when not running in cluster)")
+	var flagContext = flag.String("context", "", "override default k8s context (optional)")
+	var flagListenAddress = flag.String("listen", ":8080", "listen address for Prometheus metrics endpoint")
+	var flagContainer = flag.String("container", "", "name of Swift container in which to upload report")
+	var flagObject = flag.String("object", "", "object name with which report will be uploaded in Swift")
+	flag.Parse()
+
+	if *flagContainer == "" {
+		logg.Fatal("missing required option: -container")
+	}
+	if *flagObject == "" {
+		logg.Fatal("missing required option: -object")
 	}
 
+	//initialize OpenStack/Swift client
 	provider, err := clientconfig.AuthenticatedClient(nil)
 	must("initialize OpenStack client", err)
 	client, err := openstack.NewObjectStorageV1(provider, gophercloud.EndpointOpts{})
 	must("initialize Swift client", err)
-	account, err := gopherschwift.Wrap(client, nil)
+	account, err := gopherschwift.Wrap(client, &gopherschwift.Options{
+		UserAgent: "doop-agent/rolling",
+	})
 	must("initialize Schwift account", err)
-	swiftObj := account.Container(mustGetenv("REPORT_CONTAINER_NAME")).Object(mustGetenv("REPORT_OBJECT_NAME"))
+	swiftObj := account.Container(*flagContainer).Object(*flagObject)
 
-	_ = swiftObj
+	//initialize Kubernetes client
+	var clientset *kubernetes.Clientset
+	if *flagKubeconfig != "" {
+		clientConfig := wsk.NewClientConfig(*flagKubeconfig, *flagContext)
+		clientset, err = wsk.NewClientSet(clientConfig)
+		must("initialize Kubernetes client", err)
+	} else {
+		config, err := rest.InClusterConfig()
+		must("build Kubernetes config", err)
+		clientset, err = kubernetes.NewForConfig(config)
+		must("initialize Kubernetes client", err)
+	}
 
+	_ = clientset //TODO
+	_ = swiftObj  //TODO
+
+	//start HTTP server for Prometheus metrics
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
-
-	logg.Info("listening on " + os.Args[1])
+	logg.Info("listening on " + *flagListenAddress)
 	ctx := httpee.ContextWithSIGINT(context.Background())
-	err = httpee.ListenAndServeContext(ctx, os.Args[1], mux)
+	err = httpee.ListenAndServeContext(ctx, *flagListenAddress, mux)
 	if err != nil {
 		logg.Fatal(err.Error())
 	}
-}
-
-func mustGetenv(key string) string {
-	val := os.Getenv(key)
-	if val == "" {
-		logg.Fatal("missing required environment variable: " + key)
-	}
-	return val
 }
 
 func must(task string, err error) {

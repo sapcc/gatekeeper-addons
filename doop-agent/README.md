@@ -22,10 +22,16 @@ To gather audit data, the uplink needs read access to the Kubernetes API for:
 - constraint templates (kind `ConstraintTemplate` in API group `templates.gatekeeper.sh`)
 - constraint configs (all kinds in API group `constraints.gatekeeper.sh`)
 
+By default, the agent expects to be running in a pod inside the same Kubernetes
+cluster, so it will look for its service account token in the usual place. For
+development purposes, the options `-kubeconfig` and `-context` can be used to
+supply a configuration (like with kubectl).
+
 ## Metrics
 
 A HTTP server is exposed providing a `/metrics` endpoint for Prometheus.
-The listen address for this server must be provided as the only command line argument.
+The listen address for this server defaults to `:8080`, and can be changed with
+the `-listen` option.
 
 The only metric presented is `doop_agent_last_successful_report`, given as a
 UNIX timestamp in seconds (or 0 if no successful report was sent yet).
