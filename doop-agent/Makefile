@@ -5,7 +5,7 @@
 
 default: build-all
 
-DOCKER_REPO = keppel.eu-de-1.cloud.sap/ccloud/helm-manifest-parser
+DOCKER_REPO = keppel.eu-de-1.cloud.sap/ccloud/doop-agent
 DOCKER_TAG  = $(shell git describe --abbrev=10 --always --dirty)
 
 push:
