@@ -32,6 +32,7 @@ import (
 	"github.com/gophercloud/utils/openstack/clientconfig"
 	"github.com/majewsky/schwift"
 	"github.com/majewsky/schwift/gopherschwift"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/go-bits/httpee"
 	"github.com/sapcc/go-bits/logg"
@@ -39,7 +40,21 @@ import (
 	"k8s.io/client-go/rest"
 )
 
+var (
+	metricLastSuccessfulReport = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "doop_agent_last_successful_report",
+		Help: "UNIX timestamp in seconds when last report was submitted.",
+	})
+	metricReportDurationSecs = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "doop_agent_report_duration_secs",
+		Help: "How long it took to collect and submit the last report, in seconds.",
+	})
+)
+
 func main() {
+	prometheus.MustRegister(metricLastSuccessfulReport)
+	prometheus.MustRegister(metricReportDurationSecs)
+
 	var flagKubeconfig = flag.String("kubeconfig", "", "path to kubeconfig (required when not running in cluster)")
 	var flagContext = flag.String("context", "", "override default k8s context (optional)")
 	var flagListenAddress = flag.String("listen", ":8080", "listen address for Prometheus metrics endpoint")
@@ -155,5 +170,9 @@ func SendReport(ctx context.Context, cs ClientSet, swiftObj *schwift.Object) {
 	err = swiftObj.Upload(bytes.NewReader(reportBytes), nil, nil)
 	must("upload report to Swift", err)
 
-	logg.Info("report submitted in %g seconds", time.Since(start).Seconds())
+	end := time.Now()
+	duration := end.Sub(start)
+	metricLastSuccessfulReport.Set(float64(end.Unix()))
+	metricReportDurationSecs.Set(duration.Seconds())
+	logg.Info("report submitted in %g seconds", duration.Seconds())
 }

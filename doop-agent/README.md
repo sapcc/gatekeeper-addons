@@ -33,5 +33,9 @@ A HTTP server is exposed providing a `/metrics` endpoint for Prometheus.
 The listen address for this server defaults to `:8080`, and can be changed with
 the `-listen` option.
 
-The only metric presented is `doop_agent_last_successful_report`, given as a
-UNIX timestamp in seconds (or 0 if no successful report was sent yet).
+| Metric | Description |
+| ------ | ----------- |
+| `doop_agent_report_submitted_at` | UNIX timestamp of when last report was submitted |
+| `doop_agent_report_duration_secs` | how long it took to collect and submit the last report, in seconds |
+
+Metrics are absent until the first report has been submitted.
