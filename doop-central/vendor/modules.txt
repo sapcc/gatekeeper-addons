@@ -25,7 +25,7 @@ github.com/majewsky/schwift/capabilities
 github.com/majewsky/schwift/gopherschwift
 # github.com/mitchellh/go-homedir v1.1.0
 github.com/mitchellh/go-homedir
-# github.com/sapcc/go-bits v0.0.0-20210326161745-782f1d0cfdee
+# github.com/sapcc/go-bits v0.0.0-20210421130523-ebbcdaf1960c
 ## explicit
 github.com/sapcc/go-bits/httpee
 github.com/sapcc/go-bits/httpext
