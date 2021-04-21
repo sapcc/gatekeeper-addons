@@ -25,6 +25,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/sapcc/go-bits/httpee"
 	"github.com/sapcc/go-bits/logg"
@@ -40,7 +41,7 @@ func main() {
 	mux.HandleFunc("/v2", handleAPI("/v2", ParseHelm2Manifest))
 	mux.HandleFunc("/v3", handleAPI("/v3", ParseHelm3Manifest))
 
-	handler := logg.Middleware{ExceptStatusCodes: []int{200}}.Wrap(mux)
+	handler := getLogMiddleware().Wrap(mux)
 
 	logg.Info("listening on " + os.Args[1])
 	ctx := httpee.ContextWithSIGINT(context.Background())
@@ -48,6 +49,14 @@ func main() {
 	if err != nil {
 		logg.Fatal(err.Error())
 	}
+}
+
+func getLogMiddleware() logg.Middleware {
+	logAllRequests, _ := strconv.ParseBool(os.Getenv("LOG_ALL_REQUESTS"))
+	if logAllRequests {
+		return logg.Middleware{}
+	}
+	return logg.Middleware{ExceptStatusCodes: []int{200}}
 }
 
 func handleHealthcheck(w http.ResponseWriter, r *http.Request) {

@@ -42,3 +42,8 @@ manifests). In both cases, the response body is a JSON document enumerating the 
 ```
 
 Finally, a health check endpoint is provided at `GET /healthcheck`, which always returns the plain text string "OK".
+
+## Logging
+
+HTTP requests are logged, but by default, only failed requests (HTTP status code != 200) are logged. To enable full
+logging, set the environment variable `LOG_ALL_REQUESTS=true`.
