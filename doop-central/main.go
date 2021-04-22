@@ -23,6 +23,7 @@ import (
 	"context"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
@@ -33,6 +34,7 @@ import (
 )
 
 func main() {
+	logg.ShowDebug, _ = strconv.ParseBool(os.Getenv("DOOP_CENTRAL_DEBUG"))
 	if len(os.Args) != 2 {
 		logg.Fatal("usage: %s <listen-address>", os.Args[0])
 	}
@@ -52,6 +54,7 @@ func main() {
 	//collect HTTP handlers
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthcheck", handleHealthcheck)
+	mux.HandleFunc("/", UI{NewDownloader(swiftContainer)}.RenderMainPage)
 
 	//start HTTP server
 	handler := logg.Middleware{}.Wrap(mux)
@@ -61,9 +64,6 @@ func main() {
 	if err != nil {
 		logg.Fatal(err.Error())
 	}
-
-	//TODO use
-	_ = swiftContainer
 }
 
 func must(task string, err error) {
