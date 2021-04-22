@@ -21,6 +21,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"net/http"
 	"os"
 	"strconv"
@@ -32,6 +33,9 @@ import (
 	"github.com/sapcc/go-bits/httpee"
 	"github.com/sapcc/go-bits/logg"
 )
+
+//go:embed static
+var staticContent embed.FS
 
 func main() {
 	logg.ShowDebug, _ = strconv.ParseBool(os.Getenv("DOOP_CENTRAL_DEBUG"))
@@ -54,6 +58,7 @@ func main() {
 	//collect HTTP handlers
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthcheck", handleHealthcheck)
+	mux.Handle("/static/", http.FileServer(http.FS(staticContent)))
 	mux.HandleFunc("/", UI{NewDownloader(swiftContainer)}.RenderMainPage)
 
 	//start HTTP server

@@ -20,9 +20,16 @@
 package main
 
 import (
-	"encoding/json"
+	_ "embed"
 	"net/http"
+	"text/template"
+
+	"github.com/sapcc/go-bits/logg"
 )
+
+//go:embed index.html.tpl
+var pageTemplateStr string
+var pageTemplate = template.Must(template.New("index.html").Parse(pageTemplateStr))
 
 //UI provides the business logic for rendering the web dashboard.
 type UI struct {
@@ -42,11 +49,11 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO build actual report page
-	result := make(map[string]int)
-	for name, report := range reports {
-		result[name] = len(report)
+	//TODO preprocess `reports` before passing it into the template
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = pageTemplate.Execute(w, reports)
+	if err != nil {
+		logg.Error("while rendering index.html: %s", err.Error())
 	}
-	resultBytes, _ := json.Marshal(result)
-	http.Error(w, string(resultBytes), http.StatusOK)
 }
