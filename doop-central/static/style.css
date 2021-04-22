@@ -16,3 +16,32 @@ h1 small a {
 h1 small a:active, h1 small a:focus, h1 small a:hover {
   opacity: 1.0;
 }
+
+.nobr {
+  white-space: nowrap;
+}
+.center {
+  text-align: center;
+}
+
+table {
+  border: 0;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.9);
+  overflow-x: auto;
+}
+
+table td, table th {
+  border: 1px solid #AAA;
+  padding: 0.5rem;
+}
+
+table td.value-ok {
+  background-color: #EFE;
+}
+table td.value-warning {
+  background-color: #FFE;
+}
+table td.value-danger {
+  background-color: #FEE;
+}
