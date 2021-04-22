@@ -58,6 +58,7 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//TODO preprocess `reports` before passing it into the template
+	w.Header().Set("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = pageTemplate.Execute(w, reports)

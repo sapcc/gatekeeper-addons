@@ -1,24 +1,18 @@
 html {
   font-family: system-ui, sans-serif;
   font-size: 16px;
+  background: white url(/static/logo.svg) no-repeat fixed;
+  background-size: 30%;
+  background-position: top 1rem right 1rem;
 }
 
-header img {
-  float: right;
-  height: 5rem;
-}
-
-body > * {
-  clear: right;
-}
-
-header h1 small a {
+h1 small a {
   opacity: 0.3;
   font-size: 0.7rem;
   color: blue !important;
   text-decoration: none !important;
 }
 
-header h1 small a:active, header h1 small a:focus, header h1 small a:hover {
+h1 small a:active, h1 small a:focus, h1 small a:hover {
   opacity: 1.0;
 }
