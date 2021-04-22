@@ -20,7 +20,9 @@
 package main
 
 import (
+	"bytes"
 	_ "embed"
+	"encoding/json"
 	"net/http"
 	"text/template"
 
@@ -29,7 +31,13 @@ import (
 
 //go:embed index.html.tpl
 var pageTemplateStr string
-var pageTemplate = template.Must(template.New("index.html").Parse(pageTemplateStr))
+
+var (
+	pageTemplate = template.Must(template.New("index.html").Funcs(funcMap).Parse(pageTemplateStr))
+	funcMap      = template.FuncMap{
+		"jsonIndent": jsonIndent,
+	}
+)
 
 //UI provides the business logic for rendering the web dashboard.
 type UI struct {
@@ -56,4 +64,10 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logg.Error("while rendering index.html: %s", err.Error())
 	}
+}
+
+func jsonIndent(in []byte) string {
+	var buf bytes.Buffer
+	json.Indent(&buf, in, "", "  ")
+	return buf.String()
 }

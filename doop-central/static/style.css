@@ -1,3 +1,24 @@
-body {
-  background: #EEE; /* just a test for the asset pipeline */
+html {
+  font-family: system-ui, sans-serif;
+  font-size: 16px;
+}
+
+header img {
+  float: right;
+  height: 5rem;
+}
+
+body > * {
+  clear: right;
+}
+
+header h1 small a {
+  opacity: 0.3;
+  font-size: 0.7rem;
+  color: blue !important;
+  text-decoration: none !important;
+}
+
+header h1 small a:active, header h1 small a:focus, header h1 small a:hover {
+  opacity: 1.0;
 }
