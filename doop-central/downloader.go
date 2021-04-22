@@ -20,6 +20,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
@@ -47,7 +48,7 @@ func NewDownloader(container *schwift.Container) *Downloader {
 }
 
 //GetReports returns all most recent doop-agent reports in their yet unpaosed form.
-func (d *Downloader) GetReports() (map[string][]byte, error) {
+func (d *Downloader) GetReports() (map[string]Report, error) {
 	objInfos, err := d.container.Objects().CollectDetailed()
 	if err != nil {
 		return nil, fmt.Errorf("cannot list reports in Swift: %w", err)
@@ -56,7 +57,7 @@ func (d *Downloader) GetReports() (map[string][]byte, error) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
-	result := make(map[string][]byte)
+	result := make(map[string]Report)
 	for _, oi := range objInfos {
 		name := oi.Object.Name()
 		os := d.objects[name]
@@ -70,10 +71,16 @@ func (d *Downloader) GetReports() (map[string][]byte, error) {
 			os.SizeBytes = oi.SizeBytes
 			os.Etag = oi.Etag
 			os.LastModified = oi.LastModified
-			os.Payload, err = oi.Object.Download(nil).AsByteSlice()
+			payloadBytes, err := oi.Object.Download(nil).AsByteSlice()
 			if err != nil {
 				return nil, fmt.Errorf("cannot download report for %s from Swift: %w", name, err)
 			}
+			var payload Report
+			err = json.Unmarshal(payloadBytes, &payload)
+			if err != nil {
+				return nil, fmt.Errorf("cannot decode report for %s: %w", name, err)
+			}
+			os.Payload = payload
 		}
 
 		result[name] = os.Payload
@@ -89,7 +96,7 @@ type objectState struct {
 	SizeBytes    uint64
 	Etag         string
 	LastModified time.Time
-	Payload      []byte
+	Payload      Report
 }
 
 func (os *objectState) NeedsUpdate(oi schwift.ObjectInfo) bool {
@@ -98,4 +105,33 @@ func (os *objectState) NeedsUpdate(oi schwift.ObjectInfo) bool {
 		return true
 	}
 	return os.SizeBytes != oi.SizeBytes || os.Etag != oi.Etag || os.LastModified != oi.LastModified
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// data types for JSON unmarshalling of audit reports
+
+//Report is the structure of an audit report.
+type Report struct {
+	Templates []TemplateReport `json:"templates"`
+}
+
+//TemplateReport appears in type Report.
+type TemplateReport struct {
+	Kind    string         `json:"kind"`
+	Configs []ConfigReport `json:"configs"`
+}
+
+//ConfigReport appears in type TemplateReport.
+type ConfigReport struct {
+	Name       string            `json:"name"`
+	AuditAt    time.Time         `json:"auditTimestamp"`
+	Violations []ViolationReport `json:"violations"`
+}
+
+//ViolationReport appears in type ConfigReport.
+type ViolationReport struct {
+	Kind      string `json:"kind"`
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+	Message   string `json:"message"`
 }

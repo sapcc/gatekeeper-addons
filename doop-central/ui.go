@@ -23,7 +23,6 @@ import (
 	"bytes"
 	_ "embed"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"sort"
 	"strings"
@@ -68,27 +67,22 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 		AllClusters      []string
 		AllClusterGroups []string
 		ClustersByGroup  map[string][]string
-		ClusterInfos     map[string]clusterInfo
+		ClusterInfos     map[string]ClusterInfo
 		Reports          map[string][]byte //TODO remove (only used for debug display)
 	}{
 		ClustersByGroup: make(map[string][]string),
-		ClusterInfos:    make(map[string]clusterInfo),
-		Reports:         reports,
+		ClusterInfos:    make(map[string]ClusterInfo),
+		Reports:         make(map[string][]byte),
 	}
 
-	for clusterName, reportBytes := range reports {
-		var r report
-		err := json.Unmarshal(reportBytes, &r)
-		if err != nil {
-			msg := fmt.Sprintf("cannot parse report for %s: %s", clusterName, err.Error())
-			http.Error(w, msg, http.StatusInternalServerError)
-			return
-		}
-
+	for clusterName, report := range reports {
 		data.AllClusters = append(data.AllClusters, clusterName)
 		clusterGroup := clusterGroupOf(clusterName)
 		data.ClustersByGroup[clusterGroup] = append(data.ClustersByGroup[clusterGroup], clusterName)
-		data.ClusterInfos[clusterName] = r.ToClusterInfo()
+		data.ClusterInfos[clusterName] = report.ToClusterInfo()
+
+		reportBytes, _ := json.Marshal(report)
+		data.Reports[clusterName] = reportBytes
 	}
 
 	sort.Strings(data.AllClusters)
@@ -125,38 +119,18 @@ func clusterGroupOf(clusterName string) string {
 	return ""
 }
 
-type report struct {
-	Templates []templateReport `json:"templates"`
-}
-
-type templateReport struct {
-	Kind    string         `json:"kind"`
-	Configs []configReport `json:"configs"`
-}
-
-type configReport struct {
-	Name       string            `json:"name"`
-	AuditAt    time.Time         `json:"auditTimestamp"`
-	Violations []violationReport `json:"violations"`
-}
-
-type violationReport struct {
-	Kind      string `json:"kind"`
-	Name      string `json:"name"`
-	Namespace string `json:"namespace"`
-	Message   string `json:"message"`
-}
-
-type clusterInfo struct {
+//ClusterInfo contains health information for the Gatekeeper in a certain cluster.
+type ClusterInfo struct {
 	OldestAuditAgeSecs  float64
 	OldestAuditCSSClass string
 	NewestAuditAgeSecs  float64
 	NewestAuditCSSClass string
 }
 
-func (r report) ToClusterInfo() clusterInfo {
+//ToClusterInfo generates the ClusterInfo for this Report.
+func (r Report) ToClusterInfo() ClusterInfo {
 	now := time.Now()
-	var info clusterInfo
+	var info ClusterInfo
 	for _, rt := range r.Templates {
 		for _, rc := range rt.Configs {
 			auditAgeSecs := now.Sub(rc.AuditAt).Seconds()
