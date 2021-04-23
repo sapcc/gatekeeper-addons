@@ -8,12 +8,23 @@ container for further processing by [doop-central](../doop-central/).
 
 The agent itself is completely stateless, but some configuration must be provided.
 
+### Identity
+
+Two positional arguments must be given to classify the cluster where the agent
+is running:
+
+- The first argument ("layer") describes whether this is a productive system or
+  not. Reasonable values include `dev`, `qa`, `prod` or such.
+- The second argument ("type") describes the type of cluster. This depends on
+  the structure of your environment. For SAP CC, we use this to distinguish
+  baremetal from virtualized clusters, among other things.
+
 ### Swift API
 
 For uploading reports into Swift, OpenStack credentials must be present in the
-usual `OS_...` environment variables. Furthermore, the `REPORT_CONTAINER_NAME`
-and `REPORT_OBJECT_NAME` environment variables must be given to identify where
-the report is uploaded within the Swift account.
+usual `OS_...` environment variables. Furthermore, the options `-container` and
+`-object` must be given to identify where the report is uploaded within the
+Swift account.
 
 ### Kubernetes API
 

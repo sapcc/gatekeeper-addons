@@ -51,6 +51,11 @@ var (
 	})
 )
 
+type clusterIdentity struct {
+	Layer string `json:"layer"`
+	Type  string `json:"type"`
+}
+
 func main() {
 	prometheus.MustRegister(metricLastSuccessfulReport)
 	prometheus.MustRegister(metricReportDurationSecs)
@@ -67,6 +72,14 @@ func main() {
 	}
 	if *flagObject == "" {
 		logg.Fatal("missing required option: -object")
+	}
+
+	if flag.NArg() != 2 {
+		logg.Fatal("need exactly two positional arguments")
+	}
+	identity := clusterIdentity{
+		Layer: flag.Arg(0),
+		Type:  flag.Arg(1),
 	}
 
 	//initialize OpenStack/Swift client
@@ -105,14 +118,14 @@ func main() {
 	}()
 
 	//send a report immediately, then every few minutes
-	SendReport(ctx, clientset, swiftObj)
+	SendReport(ctx, clientset, swiftObj, identity)
 	ticker := time.NewTicker(3 * time.Minute)
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			SendReport(ctx, clientset, swiftObj)
+			SendReport(ctx, clientset, swiftObj, identity)
 		}
 	}
 }
@@ -125,6 +138,7 @@ func must(task string, err error) {
 
 //Report is the data structure that we write into our report file.
 type Report struct {
+	Identitty clusterIdentity     `json:"identity"`
 	Templates []ReportForTemplate `json:"templates"`
 }
 
@@ -142,7 +156,7 @@ type ReportForConfig struct {
 }
 
 //SendReport queries the Kubernetes API to prepare a Report, and uploads the report to Swift.
-func SendReport(ctx context.Context, cs ClientSet, swiftObj *schwift.Object) {
+func SendReport(ctx context.Context, cs ClientSet, swiftObj *schwift.Object, identity clusterIdentity) {
 	start := time.Now()
 
 	//build report
