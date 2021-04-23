@@ -5,12 +5,12 @@
   <h1>Decentralized Observer of Policies</h1>
   <div class="buttons">
     {{- range $layer := $.AllClusterLayers }}
-      <div class="selected">{{ $layer | titlecase }}</div>
+      <button type="button" class="selected" data-value="{{ $layer }}">{{ $layer | titlecase }}</button>
     {{- end }}
   </div>
   <div class="buttons">
     {{- range $type := $.AllClusterTypes }}
-      <div class="selected">{{ $type | titlecase }}</div>
+      <button type="button" class="selected" data-value="{{ $type }}">{{ $type | titlecase }}</button>
     {{- end }}
   </div>
   <input id="search" autofocus type="text" placeholder="Search">
@@ -40,9 +40,10 @@
             {{ $vgroup.Message }}
           </div>
           <div class="violation-instances {{ if gt (len $vgroup.Instances) 3 }}folded{{ end }}">
-            <div class="unfolder">{{ len $vgroup.Instances }} instances <a href="#">(show all)</a></div>
+            <div class="unfolder">{{ len $vgroup.Instances }} instances in total <a href="#">(expand)</a></div>
             {{- range $instance := $vgroup.Instances }}
-              <div class="violation-instance">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
+              {{- $info := index $.ClusterInfos $instance.ClusterName }}
+              <div class="violation-instance" data-layer="{{ $info.Layer }}" data-type="{{ $info.Type }}">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
             {{- end }}
           </div>
         </li>

@@ -66,18 +66,20 @@ header div.buttons {
   margin: 0.6rem 0.25rem;
   box-shadow: 0 0 3px #CCC;
 }
-header div.buttons div {
+header div.buttons button {
   padding: 0 0.5rem;
   border: 1px solid #999;
+  font-family: inherit;
+  font-weight: normal;
   font-size: 1.2rem;
   line-height: calc(1.8rem - 1px);
   cursor: pointer;
 }
-header div.buttons div:focus, header div.buttons div:hover {
+header div.buttons button:focus, header div.buttons button:hover {
   border-color: #666;
   z-index: 10;
 }
-header div.buttons div.selected {
+header div.buttons button.selected {
   background: white;
   font-weight: bold;
 }
@@ -109,6 +111,9 @@ ul.violations li div.violation-instances {
 }
 
 ul.violations li.hidden {
+  display: none;
+}
+ul.violations li div.violation-instances div.violation-instance.hidden {
   display: none;
 }
 

@@ -35,19 +35,37 @@
   //This updates the view after a filter or search phrase was set. We will use
   //this in event handlers below.
   let updateView = () => {
+    //collect filter settings
     const searchTerms = $("input#search").value.toLowerCase().split(/\s+/);
+    const isSelected = {};
+    for (const button of $$("div.buttons > button")) {
+      isSelected[button.dataset.value] = button.classList.contains("selected");
+    }
 
+    //foreach violation...
     for (const violation of $$("ul.violations > li")) {
+      //...show only if at least once instance remains on screen
+      let hasVisibleInstances = false;
+      for (const instance of violation.querySelectorAll(".violation-instance")) {
+        const isVisible = isSelected[instance.dataset.layer] && isSelected[instance.dataset.type];
+        if (isVisible) {
+          hasVisibleInstances = true;
+        }
+        instance.classList.toggle("hidden", !isVisible);
+      }
+
+      //...show only if all search terms are found in the top line
       const text = violation.querySelector(".violation-details").innerText.toLowerCase();
-      let matches = true;
+      let matchesSearch = true;
       for (const searchTerm of searchTerms) {
         if (!text.includes(searchTerm)) {
-          matches = false;
+          matchesSearch = false;
           break;
         }
       }
-      console.log("matches: "+matches);
-      violation.classList.toggle("hidden", !matches);
+
+      //apply computed visibility
+      violation.classList.toggle("hidden", !(matchesSearch && hasVisibleInstances));
     }
   };
 
@@ -56,5 +74,14 @@
 
   //The event handler for the search box is easy.
   $("input#search").addEventListener("input", event => updateView());
+
+  //For the layer/type filters, we need to toggle them manually.
+  for (const button of $$("div.buttons > button")) {
+    button.addEventListener("click", event => {
+      event.preventDefault();
+      button.classList.toggle("selected");
+      updateView();
+    });
+  }
 
 })();
