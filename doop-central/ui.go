@@ -25,7 +25,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"sort"
-	"strings"
 	"text/template"
 	"time"
 
@@ -65,20 +64,19 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		AllClusters      []string
-		AllClusterGroups []string
-		ClustersByGroup  map[string][]string
+		AllClusterLayers []string
+		AllClusterTypes  []string
 		ClusterInfos     map[string]ClusterInfo
 		Reports          map[string][]byte //TODO remove (only used for debug display)
 	}{
-		ClustersByGroup: make(map[string][]string),
-		ClusterInfos:    make(map[string]ClusterInfo),
-		Reports:         make(map[string][]byte),
+		ClusterInfos: make(map[string]ClusterInfo),
+		Reports:      make(map[string][]byte),
 	}
 
 	for clusterName, report := range reports {
 		data.AllClusters = append(data.AllClusters, clusterName)
-		clusterGroup := clusterGroupOf(clusterName)
-		data.ClustersByGroup[clusterGroup] = append(data.ClustersByGroup[clusterGroup], clusterName)
+		data.AllClusterLayers = append(data.AllClusterLayers, report.Identity.Layer)
+		data.AllClusterTypes = append(data.AllClusterTypes, report.Identity.Type)
 		data.ClusterInfos[clusterName] = report.ToClusterInfo()
 
 		reportBytes, _ := json.Marshal(report)
@@ -86,11 +84,8 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sort.Strings(data.AllClusters)
-	for clusterGroup, clusterNames := range data.ClustersByGroup {
-		sort.Strings(clusterNames)
-		data.AllClusterGroups = append(data.AllClusterGroups, clusterGroup)
-	}
-	sort.Strings(data.AllClusterGroups)
+	data.AllClusterLayers = sortAndDedupStrings(data.AllClusterLayers)
+	data.AllClusterTypes = sortAndDedupStrings(data.AllClusterTypes)
 
 	w.Header().Set("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -107,20 +102,26 @@ func jsonIndent(in []byte) string {
 	return buf.String()
 }
 
+func sortAndDedupStrings(vals []string) []string {
+	isVal := make(map[string]bool)
+	for _, val := range vals {
+		isVal[val] = true
+	}
+	result := make([]string, 0, len(isVal))
+	for val := range isVal {
+		result = append(result, val)
+	}
+	sort.Strings(result)
+	return result
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // report datatypes and structured data for HTML template
 
-func clusterGroupOf(clusterName string) string {
-	for _, prefix := range []string{"a-", "k-", "s-", "v-"} {
-		if strings.HasPrefix(clusterName, prefix) {
-			return prefix
-		}
-	}
-	return ""
-}
-
 //ClusterInfo contains health information for the Gatekeeper in a certain cluster.
 type ClusterInfo struct {
+	Layer               string
+	Type                string
 	OldestAuditAgeSecs  float64
 	OldestAuditCSSClass string
 	NewestAuditAgeSecs  float64
@@ -130,7 +131,10 @@ type ClusterInfo struct {
 //ToClusterInfo generates the ClusterInfo for this Report.
 func (r Report) ToClusterInfo() ClusterInfo {
 	now := time.Now()
-	var info ClusterInfo
+	info := ClusterInfo{
+		Layer: r.Identity.Layer,
+		Type:  r.Identity.Type,
+	}
 	for _, rt := range r.Templates {
 		for _, rc := range rt.Configs {
 			auditAgeSecs := now.Sub(rc.AuditAt).Seconds()

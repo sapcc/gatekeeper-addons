@@ -112,6 +112,10 @@ func (os *objectState) NeedsUpdate(oi schwift.ObjectInfo) bool {
 
 //Report is the structure of an audit report.
 type Report struct {
+	Identity struct {
+		Layer string `json:"layer"`
+		Type  string `json:"type"`
+	} `json:"identity"`
 	Templates []TemplateReport `json:"templates"`
 }
 

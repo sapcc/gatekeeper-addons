@@ -9,25 +9,32 @@
 
 <table>
   <thead>
-    {{- range $clusterGroup := $.AllClusterGroups }}
+    {{- range $ctype := $.AllClusterTypes }}
       <tr>
         <th class="nobr">&nbsp;</th>
-        {{- range $cluster := index $.ClustersByGroup $clusterGroup }}
-          <th class="nobr"><div>{{ $cluster }}</div></th>
+        {{- range $cluster := $.AllClusters }}
+          {{- $info := index $.ClusterInfos $cluster }}
+          {{- if eq $info.Type $ctype }}
+            <th class="nobr"><div>{{ $cluster }}</div></th>
+          {{- end }}
         {{- end }}
       </tr>
       <tr>
         <th class="nobr">Oldest data</th>
-        {{- range $cluster := index $.ClustersByGroup $clusterGroup }}
+        {{- range $cluster := $.AllClusters }}
           {{- $info := index $.ClusterInfos $cluster }}
-          <td class="nobr center {{ $info.OldestAuditCSSClass }}">{{ printf "%.1fs" $info.OldestAuditAgeSecs }}</th>
+          {{- if eq $info.Type $ctype }}
+            <td class="nobr center {{ $info.OldestAuditCSSClass }}">{{ printf "%.1fs" $info.OldestAuditAgeSecs }}</th>
+          {{- end }}
         {{- end }}
       </tr>
       <tr>
         <th class="nobr">Newest data</th>
-        {{- range $cluster := index $.ClustersByGroup $clusterGroup }}
+        {{- range $cluster := $.AllClusters }}
           {{- $info := index $.ClusterInfos $cluster }}
-          <td class="nobr center {{ $info.NewestAuditCSSClass }}">{{ printf "%.1fs" $info.NewestAuditAgeSecs }}</th>
+          {{- if eq $info.Type $ctype }}
+            <td class="nobr center {{ $info.NewestAuditCSSClass }}">{{ printf "%.1fs" $info.NewestAuditAgeSecs }}</th>
+          {{- end }}
         {{- end }}
       </tr>
     {{- end }}
