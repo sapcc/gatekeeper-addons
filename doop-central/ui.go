@@ -24,6 +24,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"net/http"
+	"regexp"
 	"sort"
 	"strings"
 	"text/template"
@@ -69,10 +70,11 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 		AllClusterLayers []string
 		AllClusterTypes  []string
 		ClusterInfos     map[string]ClusterInfo
-		Reports          map[string][]byte //TODO remove (only used for debug display)
+		AllTemplateKinds []string
+		ViolationGroups  map[string][]*ViolationGroup
 	}{
-		ClusterInfos: make(map[string]ClusterInfo),
-		Reports:      make(map[string][]byte),
+		ClusterInfos:    make(map[string]ClusterInfo),
+		ViolationGroups: make(map[string][]*ViolationGroup),
 	}
 
 	for clusterName, report := range reports {
@@ -80,14 +82,17 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 		data.AllClusterLayers = append(data.AllClusterLayers, report.Identity.Layer)
 		data.AllClusterTypes = append(data.AllClusterTypes, report.Identity.Type)
 		data.ClusterInfos[clusterName] = report.ToClusterInfo()
-
-		reportBytes, _ := json.Marshal(report)
-		data.Reports[clusterName] = reportBytes
+		report.GroupViolationsInto(data.ViolationGroups, clusterName)
 	}
 
 	sort.Strings(data.AllClusters)
 	data.AllClusterLayers = sortAndDedupStrings(data.AllClusterLayers)
 	data.AllClusterTypes = sortAndDedupStrings(data.AllClusterTypes)
+	for kind, violationGroups := range data.ViolationGroups {
+		data.AllTemplateKinds = append(data.AllTemplateKinds, kind)
+		sortViolationGroups(violationGroups)
+	}
+	sort.Strings(data.AllTemplateKinds)
 
 	w.Header().Set("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -169,4 +174,155 @@ func cssClassForAge(ageSecs float64) string {
 		return "value-warning"
 	}
 	return "value-ok"
+}
+
+//ViolationGroup is a group of mostly identical violations across clusters and
+//across objects.
+type ViolationGroup struct {
+	//object metadata
+	Kind        string
+	NamePattern string
+	Namespace   string
+	//violation details
+	Message   string
+	Instances []ViolationInstance
+}
+
+//ViolationInstance appears in type ViolationGroup.
+type ViolationInstance struct {
+	ClusterName string
+	Name        string
+}
+
+var (
+	helm2ReleaseNameRx        = regexp.MustCompile(`^(.*)\.v\d+$`)
+	helm3ReleaseNameRx        = regexp.MustCompile(`^sh\.helm\.release\.v1\.(.*)\.v\d+$`)
+	generatedPodNameRx        = regexp.MustCompile(`^(.+)-[0-9a-z]{5}$`)
+	generatedReplicasetNameRx = regexp.MustCompile(`^(.+)-[0-9a-f]{8,10}(-\.\.\.)?$`)
+)
+
+//NewViolationGroup creates a fresh group for a reported violation.
+func NewViolationGroup(report ViolationReport, clusterName string) ViolationGroup {
+	//special handling for Helm 2 releases
+	if report.Kind == "ConfigMap" && report.Namespace == "kube-system" {
+		match := helm2ReleaseNameRx.FindStringSubmatch(report.Name)
+		if match != nil {
+			return ViolationGroup{
+				Kind:        "Helm 2 release",
+				NamePattern: match[1],
+				Namespace:   "",
+				Message:     report.Message,
+				Instances: []ViolationInstance{{
+					ClusterName: clusterName,
+					Name:        report.Name,
+				}},
+			}
+		}
+	}
+
+	//special handling for Helm 3 releases
+	if report.Kind == "Secret" {
+		match := helm3ReleaseNameRx.FindStringSubmatch(report.Name)
+		if match != nil {
+			return ViolationGroup{
+				Kind:        "Helm 3 release",
+				NamePattern: match[1],
+				Namespace:   report.Namespace,
+				Message:     report.Message,
+				Instances: []ViolationInstance{{
+					ClusterName: clusterName,
+					Name:        report.Name,
+				}},
+			}
+		}
+	}
+
+	//normal handling for Kubernetes objects: use generated name patterns for grouping
+	namePattern := report.Name
+	if report.Kind == "Pod" {
+		match := generatedPodNameRx.FindStringSubmatch(namePattern)
+		if match != nil {
+			namePattern = match[1] + "-..."
+		}
+	}
+	if report.Kind == "Pod" || report.Kind == "ReplicaSet" {
+		match := generatedReplicasetNameRx.FindStringSubmatch(namePattern)
+		if match != nil {
+			namePattern = match[1] + "-..." + match[2]
+		}
+	}
+
+	return ViolationGroup{
+		Kind:        report.Kind,
+		NamePattern: namePattern,
+		Namespace:   report.Namespace,
+		Message:     report.Message,
+		Instances: []ViolationInstance{{
+			ClusterName: clusterName,
+			Name:        report.Name,
+		}},
+	}
+}
+
+//CanMergeWith checks if both ViolationGroups are semantically identical and
+//can be merged.
+func (vg ViolationGroup) CanMergeWith(other ViolationGroup) bool {
+	return vg.Kind == other.Kind && vg.Namespace == other.Namespace &&
+		vg.NamePattern == other.NamePattern && vg.Message == other.Message
+}
+
+//GroupViolationsInto processes the violations in this report into
+//ViolationGroups, sorted by template kind.
+func (r Report) GroupViolationsInto(violationGroups map[string][]*ViolationGroup, clusterName string) {
+	for _, rt := range r.Templates {
+		for _, rc := range rt.Configs {
+		VIOLATION:
+			for _, rv := range rc.Violations {
+				//start with a fresh violation group for this violation...
+				vgNew := NewViolationGroup(rv, clusterName)
+
+				//...but prefer to merge it with an existing group
+				for _, vgOld := range violationGroups[rt.Kind] {
+					if vgOld.CanMergeWith(vgNew) {
+						vgOld.Instances = append(vgOld.Instances, vgNew.Instances...)
+						continue VIOLATION
+					}
+				}
+
+				//otherwise it gets inserted on its own
+				violationGroups[rt.Kind] = append(violationGroups[rt.Kind], &vgNew)
+			}
+		}
+	}
+}
+
+func sortViolationGroups(groups []*ViolationGroup) {
+	for _, group := range groups {
+		sortViolationInstances(group.Instances)
+	}
+	sort.Slice(groups, func(i, j int) bool {
+		lhs := groups[i]
+		rhs := groups[j]
+		if lhs.Kind != rhs.Kind {
+			return lhs.Kind < rhs.Kind
+		}
+		if lhs.Namespace != rhs.Namespace {
+			return lhs.Namespace < rhs.Namespace
+		}
+		if lhs.NamePattern != rhs.NamePattern {
+			return lhs.NamePattern < rhs.NamePattern
+		}
+		return lhs.Message < rhs.Message
+	})
+}
+
+func sortViolationInstances(instances []ViolationInstance) {
+	sort.Slice(instances, func(i, j int) bool {
+		lhs := instances[i]
+		rhs := instances[j]
+		if lhs.ClusterName != rhs.ClusterName {
+			return lhs.ClusterName < rhs.ClusterName
+		}
+		return lhs.Name < rhs.Name
+	})
 }

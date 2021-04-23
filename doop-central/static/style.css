@@ -104,14 +104,14 @@ header div.buttons * + * {
   text-align: center;
 }
 
-table {
+main > table {
   border: 0;
   border-collapse: collapse;
   background: rgba(255, 255, 255, 0.9);
   overflow-x: auto;
 }
 
-table td, table th {
+main > table td, main > table th {
   border: 1px solid #AAA;
   padding: 0.5rem;
 }

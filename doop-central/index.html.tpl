@@ -18,6 +18,34 @@
 
 <main>
 
+  {{- range $kind := $.AllTemplateKinds }}
+    <h2>Constraint: {{ $kind }}</h2>
+
+    <ul>
+      {{- range $vgroup := index $.ViolationGroups $kind }}
+        <li>
+          {{- if $vgroup.Namespace }}
+            <strong>{{ $vgroup.Kind }}</strong> in namespace {{ $vgroup.Namespace }}:
+          {{- else }}
+            {{ $vgroup.Kind }}:
+          {{- end }}
+          {{- if gt (len $vgroup.Instances) 1 }}
+            <strong>{{ $vgroup.NamePattern }}</strong>
+          {{- else }}
+            {{- $instance := index $vgroup.Instances 0 }}
+            <strong>{{ $instance.Name }}</strong>
+          {{- end }}
+          <div class="violation-details">
+            <code>{{ $vgroup.Message }}</code>
+            {{- range $instance := $vgroup.Instances }}
+              <br><small>{{ $instance.ClusterName }}: {{ $instance.Name }}</small>
+            {{- end }}
+          </div>
+        </li>
+      {{- end }}
+    </ul>
+  {{- end }}
+
   <h2>Cluster health</h2>
 
   <table>
@@ -53,11 +81,5 @@
       {{- end }}
     </thead>
   </table>
-
-  <!-- TODO: remove debug display -->
-  {{- range $cluster := $.AllClusters }}
-    <h2>Raw report: {{ $cluster }}</h2>
-    <pre><code>{{ index $.Reports $cluster | jsonIndent }}</code></pre>
-  {{- end }}
 
 </main>
