@@ -21,24 +21,28 @@
   {{- range $kind := $.AllTemplateKinds }}
     <h2>Constraint: {{ $kind }}</h2>
 
-    <ul>
+    <ul class="violations">
       {{- range $vgroup := index $.ViolationGroups $kind }}
         <li>
-          {{- if $vgroup.Namespace }}
-            <strong>{{ $vgroup.Kind }}</strong> in namespace {{ $vgroup.Namespace }}:
-          {{- else }}
-            {{ $vgroup.Kind }}:
-          {{- end }}
-          {{- if gt (len $vgroup.Instances) 1 }}
-            <strong>{{ $vgroup.NamePattern }}</strong>
-          {{- else }}
-            {{- $instance := index $vgroup.Instances 0 }}
-            <strong>{{ $instance.Name }}</strong>
-          {{- end }}
           <div class="violation-details">
-            <code>{{ $vgroup.Message }}</code>
+            {{ $vgroup.Kind }}
+            <strong>
+              {{- if gt (len $vgroup.Instances) 1 -}}
+                {{- $vgroup.NamePattern -}}
+              {{- else -}}
+                {{- $instance := index $vgroup.Instances 0 -}}
+                {{- $instance.Name -}}
+              {{- end -}}
+            </strong>
+            {{- if $vgroup.Namespace }}
+               in namespace {{ $vgroup.Namespace }}
+            {{- end }}:
+            {{ $vgroup.Message }}
+          </div>
+          <div class="violation-instances {{ if gt (len $vgroup.Instances) 3 }}folded{{ end }}">
+            <div class="unfolder">{{ len $vgroup.Instances }} instances <a href="#">(show all)</a></div>
             {{- range $instance := $vgroup.Instances }}
-              <br><small>{{ $instance.ClusterName }}: {{ $instance.Name }}</small>
+              <div class="violation-instance">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
             {{- end }}
           </div>
         </li>
@@ -83,3 +87,5 @@
   </table>
 
 </main>
+
+<script src="/static/behavior.js"></script>

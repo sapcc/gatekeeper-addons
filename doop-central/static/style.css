@@ -94,6 +94,28 @@ header div.buttons * + * {
 }
 
 /*******************************************************************************
+ * violation report
+ */
+
+ul.violations {
+  padding-left: 0.5rem;
+  list-style: none;
+}
+
+ul.violations li div.violation-instances {
+  margin: 0.5rem 0 1rem 1rem;
+  font-size: 0.8rem;
+  color: #333;
+}
+
+ul.violations li div.violation-instances:not(.folded) div.unfolder {
+  display: none;
+}
+ul.violations li div.violation-instances.folded div.violation-instance {
+  display: none;
+}
+
+/*******************************************************************************
  * table styling
  */
 

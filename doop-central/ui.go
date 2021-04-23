@@ -251,12 +251,15 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 			namePattern = match[1] + "-..." + match[2]
 		}
 	}
+	//merge violations that only differ in a name or message part that is equal to the cluster name
+	namePattern = strings.Replace(namePattern, clusterName, "$CLUSTER", -1)
+	messagePattern := strings.Replace(report.Message, clusterName, "$CLUSTER", -1)
 
 	return ViolationGroup{
 		Kind:        report.Kind,
 		NamePattern: namePattern,
 		Namespace:   report.Namespace,
-		Message:     report.Message,
+		Message:     messagePattern,
 		Instances: []ViolationInstance{{
 			ClusterName: clusterName,
 			Name:        report.Name,
@@ -303,14 +306,14 @@ func sortViolationGroups(groups []*ViolationGroup) {
 	sort.Slice(groups, func(i, j int) bool {
 		lhs := groups[i]
 		rhs := groups[j]
+		if lhs.NamePattern != rhs.NamePattern {
+			return lhs.NamePattern < rhs.NamePattern
+		}
 		if lhs.Kind != rhs.Kind {
 			return lhs.Kind < rhs.Kind
 		}
 		if lhs.Namespace != rhs.Namespace {
 			return lhs.Namespace < rhs.Namespace
-		}
-		if lhs.NamePattern != rhs.NamePattern {
-			return lhs.NamePattern < rhs.NamePattern
 		}
 		return lhs.Message < rhs.Message
 	})
