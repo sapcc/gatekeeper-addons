@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<title>DOOP: Decentralized Observer of Policies</title>
 <link rel="stylesheet" href="/static/style.css">
 
 <header>
