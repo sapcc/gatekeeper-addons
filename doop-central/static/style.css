@@ -1,21 +1,101 @@
+/*******************************************************************************
+ * overall document structure
+ */
+
 html {
   font-family: system-ui, sans-serif;
   font-size: 16px;
   background: white url(/static/logo.svg) no-repeat fixed;
   background-size: 30%;
-  background-position: top 1rem right 1rem;
+  background-position: bottom 1rem right 1rem;
 }
 
-h1 small a {
+/*******************************************************************************
+ * header
+ */
+
+main {
+  padding-top: 3rem; /* to accommodate the fixed <header> */
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3rem;
+  background: #EEE;
+  display: flex;
+  white-space: nowrap;
+  box-shadow: 0 0 5px #333;
+}
+
+header h1 {
+  flex: 0;
+  margin: 0 0.5rem;
+  font-size: 1.75rem;
+  line-height: 3rem;
+}
+
+header h1 small a {
   opacity: 0.3;
   font-size: 0.7rem;
   color: blue !important;
   text-decoration: none !important;
 }
 
-h1 small a:active, h1 small a:focus, h1 small a:hover {
+header h1 small a:hover {
   opacity: 1.0;
 }
+
+header input[type=text] {
+  flex: 1;
+  min-width: 5rem;
+  max-width: 20rem;
+  background: white;
+  margin: 0.6rem 0.25rem;
+  border: 1px solid #999;
+  border-radius: 0.25rem;
+  padding: 0 0.25rem;
+  font-size: 1.2rem;
+}
+
+header div.buttons {
+  display: flex;
+  vertical-align: middle;
+  margin: 0.6rem 0.25rem;
+  box-shadow: 0 0 3px #CCC;
+}
+header div.buttons div {
+  padding: 0 0.5rem;
+  border: 1px solid #999;
+  font-size: 1.2rem;
+  line-height: calc(1.8rem - 1px);
+  cursor: pointer;
+}
+header div.buttons div:focus, header div.buttons div:hover {
+  border-color: #666;
+  z-index: 10;
+}
+header div.buttons div.selected {
+  background: white;
+  font-weight: bold;
+}
+header div.buttons *:first-child {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+header div.buttons *:last-child {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+header div.buttons * + * {
+  margin-left: -1px;
+}
+
+/*******************************************************************************
+ * table styling
+ */
 
 .nobr {
   white-space: nowrap;

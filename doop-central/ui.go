@@ -25,6 +25,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"sort"
+	"strings"
 	"text/template"
 	"time"
 
@@ -37,6 +38,7 @@ var pageTemplateStr string
 var (
 	pageTemplate = template.Must(template.New("index.html").Funcs(funcMap).Parse(pageTemplateStr))
 	funcMap      = template.FuncMap{
+		"titlecase":  titlecase,
 		"jsonIndent": jsonIndent,
 	}
 )
@@ -94,6 +96,13 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logg.Error("while rendering index.html: %s", err.Error())
 	}
+}
+
+func titlecase(in string) string {
+	if in == "qa" {
+		return "QA"
+	}
+	return strings.Title(in)
 }
 
 func jsonIndent(in []byte) string {
