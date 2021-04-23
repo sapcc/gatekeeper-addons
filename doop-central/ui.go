@@ -196,7 +196,7 @@ type ViolationInstance struct {
 
 var (
 	helm2ReleaseNameRx        = regexp.MustCompile(`^(.*)\.v\d+$`)
-	helm3ReleaseNameRx        = regexp.MustCompile(`^sh\.helm\.release\.v1\.(.*)\.v\d+$`)
+	helm3ReleaseNameRx        = regexp.MustCompile(`^sh\.helm\.release\.v1\.(.*)(\.v\d+)$`)
 	generatedPodNameRx        = regexp.MustCompile(`^(.+)-[0-9a-z]{5}$`)
 	generatedReplicasetNameRx = regexp.MustCompile(`^(.+)-[0-9a-f]{8,10}(-\.\.\.)?$`)
 )
@@ -231,7 +231,7 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 				Message:     report.Message,
 				Instances: []ViolationInstance{{
 					ClusterName: clusterName,
-					Name:        report.Name,
+					Name:        match[1] + match[2],
 				}},
 			}
 		}
