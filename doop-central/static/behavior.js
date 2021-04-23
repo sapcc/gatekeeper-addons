@@ -18,12 +18,12 @@
 *******************************************************************************/
 
 (function() {
-
+  var $ = selector => document.querySelector(selector);
   var $$ = selector => document.querySelectorAll(selector);
 
   //Long lists of violation instances get folded by default. This is the
   //behavior for the unfold button.
-  for (const list of document.querySelectorAll(".violation-instances")) {
+  for (const list of $$(".violation-instances")) {
     for (const button of list.querySelectorAll(".unfolder a")) {
       button.addEventListener("click", event => {
         event.preventDefault();
@@ -31,5 +31,30 @@
       });
     }
   }
+
+  //This updates the view after a filter or search phrase was set. We will use
+  //this in event handlers below.
+  let updateView = () => {
+    const searchTerms = $("input#search").value.toLowerCase().split(/\s+/);
+
+    for (const violation of $$("ul.violations > li")) {
+      const text = violation.querySelector(".violation-details").innerText.toLowerCase();
+      let matches = true;
+      for (const searchTerm of searchTerms) {
+        if (!text.includes(searchTerm)) {
+          matches = false;
+          break;
+        }
+      }
+      console.log("matches: "+matches);
+      violation.classList.toggle("hidden", !matches);
+    }
+  };
+
+  //Clear search terms that were carried across reloads.
+  $("input#search").value = "";
+
+  //The event handler for the search box is easy.
+  $("input#search").addEventListener("input", event => updateView());
 
 })();

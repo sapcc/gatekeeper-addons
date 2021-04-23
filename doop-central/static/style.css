@@ -108,6 +108,10 @@ ul.violations li div.violation-instances {
   color: #333;
 }
 
+ul.violations li.hidden {
+  display: none;
+}
+
 ul.violations li div.violation-instances:not(.folded) div.unfolder {
   display: none;
 }

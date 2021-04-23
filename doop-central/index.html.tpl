@@ -13,7 +13,7 @@
       <div class="selected">{{ $type | titlecase }}</div>
     {{- end }}
   </div>
-  <input type="text" placeholder="Search">
+  <input id="search" autofocus type="text" placeholder="Search">
 </header>
 
 <main>
