@@ -138,7 +138,7 @@ func must(task string, err error) {
 
 //Report is the data structure that we write into our report file.
 type Report struct {
-	Identitty clusterIdentity     `json:"identity"`
+	Identity  clusterIdentity     `json:"identity"`
 	Templates []ReportForTemplate `json:"templates"`
 }
 
@@ -161,7 +161,7 @@ func SendReport(ctx context.Context, cs ClientSet, swiftObj *schwift.Object, ide
 
 	//build report
 	logg.Info("building report")
-	var r Report
+	r := Report{Identity: identity}
 	for _, t := range cs.ListConstraintTemplates(ctx) {
 		rt := ReportForTemplate{
 			Kind: t.Spec.CRD.Spec.Names.Kind,
