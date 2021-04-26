@@ -67,6 +67,12 @@
       //apply computed visibility
       violation.classList.toggle("hidden", !(matchesSearch && hasVisibleInstances));
     }
+
+    //hide checks that have all violations hidden
+    for (const section of $$("section")) {
+      const isHidden = section.querySelectorAll("ul.violations > li:not(.hidden)").length == 0;
+      section.classList.toggle("hidden", isHidden);
+    }
   };
 
   //Clear search terms that were carried across reloads.

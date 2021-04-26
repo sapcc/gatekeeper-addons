@@ -24,40 +24,42 @@
   {{- end }}
 
   {{- range $kind := $.AllTemplateKinds }}
-    <h2>Check: {{ $kind }}</h2>
+    <section>
+      <h2>Check: {{ $kind }}</h2>
 
-    {{- if index $.Docstrings $kind }}
-      <blockquote>{{ index $.Docstrings $kind }}</blockquote>
-    {{- end }}
-
-    <ul class="violations">
-      {{- range $vgroup := index $.ViolationGroups $kind }}
-        <li>
-          <div class="violation-details">
-            {{ $vgroup.Kind }}
-            <strong>
-              {{- if gt (len $vgroup.Instances) 1 -}}
-                {{- $vgroup.NamePattern -}}
-              {{- else -}}
-                {{- $instance := index $vgroup.Instances 0 -}}
-                {{- $instance.Name -}}
-              {{- end -}}
-            </strong>
-            {{- if $vgroup.Namespace }}
-               in namespace {{ $vgroup.Namespace }}
-            {{- end }}:
-            {{ $vgroup.Message }}
-          </div>
-          <div class="violation-instances {{ if gt (len $vgroup.Instances) 3 }}folded{{ end }}">
-            <div class="unfolder">{{ len $vgroup.Instances }} instances in total <a href="#">(expand)</a></div>
-            {{- range $instance := $vgroup.Instances }}
-              {{- $info := index $.ClusterInfos $instance.ClusterName }}
-              <div class="violation-instance" data-layer="{{ $info.Layer }}" data-type="{{ $info.Type }}">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
-            {{- end }}
-          </div>
-        </li>
+      {{- if index $.Docstrings $kind }}
+        <blockquote>{{ index $.Docstrings $kind }}</blockquote>
       {{- end }}
-    </ul>
+
+      <ul class="violations">
+        {{- range $vgroup := index $.ViolationGroups $kind }}
+          <li>
+            <div class="violation-details">
+              {{ $vgroup.Kind }}
+              <strong>
+                {{- if gt (len $vgroup.Instances) 1 -}}
+                  {{- $vgroup.NamePattern -}}
+                {{- else -}}
+                  {{- $instance := index $vgroup.Instances 0 -}}
+                  {{- $instance.Name -}}
+                {{- end -}}
+              </strong>
+              {{- if $vgroup.Namespace }}
+                 in namespace {{ $vgroup.Namespace }}
+              {{- end }}:
+              {{ $vgroup.Message }}
+            </div>
+            <div class="violation-instances {{ if gt (len $vgroup.Instances) 3 }}folded{{ end }}">
+              <div class="unfolder">{{ len $vgroup.Instances }} instances in total <a href="#">(expand)</a></div>
+              {{- range $instance := $vgroup.Instances }}
+                {{- $info := index $.ClusterInfos $instance.ClusterName }}
+                <div class="violation-instance" data-layer="{{ $info.Layer }}" data-type="{{ $info.Type }}">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
+              {{- end }}
+            </div>
+          </li>
+        {{- end }}
+      </ul>
+    </section>
   {{- end }}
 
   <h2>Gatekeeper stats</h2>
