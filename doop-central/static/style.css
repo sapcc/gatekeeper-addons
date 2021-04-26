@@ -203,8 +203,8 @@ section > h2:hover {
 
 section > h2:before {
   content: '\2B9F';
-  display: inline;
-  padding-right: 0.5rem;
+  display: inline-block;
+  width: 2rem;
 }
 
 section.folded > h2:before {
