@@ -197,6 +197,9 @@ table td.value-danger {
 section > h2 {
   cursor: pointer;
 }
+section > h2:hover {
+  background: #EEE;
+}
 
 section > h2:before {
   content: '\2B9F';

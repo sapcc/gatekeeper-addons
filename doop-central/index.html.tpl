@@ -23,6 +23,44 @@
     <blockquote>{{ .Docstrings.Header }}</blockquote>
   {{- end }}
 
+  <section class="folded">
+    <h2>Gatekeeper stats</h2>
+
+    <table>
+      <thead>
+        {{- range $ctype := $.AllClusterTypes }}
+          <tr>
+            <th class="nobr">&nbsp;</th>
+            {{- range $cluster := $.AllClusters }}
+              {{- $info := index $.ClusterInfos $cluster }}
+              {{- if eq $info.Type $ctype }}
+                <th class="nobr"><div>{{ $cluster }}</div></th>
+              {{- end }}
+            {{- end }}
+          </tr>
+          <tr>
+            <th class="nobr">Oldest data</th>
+            {{- range $cluster := $.AllClusters }}
+              {{- $info := index $.ClusterInfos $cluster }}
+              {{- if eq $info.Type $ctype }}
+                <td class="nobr center {{ $info.OldestAuditCSSClass }}">{{ printf "%.1fs" $info.OldestAuditAgeSecs }}</th>
+              {{- end }}
+            {{- end }}
+          </tr>
+          <tr>
+            <th class="nobr">Newest data</th>
+            {{- range $cluster := $.AllClusters }}
+              {{- $info := index $.ClusterInfos $cluster }}
+              {{- if eq $info.Type $ctype }}
+                <td class="nobr center {{ $info.NewestAuditCSSClass }}">{{ printf "%.1fs" $info.NewestAuditAgeSecs }}</th>
+              {{- end }}
+            {{- end }}
+          </tr>
+        {{- end }}
+      </thead>
+    </table>
+  </section>
+
   {{- range $kind := $.AllTemplateKinds }}
     <section>
       <h2>Check: {{ $kind }}</h2>
@@ -61,44 +99,6 @@
       </ul>
     </section>
   {{- end }}
-
-  <section class="folded">
-    <h2>Gatekeeper stats</h2>
-
-    <table>
-      <thead>
-        {{- range $ctype := $.AllClusterTypes }}
-          <tr>
-            <th class="nobr">&nbsp;</th>
-            {{- range $cluster := $.AllClusters }}
-              {{- $info := index $.ClusterInfos $cluster }}
-              {{- if eq $info.Type $ctype }}
-                <th class="nobr"><div>{{ $cluster }}</div></th>
-              {{- end }}
-            {{- end }}
-          </tr>
-          <tr>
-            <th class="nobr">Oldest data</th>
-            {{- range $cluster := $.AllClusters }}
-              {{- $info := index $.ClusterInfos $cluster }}
-              {{- if eq $info.Type $ctype }}
-                <td class="nobr center {{ $info.OldestAuditCSSClass }}">{{ printf "%.1fs" $info.OldestAuditAgeSecs }}</th>
-              {{- end }}
-            {{- end }}
-          </tr>
-          <tr>
-            <th class="nobr">Newest data</th>
-            {{- range $cluster := $.AllClusters }}
-              {{- $info := index $.ClusterInfos $cluster }}
-              {{- if eq $info.Type $ctype }}
-                <td class="nobr center {{ $info.NewestAuditCSSClass }}">{{ printf "%.1fs" $info.NewestAuditAgeSecs }}</th>
-              {{- end }}
-            {{- end }}
-          </tr>
-        {{- end }}
-      </thead>
-    </table>
-  </section>
 
 </main>
 
