@@ -96,6 +96,42 @@ header div.buttons * + * {
 }
 
 /*******************************************************************************
+ * docstrings
+ */
+
+blockquote {
+  max-width: 60rem;
+  margin: 0.5rem;
+  border-left: 2px solid #66C;
+  padding: 0.5rem;
+  background: #EEF;
+}
+blockquote > :first-child {
+  margin-top: 0 !important;
+}
+blockquote > :last-child {
+  margin-bottom: 0 !important;
+}
+
+blockquote pre {
+  margin-left: 1rem;
+}
+
+blockquote dl {
+  margin-bottom: 1rem;
+}
+blockquote dt {
+  font-weight: bold;
+}
+blockquote dd {
+  margin-left: 0.5rem;
+  margin: 0.25rem 0 0 1rem;
+}
+blockquote dd:not(:last-child) {
+  margin-bottom: 1rem;
+}
+
+/*******************************************************************************
  * violation report
  */
 

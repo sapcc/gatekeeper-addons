@@ -22,6 +22,8 @@ package main
 import (
 	"context"
 	"embed"
+	"html/template"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -32,6 +34,7 @@ import (
 	"github.com/majewsky/schwift/gopherschwift"
 	"github.com/sapcc/go-bits/httpee"
 	"github.com/sapcc/go-bits/logg"
+	"gopkg.in/yaml.v2"
 )
 
 //go:embed static
@@ -39,9 +42,16 @@ var staticContent embed.FS
 
 func main() {
 	logg.ShowDebug, _ = strconv.ParseBool(os.Getenv("DOOP_CENTRAL_DEBUG"))
-	if len(os.Args) != 2 {
-		logg.Fatal("usage: %s <listen-address>", os.Args[0])
+	if len(os.Args) != 3 {
+		logg.Fatal("usage: %s <listen-address> <docs.yaml>", os.Args[0])
 	}
+
+	//parse docs.yaml
+	docstringsBytes, err := ioutil.ReadFile(os.Args[2])
+	must("read docstring file", err)
+	docstrings := make(map[string]template.HTML)
+	err = yaml.Unmarshal(docstringsBytes, &docstrings)
+	must("parse docstring file", err)
 
 	//initialize OpenStack/Swift client
 	ao, err := clientconfig.AuthOptions(nil)
@@ -64,7 +74,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthcheck", handleHealthcheck)
 	mux.Handle("/static/", http.FileServer(http.FS(staticContent)))
-	mux.HandleFunc("/", UI{NewDownloader(swiftContainer)}.RenderMainPage)
+	mux.HandleFunc("/", UI{NewDownloader(swiftContainer), docstrings}.RenderMainPage)
 
 	//start HTTP server
 	handler := logg.Middleware{}.Wrap(mux)

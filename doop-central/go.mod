@@ -8,4 +8,5 @@ require (
 	github.com/jpillora/longestcommon v0.0.0-20161227235612-adb9d91ee629 // indirect
 	github.com/majewsky/schwift v0.0.0-20201014122716-bd1c74594efe
 	github.com/sapcc/go-bits v0.0.0-20210421130523-ebbcdaf1960c
+	gopkg.in/yaml.v2 v2.4.0
 )

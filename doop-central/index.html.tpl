@@ -19,8 +19,16 @@
 
 <main>
 
+  {{- if .Docstrings.Header }}
+    <blockquote>{{ .Docstrings.Header }}</blockquote>
+  {{- end }}
+
   {{- range $kind := $.AllTemplateKinds }}
-    <h2>Constraint: {{ $kind }}</h2>
+    <h2>Check: {{ $kind }}</h2>
+
+    {{- if index $.Docstrings $kind }}
+      <blockquote>{{ index $.Docstrings $kind }}</blockquote>
+    {{- end }}
 
     <ul class="violations">
       {{- range $vgroup := index $.ViolationGroups $kind }}
@@ -52,7 +60,7 @@
     </ul>
   {{- end }}
 
-  <h2>Cluster health</h2>
+  <h2>Gatekeeper stats</h2>
 
   <table>
     <thead>

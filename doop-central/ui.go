@@ -23,11 +23,11 @@ import (
 	"bytes"
 	_ "embed"
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"regexp"
 	"sort"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/sapcc/go-bits/logg"
@@ -49,7 +49,8 @@ var (
 
 //UI provides the business logic for rendering the web dashboard.
 type UI struct {
-	d *Downloader
+	d          *Downloader
+	docstrings map[string]template.HTML
 }
 
 //RenderMainPage is a http.HandleFunc for `GET /`.
@@ -72,9 +73,11 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 		ClusterInfos     map[string]ClusterInfo
 		AllTemplateKinds []string
 		ViolationGroups  map[string][]*ViolationGroup
+		Docstrings       map[string]template.HTML
 	}{
 		ClusterInfos:    make(map[string]ClusterInfo),
 		ViolationGroups: make(map[string][]*ViolationGroup),
+		Docstrings:      ui.docstrings,
 	}
 
 	for clusterName, report := range reports {
