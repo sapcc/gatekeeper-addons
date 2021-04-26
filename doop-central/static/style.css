@@ -168,14 +168,14 @@ ul.violations li div.violation-instances.folded div.violation-instance {
   text-align: center;
 }
 
-main > table {
+table {
   border: 0;
   border-collapse: collapse;
   background: rgba(255, 255, 255, 0.9);
   overflow-x: auto;
 }
 
-main > table td, main > table th {
+table td, table th {
   border: 1px solid #AAA;
   padding: 0.5rem;
 }
@@ -188,4 +188,26 @@ table td.value-warning {
 }
 table td.value-danger {
   background-color: #FEE;
+}
+
+/*******************************************************************************
+ * foldable sections
+ */
+
+section > h2 {
+  cursor: pointer;
+}
+
+section > h2:before {
+  content: '\2B9F';
+  display: inline;
+  padding-right: 0.5rem;
+}
+
+section.folded > h2:before {
+  content: '\2B9E';
+}
+
+section.folded > :not(h2) {
+  display: none;
 }
