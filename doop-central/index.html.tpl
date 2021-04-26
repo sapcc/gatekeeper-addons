@@ -62,7 +62,7 @@
   </section>
 
   {{- range $kind := $.AllTemplateKinds }}
-    <section>
+    <section class="check">
       <h2>Check: {{ $kind }}</h2>
 
       {{- if index $.Docstrings $kind }}

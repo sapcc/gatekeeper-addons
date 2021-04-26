@@ -69,7 +69,7 @@
     }
 
     //hide checks that have all violations hidden
-    for (const section of $$("section")) {
+    for (const section of $$("section.check")) {
       const isHidden = section.querySelectorAll("ul.violations > li:not(.hidden)").length == 0;
       section.classList.toggle("hidden", isHidden);
     }
