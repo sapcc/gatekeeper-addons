@@ -44,8 +44,13 @@ func main() {
 	}
 
 	//initialize OpenStack/Swift client
-	provider, err := clientconfig.AuthenticatedClient(nil)
+	ao, err := clientconfig.AuthOptions(nil)
+	must("find OpenStack credentials", err)
+	ao.AllowReauth = true
+	provider, err := openstack.NewClient(ao.IdentityEndpoint)
 	must("initialize OpenStack client", err)
+	err = openstack.Authenticate(provider, *ao)
+	must("initialize OpenStack authentication", err)
 	client, err := openstack.NewObjectStorageV1(provider, gophercloud.EndpointOpts{})
 	must("initialize Swift client", err)
 	account, err := gopherschwift.Wrap(client, &gopherschwift.Options{
