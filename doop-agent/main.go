@@ -117,9 +117,9 @@ func main() {
 		}
 	}()
 
-	//send a report immediately, then every few minutes
+	//send a report immediately, then once a minute
 	SendReport(ctx, clientset, swiftObj, identity)
-	ticker := time.NewTicker(3 * time.Minute)
+	ticker := time.NewTicker(1 * time.Minute)
 	for {
 		select {
 		case <-ctx.Done():
