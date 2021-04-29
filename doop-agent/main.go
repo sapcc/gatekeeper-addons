@@ -144,13 +144,17 @@ type Report struct {
 
 //ReportForTemplate appears in type Report.
 type ReportForTemplate struct {
-	Kind    string            `json:"kind"`
-	Configs []ReportForConfig `json:"configs"`
+	Kind        string            `json:"kind"`
+	Labels      map[string]string `json:"labels,omitempty"`
+	Annotations map[string]string `json:"annotations,omitempty"`
+	Configs     []ReportForConfig `json:"configs"`
 }
 
 //ReportForConfig appears in type ReportForTemplate.
 type ReportForConfig struct {
 	Name           string                `json:"name"`
+	Labels         map[string]string     `json:"labels,omitempty"`
+	Annotations    map[string]string     `json:"annotations,omitempty"`
 	AuditTimestamp string                `json:"auditTimestamp"`
 	Violations     []ConstraintViolation `json:"violations"`
 }
@@ -164,11 +168,15 @@ func SendReport(ctx context.Context, cs ClientSet, swiftObj *schwift.Object, ide
 	r := Report{Identity: identity}
 	for _, t := range cs.ListConstraintTemplates(ctx) {
 		rt := ReportForTemplate{
-			Kind: t.Spec.CRD.Spec.Names.Kind,
+			Kind:        t.Spec.CRD.Spec.Names.Kind,
+			Labels:      t.Metadata.Labels,
+			Annotations: t.Metadata.Annotations,
 		}
 		for _, c := range cs.ListConstraintConfigs(ctx, t) {
 			rc := ReportForConfig{
 				Name:           c.Metadata.Name,
+				Labels:         c.Metadata.Labels,
+				Annotations:    c.Metadata.Annotations,
 				AuditTimestamp: c.Status.AuditTimestamp,
 				Violations:     c.Status.Violations,
 			}
