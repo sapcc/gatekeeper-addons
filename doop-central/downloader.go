@@ -132,7 +132,7 @@ type ConfigReport struct {
 	Name        string            `json:"name"`
 	Labels      map[string]string `json:"labels"`
 	Annotations map[string]string `json:"annotations"`
-	AuditAt     time.Time         `json:"auditTimestamp"`
+	AuditAt     time.Time         `json:"auditTimestamp"` //TODO do not fail if empty string (before first full audit run)
 	Violations  []ViolationReport `json:"violations"`
 }
 
