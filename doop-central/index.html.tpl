@@ -22,6 +22,13 @@
   {{- if .Docstrings.Header }}
     <blockquote>{{ .Docstrings.Header }}</blockquote>
   {{- end }}
+  <p>
+    {{- if .ShowAll }}
+    This view includes all constraint configurations. <a href="/">Click here</a> to return to the default view.
+    {{- else }}
+    This view only includes constraint configurations with the <code>on-prod-ui:&quot;true&quot;</code> label. <a href="/all">Click here</a> for the development view.
+    {{- end }}
+  </p>
 
   <section class="folded">
     <h2>Gatekeeper stats</h2>

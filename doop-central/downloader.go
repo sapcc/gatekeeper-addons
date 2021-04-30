@@ -121,15 +121,19 @@ type Report struct {
 
 //TemplateReport appears in type Report.
 type TemplateReport struct {
-	Kind    string         `json:"kind"`
-	Configs []ConfigReport `json:"configs"`
+	Kind        string            `json:"kind"`
+	Labels      map[string]string `json:"labels"`
+	Annotations map[string]string `json:"annotations"`
+	Configs     []ConfigReport    `json:"configs"`
 }
 
 //ConfigReport appears in type TemplateReport.
 type ConfigReport struct {
-	Name       string            `json:"name"`
-	AuditAt    time.Time         `json:"auditTimestamp"`
-	Violations []ViolationReport `json:"violations"`
+	Name        string            `json:"name"`
+	Labels      map[string]string `json:"labels"`
+	Annotations map[string]string `json:"annotations"`
+	AuditAt     time.Time         `json:"auditTimestamp"`
+	Violations  []ViolationReport `json:"violations"`
 }
 
 //ViolationReport appears in type ConfigReport.

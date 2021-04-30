@@ -55,7 +55,7 @@ type UI struct {
 
 //RenderMainPage is a http.HandleFunc for `GET /`.
 func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" || (r.Method != "GET" && r.Method != "HEAD") {
+	if (r.URL.Path != "/" && r.URL.Path != "/all") || (r.Method != "GET" && r.Method != "HEAD") {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
 	}
@@ -67,6 +67,7 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
+		ShowAll          bool
 		AllClusters      []string
 		AllClusterLayers []string
 		AllClusterTypes  []string
@@ -75,6 +76,7 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 		ViolationGroups  map[string][]*ViolationGroup
 		Docstrings       map[string]template.HTML
 	}{
+		ShowAll:         r.URL.Path == "/all",
 		ClusterInfos:    make(map[string]ClusterInfo),
 		ViolationGroups: make(map[string][]*ViolationGroup),
 		Docstrings:      ui.docstrings,
@@ -85,7 +87,7 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 		data.AllClusterLayers = append(data.AllClusterLayers, report.Identity.Layer)
 		data.AllClusterTypes = append(data.AllClusterTypes, report.Identity.Type)
 		data.ClusterInfos[clusterName] = report.ToClusterInfo()
-		report.GroupViolationsInto(data.ViolationGroups, clusterName)
+		report.GroupViolationsInto(data.ViolationGroups, clusterName, data.ShowAll)
 	}
 
 	sort.Strings(data.AllClusters)
@@ -279,9 +281,12 @@ func (vg ViolationGroup) CanMergeWith(other ViolationGroup) bool {
 
 //GroupViolationsInto processes the violations in this report into
 //ViolationGroups, sorted by template kind.
-func (r Report) GroupViolationsInto(violationGroups map[string][]*ViolationGroup, clusterName string) {
+func (r Report) GroupViolationsInto(violationGroups map[string][]*ViolationGroup, clusterName string, showAll bool) {
 	for _, rt := range r.Templates {
 		for _, rc := range rt.Configs {
+			if !showAll && rc.Labels["on-prod-ui"] != "true" {
+				continue
+			}
 		VIOLATION:
 			for _, rv := range rc.Violations {
 				//start with a fresh violation group for this violation...
