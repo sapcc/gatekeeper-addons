@@ -20,9 +20,8 @@
 package main
 
 import (
-	"bytes"
 	_ "embed"
-	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 	"regexp"
@@ -39,8 +38,8 @@ var pageTemplateStr string
 var (
 	pageTemplate = template.Must(template.New("index.html").Funcs(funcMap).Parse(pageTemplateStr))
 	funcMap      = template.FuncMap{
-		"titlecase":  titlecase,
-		"jsonIndent": jsonIndent,
+		"titlecase":          titlecase,
+		"markupPlaceholders": markupPlaceholders,
 	}
 )
 
@@ -115,12 +114,6 @@ func titlecase(in string) string {
 	return strings.Title(in)
 }
 
-func jsonIndent(in []byte) string {
-	var buf bytes.Buffer
-	json.Indent(&buf, in, "", "  ")
-	return buf.String()
-}
-
 func sortAndDedupStrings(vals []string) []string {
 	isVal := make(map[string]bool)
 	for _, val := range vals {
@@ -132,6 +125,28 @@ func sortAndDedupStrings(vals []string) []string {
 	}
 	sort.Strings(result)
 	return result
+}
+
+var placeholderRx = regexp.MustCompile(`<(variable|cluster|region)>`)
+
+func markupPlaceholders(in string) template.HTML {
+	//When grouping violations together (see below), we do certain string
+	//replacements in the object name, object namespace and violation message in
+	//order to enable merge aggressive grouping. This template function replaces
+	//the pseudo-variables used therein with some proper HTML markup to make the
+	//pseudo-variables stand out better on screen.
+	out := ""
+	for {
+		loc := placeholderRx.FindStringSubmatchIndex(in)
+		if loc == nil {
+			break
+		}
+		out += template.HTMLEscapeString(in[:loc[0]])
+		out += fmt.Sprintf(`<span class="collation-variable">%s</span>`, in[loc[2]:loc[3]])
+		in = in[loc[1]:]
+	}
+
+	return template.HTML(out + template.HTMLEscapeString(in))
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -157,6 +157,13 @@ ul.violations li div.violation-instances.folded div.violation-instance {
   display: none;
 }
 
+span.collation-variable {
+  background: #F8F8FF;
+  border: 1px solid #CCF;
+  border-radius: 0.25rem;
+  padding: 0 0.25rem;
+}
+
 /*******************************************************************************
  * table styling
  */

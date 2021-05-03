@@ -83,16 +83,16 @@
               {{ $vgroup.Kind }}
               <strong>
                 {{- if gt (len $vgroup.Instances) 1 -}}
-                  {{- $vgroup.NamePattern -}}
+                  {{- $vgroup.NamePattern | markupPlaceholders -}}
                 {{- else -}}
                   {{- $instance := index $vgroup.Instances 0 -}}
                   {{- $instance.Name -}}
                 {{- end -}}
               </strong>
               {{- if $vgroup.Namespace }}
-                 in namespace {{ $vgroup.Namespace }}
+                 in namespace {{ $vgroup.Namespace | markupPlaceholders }}
               {{- end }}:
-              {{ $vgroup.Message }}
+              {{ $vgroup.Message | markupPlaceholders }}
             </div>
             <div class="violation-instances {{ if gt (len $vgroup.Instances) 3 }}folded{{ end }}">
               <div class="unfolder">{{ len $vgroup.Instances }} instances in total <a href="#">(expand)</a></div>
