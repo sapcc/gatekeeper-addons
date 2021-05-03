@@ -64,7 +64,7 @@ func main() {
 	client, err := openstack.NewObjectStorageV1(provider, gophercloud.EndpointOpts{})
 	must("initialize Swift client", err)
 	account, err := gopherschwift.Wrap(client, &gopherschwift.Options{
-		UserAgent: "doop-agent/rolling",
+		UserAgent: "doop-central/rolling",
 	})
 	must("initialize Swift account", err)
 	swiftContainer, err := account.Container(mustGetenv("REPORT_CONTAINER_NAME")).EnsureExists()
