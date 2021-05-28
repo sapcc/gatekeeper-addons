@@ -109,7 +109,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	logg.Info("listening on " + *flagListenAddress)
-	ctx := httpee.ContextWithSIGINT(context.Background())
+	ctx := httpee.ContextWithSIGINT(context.Background(), 1*time.Second)
 	go func() {
 		err = httpee.ListenAndServeContext(ctx, *flagListenAddress, mux)
 		if err != nil {

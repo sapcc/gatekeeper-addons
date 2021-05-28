@@ -44,7 +44,7 @@ github.com/google/gofuzz
 github.com/googleapis/gnostic/compiler
 github.com/googleapis/gnostic/extensions
 github.com/googleapis/gnostic/openapiv2
-# github.com/gophercloud/gophercloud v0.15.1-0.20210202035223-633d73521055
+# github.com/gophercloud/gophercloud v0.17.0
 ## explicit
 github.com/gophercloud/gophercloud
 github.com/gophercloud/gophercloud/openstack
@@ -64,11 +64,10 @@ github.com/gophercloud/utils/openstack/clientconfig
 # github.com/imdario/mergo v0.3.5
 github.com/imdario/mergo
 # github.com/jpillora/longestcommon v0.0.0-20161227235612-adb9d91ee629
-## explicit
 github.com/jpillora/longestcommon
 # github.com/json-iterator/go v1.1.10
 github.com/json-iterator/go
-# github.com/majewsky/schwift v0.0.0-20201014122716-bd1c74594efe
+# github.com/majewsky/schwift v1.0.0
 ## explicit
 github.com/majewsky/schwift
 github.com/majewsky/schwift/capabilities
@@ -98,7 +97,7 @@ github.com/prometheus/common/model
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
-# github.com/sapcc/go-bits v0.0.0-20210421130523-ebbcdaf1960c
+# github.com/sapcc/go-bits v0.0.0-20210518135053-8a9465bb1339
 ## explicit
 github.com/sapcc/go-bits/httpee
 github.com/sapcc/go-bits/httpext
@@ -187,7 +186,7 @@ google.golang.org/protobuf/types/known/timestamppb
 gopkg.in/inf.v0
 # gopkg.in/yaml.v2 v2.4.0
 gopkg.in/yaml.v2
-# k8s.io/api v0.21.0
+# k8s.io/api v0.21.1
 k8s.io/api/admissionregistration/v1
 k8s.io/api/admissionregistration/v1beta1
 k8s.io/api/apiserverinternal/v1alpha1
@@ -231,7 +230,7 @@ k8s.io/api/scheduling/v1beta1
 k8s.io/api/storage/v1
 k8s.io/api/storage/v1alpha1
 k8s.io/api/storage/v1beta1
-# k8s.io/apimachinery v0.21.0
+# k8s.io/apimachinery v0.21.1
 ## explicit
 k8s.io/apimachinery/pkg/api/errors
 k8s.io/apimachinery/pkg/api/meta
@@ -269,7 +268,7 @@ k8s.io/apimachinery/pkg/util/yaml
 k8s.io/apimachinery/pkg/version
 k8s.io/apimachinery/pkg/watch
 k8s.io/apimachinery/third_party/forked/golang/reflect
-# k8s.io/client-go v0.21.0
+# k8s.io/client-go v0.21.1
 ## explicit
 k8s.io/client-go/applyconfigurations/admissionregistration/v1
 k8s.io/client-go/applyconfigurations/admissionregistration/v1beta1

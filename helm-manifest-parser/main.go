@@ -26,6 +26,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/sapcc/go-bits/httpee"
 	"github.com/sapcc/go-bits/logg"
@@ -44,7 +45,7 @@ func main() {
 	handler := getLogMiddleware().Wrap(mux)
 
 	logg.Info("listening on " + os.Args[1])
-	ctx := httpee.ContextWithSIGINT(context.Background())
+	ctx := httpee.ContextWithSIGINT(context.Background(), 10*time.Second)
 	err := httpee.ListenAndServeContext(ctx, os.Args[1], handler)
 	if err != nil {
 		logg.Fatal(err.Error())
