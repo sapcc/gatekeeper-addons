@@ -21,7 +21,8 @@ only gets Helm manifests by the API. It doesn't read the Kubernetes database its
 
 The HTTP endpoint for manifest parsing is `POST /v2` for Helm 2 manifests and `POST /v3` for Helm 3 manifests. The
 request body must be the `data.release` field of the respective ConfigMap (for Helm 2 manifests) or Secret (for Helm 3
-manifests). In both cases, the response body is a JSON document enumerating the objects in the manifest like this:
+manifests). In both cases, the response body is a JSON document containing the objects in the manifest (in the `.items`
+array) and the values that were used to render the chart templates (in the `.values` object):
 
 ```json
 {
@@ -37,7 +38,13 @@ manifests). In both cases, the response body is a JSON document enumerating the 
       }
     },
     ...
-  ]
+  ],
+  "values": {
+    "global": {
+      "region": "lab1"
+    },
+    ...
+  }
 }
 ```
 

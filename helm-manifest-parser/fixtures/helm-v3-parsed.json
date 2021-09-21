@@ -830,5 +830,111 @@
         ]
       }
     }
-  ]
+  ],
+  "values": {
+    "gatekeeper-upstream": {
+      "audit": {
+        "affinity": {},
+        "hostNetwork": false,
+        "nodeSelector": {
+          "kubernetes.io/os": "linux"
+        },
+        "priorityClassName": "system-cluster-critical",
+        "resources": {
+          "limits": {
+            "cpu": "1000m",
+            "memory": "512Mi"
+          },
+          "requests": {
+            "cpu": "100m",
+            "memory": "256Mi"
+          }
+        },
+        "tolerations": []
+      },
+      "auditChunkSize": 0,
+      "auditFromCache": false,
+      "auditInterval": 60,
+      "constraintViolationsLimit": 100,
+      "controllerManager": {
+        "affinity": {
+          "podAntiAffinity": {
+            "preferredDuringSchedulingIgnoredDuringExecution": [
+              {
+                "podAffinityTerm": {
+                  "labelSelector": {
+                    "matchExpressions": [
+                      {
+                        "key": "gatekeeper.sh/operation",
+                        "operator": "In",
+                        "values": [
+                          "webhook"
+                        ]
+                      }
+                    ]
+                  },
+                  "topologyKey": "kubernetes.io/hostname"
+                },
+                "weight": 100
+              }
+            ]
+          }
+        },
+        "hostNetwork": false,
+        "nodeSelector": {
+          "kubernetes.io/os": "linux"
+        },
+        "priorityClassName": "system-cluster-critical",
+        "resources": {
+          "limits": {
+            "cpu": "1000m",
+            "memory": "512Mi"
+          },
+          "requests": {
+            "cpu": "100m",
+            "memory": "256Mi"
+          }
+        },
+        "tolerations": []
+      },
+      "createNamespace": false,
+      "disableValidatingWebhook": true,
+      "emitAdmissionEvents": false,
+      "emitAuditEvents": false,
+      "enableDeleteOperations": false,
+      "experimentalEnableMutation": false,
+      "global": {},
+      "image": {
+        "pullPolicy": "IfNotPresent",
+        "pullSecrets": [],
+        "release": "v3.4.0",
+        "repository": "openpolicyagent/gatekeeper"
+      },
+      "logDenies": true,
+      "logLevel": "INFO",
+      "pdb": {
+        "controllerManager": {
+          "minAvailable": 1
+        }
+      },
+      "podAnnotations": {
+        "container.seccomp.security.alpha.kubernetes.io/manager": "runtime/default"
+      },
+      "podLabels": {},
+      "postInstall": {
+        "labelNamespace": {
+          "enabled": true,
+          "image": {
+            "pullPolicy": "IfNotPresent",
+            "pullSecrets": [],
+            "repository": "line/kubectl-kustomize",
+            "tag": "1.20.4-4.0.5"
+          }
+        }
+      },
+      "replicas": 3,
+      "secretAnnotations": {},
+      "validatingWebhookTimeoutSeconds": 3
+    }
+  }
 }

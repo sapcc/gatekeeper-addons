@@ -75,5 +75,11 @@
         }
       }
     }
-  ]
+  ],
+  "values": {
+    "image": {
+      "repository": "hub.global.cloud.sap/monsoon/admin-k8s",
+      "tag": 20190108095901
+    }
+  }
 }

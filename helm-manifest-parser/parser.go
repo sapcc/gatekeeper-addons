@@ -27,7 +27,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"strconv"
 
 	"github.com/golang/protobuf/proto"
 	"gopkg.in/yaml.v2"
@@ -54,11 +53,28 @@ func ParseHelm2Manifest(in []byte) (string, error) {
 		return "", fmt.Errorf("cannot parse Protobuf: %w", err)
 	}
 
-	out, err := convertManifestToJSON([]byte(parsed.Manifest))
+	var result struct {
+		Items  []interface{} `json:"items"`
+		Values interface{}   `json:"values"`
+	}
+
+	result.Items, err = convertManifestToItemsList([]byte(parsed.Manifest))
 	if err != nil {
 		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
-	return out, nil
+
+	var rawValues interface{}
+	err = yaml.Unmarshal([]byte(parsed.Chart.Values.Raw), &rawValues)
+	if err != nil {
+		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
+	}
+	result.Values, err = NormalizeRecursively(".values", rawValues)
+	if err != nil {
+		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
+	}
+
+	out, err := json.Marshal(result)
+	return string(out), err
 }
 
 //ParseHelm3Manifest parses the `data.release` field of a Helm 2 release ConfigMap.
@@ -84,17 +100,31 @@ func ParseHelm3Manifest(in []byte) (string, error) {
 		Name     string `json:"name"`
 		Version  int    `json:"version"`
 		Manifest string `json:"manifest"`
+		Chart    struct {
+			Values interface{} `json:"values"`
+		} `json:"chart"`
 	}
 	err = json.Unmarshal(in, &parsed)
 	if err != nil {
 		return "", fmt.Errorf("cannot parse Protobuf: %w", err)
 	}
 
-	out, err := convertManifestToJSON([]byte(parsed.Manifest))
+	var result struct {
+		Items  []interface{} `json:"items"`
+		Values interface{}   `json:"values"`
+	}
+
+	result.Items, err = convertManifestToItemsList([]byte(parsed.Manifest))
 	if err != nil {
 		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
-	return out, nil
+	result.Values, err = NormalizeRecursively(".values", parsed.Chart.Values)
+	if err != nil {
+		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
+	}
+
+	out, err := json.Marshal(result)
+	return string(out), err
 }
 
 func gunzip(in []byte) ([]byte, error) {
@@ -105,58 +135,8 @@ func gunzip(in []byte) ([]byte, error) {
 	return ioutil.ReadAll(r)
 }
 
-func convertManifestToJSON(in []byte) (string, error) {
-	//yaml.Unmarshal into a generic map will create map[interface{}]interface{}
-	//members which json.Marshal() cannot process. We need to convert these into
-	//map[string]interface{} recursively before proceeding.
-	normalizeKey := func(path string, k interface{}) (string, error) {
-		switch k := k.(type) {
-		case string:
-			return k, nil
-		case int:
-			//has been observed in the wild in `.data` of a v1/Secret
-			return strconv.Itoa(k), nil
-		default:
-			return "", fmt.Errorf("non-string key at %s: %T %v", path, k, k)
-		}
-	}
-
-	var normalizeRecursively func(path string, in interface{}) (interface{}, error)
-	normalizeRecursively = func(path string, in interface{}) (interface{}, error) {
-		switch in := in.(type) {
-		case map[interface{}]interface{}:
-			out := make(map[string]interface{}, len(in))
-			for k, v := range in {
-				kn, err := normalizeKey(path, k)
-				if err != nil {
-					return nil, err
-				}
-				vn, err := normalizeRecursively(fmt.Sprintf("%s.%s", path, kn), v)
-				if err != nil {
-					return nil, err
-				}
-				out[kn] = vn
-			}
-			return out, nil
-		case []interface{}:
-			out := make([]interface{}, len(in))
-			for idx, v := range in {
-				vn, err := normalizeRecursively(fmt.Sprintf("%s[%d]", path, idx), v)
-				if err != nil {
-					return nil, err
-				}
-				out[idx] = vn
-			}
-			return out, nil
-		default:
-			return in, nil
-		}
-	}
-
-	var result struct {
-		Items []interface{} `json:"items"`
-	}
-	result.Items = []interface{}{} //ensure that empty list is rendered as [] rather than null
+func convertManifestToItemsList(in []byte) ([]interface{}, error) {
+	result := []interface{}{} //ensure that empty list is rendered as [] rather than null
 
 	dec := yaml.NewDecoder(bytes.NewReader(in))
 	for idx := 0; ; idx++ {
@@ -166,15 +146,13 @@ func convertManifestToJSON(in []byte) (string, error) {
 			break
 		}
 		if err != nil {
-			return "", fmt.Errorf("cannot unmarshal YAML objects[%d]: %w", idx, err)
+			return nil, fmt.Errorf("cannot unmarshal YAML objects[%d]: %w", idx, err)
 		}
-		val, err = normalizeRecursively(fmt.Sprintf(".items[%d]", idx), val)
+		val, err = NormalizeRecursively(fmt.Sprintf(".items[%d]", idx), val)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
-		result.Items = append(result.Items, val)
+		result = append(result, val)
 	}
-
-	out, err := json.Marshal(result)
-	return string(out), err
+	return result, nil
 }
