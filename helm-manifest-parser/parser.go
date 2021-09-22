@@ -64,7 +64,7 @@ func ParseHelm2Manifest(in []byte) (string, error) {
 	}
 
 	var rawValues interface{}
-	err = yaml.Unmarshal([]byte(parsed.Chart.Values.Raw), &rawValues)
+	err = yaml.Unmarshal([]byte(parsed.Config.Raw), &rawValues)
 	if err != nil {
 		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
@@ -97,12 +97,10 @@ func ParseHelm3Manifest(in []byte) (string, error) {
 	}
 
 	var parsed struct {
-		Name     string `json:"name"`
-		Version  int    `json:"version"`
-		Manifest string `json:"manifest"`
-		Chart    struct {
-			Values interface{} `json:"values"`
-		} `json:"chart"`
+		Name     string      `json:"name"`
+		Version  int         `json:"version"`
+		Manifest string      `json:"manifest"`
+		Values   interface{} `json:"config"`
 	}
 	err = json.Unmarshal(in, &parsed)
 	if err != nil {
@@ -118,7 +116,7 @@ func ParseHelm3Manifest(in []byte) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
-	result.Values, err = NormalizeRecursively(".values", parsed.Chart.Values)
+	result.Values, err = NormalizeRecursively(".values", parsed.Values)
 	if err != nil {
 		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
