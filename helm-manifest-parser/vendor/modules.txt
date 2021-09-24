@@ -1,14 +1,15 @@
 # github.com/golang/protobuf v1.5.2
-## explicit
+## explicit; go 1.9
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/sapcc/go-bits v0.0.0-20210518135053-8a9465bb1339
-## explicit
+## explicit; go 1.12
 github.com/sapcc/go-bits/httpee
 github.com/sapcc/go-bits/httpext
 github.com/sapcc/go-bits/logg
 # google.golang.org/protobuf v1.26.0
+## explicit; go 1.9
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
 google.golang.org/protobuf/internal/descfmt
@@ -39,7 +40,7 @@ google.golang.org/protobuf/types/descriptorpb
 google.golang.org/protobuf/types/known/anypb
 google.golang.org/protobuf/types/known/timestamppb
 # gopkg.in/yaml.v2 v2.4.0
-## explicit
+## explicit; go 1.15
 gopkg.in/yaml.v2
 # k8s.io/helm v2.17.0+incompatible
 ## explicit
