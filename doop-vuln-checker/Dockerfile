@@ -16,3 +16,4 @@ USER nobody:nobody
 WORKDIR /var/empty
 EXPOSE 8080
 ENTRYPOINT ["/usr/bin/doop-vuln-checker"]
+CMD [":8080"]
