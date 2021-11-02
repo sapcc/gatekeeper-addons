@@ -22,8 +22,8 @@ push:
 build-all: build/doop-central
 
 GO_BUILDFLAGS = -mod vendor
-GO_LDFLAGS = 
-GO_TESTENV = 
+GO_LDFLAGS =
+GO_TESTENV =
 
 build/doop-central: FORCE
 	go build $(GO_BUILDFLAGS) -ldflags '-s -w $(GO_LDFLAGS)' -o build/doop-central .
