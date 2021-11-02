@@ -48,7 +48,7 @@ var (
 
 //UI provides the business logic for rendering the web dashboard.
 type UI struct {
-	d          *Downloader
+	downloader *Downloader
 	docstrings map[string]template.HTML
 }
 
@@ -59,44 +59,13 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reports, err := ui.d.GetReports()
+	data, err := ui.downloader.retrieveData()
+	data.Docstrings = ui.docstrings
+	data.ShowAll = r.URL.Path == "/all"
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	data := struct {
-		ShowAll          bool
-		AllClusters      []string
-		AllClusterLayers []string
-		AllClusterTypes  []string
-		ClusterInfos     map[string]ClusterInfo
-		AllTemplateKinds []string
-		ViolationGroups  map[string][]*ViolationGroup
-		Docstrings       map[string]template.HTML
-	}{
-		ShowAll:         r.URL.Path == "/all",
-		ClusterInfos:    make(map[string]ClusterInfo),
-		ViolationGroups: make(map[string][]*ViolationGroup),
-		Docstrings:      ui.docstrings,
-	}
-
-	for clusterName, report := range reports {
-		data.AllClusters = append(data.AllClusters, clusterName)
-		data.AllClusterLayers = append(data.AllClusterLayers, report.Identity.Layer)
-		data.AllClusterTypes = append(data.AllClusterTypes, report.Identity.Type)
-		data.ClusterInfos[clusterName] = report.ToClusterInfo()
-		report.GroupViolationsInto(data.ViolationGroups, clusterName, data.ShowAll)
-	}
-
-	sort.Strings(data.AllClusters)
-	data.AllClusterLayers = sortAndDedupStrings(data.AllClusterLayers)
-	data.AllClusterTypes = sortAndDedupStrings(data.AllClusterTypes)
-	for kind, violationGroups := range data.ViolationGroups {
-		data.AllTemplateKinds = append(data.AllTemplateKinds, kind)
-		sortViolationGroups(violationGroups)
-	}
-	sort.Strings(data.AllTemplateKinds)
 
 	w.Header().Set("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
