@@ -1,1 +1,6 @@
+/.dockerignore
+/.gitignore
 /build/
+/Dockerfile
+/Makefile.maker.yaml
+/README.md
