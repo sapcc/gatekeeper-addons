@@ -33,6 +33,8 @@ import (
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/utils/openstack/clientconfig"
 	"github.com/majewsky/schwift/gopherschwift"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/go-bits/httpee"
 	"github.com/sapcc/go-bits/logg"
 	"gopkg.in/yaml.v2"
@@ -73,9 +75,12 @@ func main() {
 
 	//collect HTTP handlers
 	mux := http.NewServeMux()
+	ui := UI{NewDownloader(swiftContainer), docstrings}
 	mux.HandleFunc("/healthcheck", handleHealthcheck)
+	prometheus.MustRegister(ui)
+	mux.Handle("/metrics", promhttp.Handler())
 	mux.Handle("/static/", http.FileServer(http.FS(staticContent)))
-	mux.HandleFunc("/", UI{NewDownloader(swiftContainer), docstrings}.RenderMainPage)
+	mux.HandleFunc("/", ui.RenderMainPage)
 
 	//start HTTP server
 	handler := logg.Middleware{}.Wrap(mux)
