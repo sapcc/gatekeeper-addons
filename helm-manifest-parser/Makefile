@@ -15,15 +15,16 @@ default: build-all
 DOCKER_REPO = keppel.eu-de-1.cloud.sap/ccloud/helm-manifest-parser
 DOCKER_TAG  = $(shell git describe --abbrev=10 --always --dirty)
 
+SUDO ?= $(shell if ! groups 2>/dev/null | grep -q docker; then echo sudo --preserve-env=DOCKER_BUILDKIT,DOCKER_CLI_EXPERIMENTAL,DOCKER_HOST,HOME,PWD; fi)
 push:
-	docker build -t $(DOCKER_REPO):$(DOCKER_TAG) .
-	docker push $(DOCKER_REPO):$(DOCKER_TAG)
+	$(SUDO) docker build -t $(DOCKER_REPO):$(DOCKER_TAG) .
+	$(SUDO) docker push $(DOCKER_REPO):$(DOCKER_TAG)
 
 build-all: build/helm-manifest-parser
 
 GO_BUILDFLAGS = -mod vendor
-GO_LDFLAGS = 
-GO_TESTENV = 
+GO_LDFLAGS =
+GO_TESTENV =
 
 build/helm-manifest-parser: FORCE
 	go build $(GO_BUILDFLAGS) -ldflags '-s -w $(GO_LDFLAGS)' -o build/helm-manifest-parser .
