@@ -67,7 +67,8 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 	AuditAgeOldestGauge.Describe(descCh)
 	auditAgeOldestDesc := <-descCh
 
-	data, err := ui.downloader.retrieveData()
+	showAll := false
+	data, err := ui.downloader.retrieveData(showAll)
 	if err != nil {
 		logg.Error(err.Error())
 	}

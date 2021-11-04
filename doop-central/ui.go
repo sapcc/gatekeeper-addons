@@ -59,9 +59,9 @@ func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := ui.downloader.retrieveData()
+	showAll := r.URL.Path == "/all"
+	data, err := ui.downloader.retrieveData(showAll)
 	data.Docstrings = ui.docstrings
-	data.ShowAll = r.URL.Path == "/all"
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

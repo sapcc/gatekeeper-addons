@@ -35,7 +35,7 @@ type PreprocessedData struct {
 	Docstrings       map[string]template.HTML
 }
 
-func (downloader *Downloader) retrieveData() (PreprocessedData, error) {
+func (downloader *Downloader) retrieveData(showAll bool) (PreprocessedData, error) {
 	reports, err := downloader.GetReports()
 	if err != nil {
 		return PreprocessedData{}, err
@@ -44,6 +44,7 @@ func (downloader *Downloader) retrieveData() (PreprocessedData, error) {
 	data := PreprocessedData{
 		ClusterInfos:    make(map[string]ClusterInfo),
 		ViolationGroups: make(map[string][]*ViolationGroup),
+		ShowAll:         showAll,
 	}
 
 	for clusterName, report := range reports {
