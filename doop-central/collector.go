@@ -20,6 +20,11 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"os"
+	"strconv"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sapcc/go-bits/logg"
 )
@@ -71,6 +76,12 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 	data, err := ui.downloader.retrieveData(showAll)
 	if err != nil {
 		logg.Error(err.Error())
+	}
+
+	dumpData, _ := strconv.ParseBool(os.Getenv("DOOP_CENTRAL_DUMP_DATA"))
+	if dumpData {
+		dataJSON, _ := json.Marshal(data)
+		_ = ioutil.WriteFile("data.json", dataJSON, 0644)
 	}
 
 	for _, check := range data.AllTemplateKinds {
