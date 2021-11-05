@@ -73,7 +73,9 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 		logg.Error(err.Error())
 	}
 
-	for check, groupedViolations := range data.ViolationGroups {
+	for _, check := range data.AllTemplateKinds {
+		groupedViolations := data.ViolationGroups[check]
+
 		ch <- prometheus.MustNewConstMetric(
 			groupedViolationDesc,
 			prometheus.GaugeValue, float64(len(groupedViolations)),
@@ -81,6 +83,9 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 		)
 
 		violationCheckCounter := make(map[string]float64)
+		for _, v := range data.AllClusters {
+			violationCheckCounter[v] = 0
+		}
 		for _, violation := range groupedViolations {
 			for _, instance := range violation.Instances {
 				violationCheckCounter[instance.ClusterName]++
