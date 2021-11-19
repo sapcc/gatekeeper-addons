@@ -49,7 +49,7 @@ func TestParseManifests(t *testing.T) {
 		outBuf.WriteString("\n")
 		must(t, ioutil.WriteFile(tc.OutputPath+".actual", outBuf.Bytes(), 0666))
 
-		cmd := exec.Command("diff", "-u", tc.OutputPath+".actual", tc.OutputPath)
+		cmd := exec.Command("diff", "-u", tc.OutputPath, tc.OutputPath+".actual")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		must(t, cmd.Run())
