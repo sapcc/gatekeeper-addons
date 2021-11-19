@@ -34,7 +34,6 @@ func TestParseManifests(t *testing.T) {
 		OutputPath string
 		Parser     func([]byte) (string, error)
 	}{
-		{"fixtures/helm-v2-manifest.dat", "fixtures/helm-v2-parsed.json", ParseHelm2Manifest},
 		{"fixtures/helm-v3-manifest.dat", "fixtures/helm-v3-parsed.json", ParseHelm3Manifest},
 	}
 

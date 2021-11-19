@@ -39,7 +39,6 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthcheck", handleHealthcheck)
-	mux.HandleFunc("/v2", handleAPI("/v2", ParseHelm2Manifest))
 	mux.HandleFunc("/v3", handleAPI("/v3", ParseHelm3Manifest))
 
 	handler := getLogMiddleware().Wrap(mux)

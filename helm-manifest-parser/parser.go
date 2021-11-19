@@ -28,54 +28,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/golang/protobuf/proto"
 	"gopkg.in/yaml.v2"
-	"k8s.io/helm/pkg/proto/hapi/release"
 )
-
-//ParseHelm2Manifest parses the `data.release` field of a Helm 2 release ConfigMap.
-func ParseHelm2Manifest(in []byte) (string, error) {
-	var err error
-
-	in, err = base64.StdEncoding.DecodeString(string(in))
-	if err != nil {
-		return "", fmt.Errorf("cannot decode Base64: %w", err)
-	}
-
-	in, err = gunzip(in)
-	if err != nil {
-		return "", fmt.Errorf("cannot decompress GZip: %w", err)
-	}
-
-	var parsed release.Release
-	err = proto.Unmarshal(in, &parsed)
-	if err != nil {
-		return "", fmt.Errorf("cannot parse Protobuf: %w", err)
-	}
-
-	var result struct {
-		Items  []interface{} `json:"items"`
-		Values interface{}   `json:"values"`
-	}
-
-	result.Items, err = convertManifestToItemsList([]byte(parsed.Manifest))
-	if err != nil {
-		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
-	}
-
-	var rawValues interface{}
-	err = yaml.Unmarshal([]byte(parsed.Config.Raw), &rawValues)
-	if err != nil {
-		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
-	}
-	result.Values, err = NormalizeRecursively(".values", rawValues)
-	if err != nil {
-		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
-	}
-
-	out, err := json.Marshal(result)
-	return string(out), err
-}
 
 //ParseHelm3Manifest parses the `data.release` field of a Helm 2 release ConfigMap.
 func ParseHelm3Manifest(in []byte) (string, error) {
