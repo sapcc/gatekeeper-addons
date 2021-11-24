@@ -23,7 +23,6 @@ import (
 	"context"
 	"embed"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -50,7 +49,7 @@ func main() {
 	}
 
 	//parse docs.yaml
-	docstringsBytes, err := ioutil.ReadFile(os.Args[2])
+	docstringsBytes, err := os.ReadFile(os.Args[2])
 	must("read docstring file", err)
 	docstrings := make(map[string]template.HTML)
 	err = yaml.Unmarshal(docstringsBytes, &docstrings)

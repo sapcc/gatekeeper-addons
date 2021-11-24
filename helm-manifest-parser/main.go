@@ -22,7 +22,6 @@ package main
 import (
 	"context"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -79,7 +78,7 @@ func handleAPI(path string, parser func([]byte) (string, error)) func(http.Respo
 		}
 
 		//never read more than 4 MiB to avoid DoS
-		in, err := ioutil.ReadAll(io.LimitReader(r.Body, 4<<20))
+		in, err := io.ReadAll(io.LimitReader(r.Body, 4<<20))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

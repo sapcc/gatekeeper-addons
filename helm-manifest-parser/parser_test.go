@@ -38,7 +38,7 @@ func TestParseManifests(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		inBytes, err := ioutil.ReadFile(tc.InputPath)
+		inBytes, err := os.ReadFile(tc.InputPath)
 		must(t, err)
 		outStr, err := tc.Parser(bytes.TrimSpace(inBytes))
 		must(t, err)
