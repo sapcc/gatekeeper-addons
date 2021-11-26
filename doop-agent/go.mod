@@ -3,14 +3,14 @@ module github.com/sapcc/gatekeeper-addons/doop-agent
 go 1.17
 
 require (
-	github.com/gophercloud/gophercloud v0.21.0
+	github.com/gophercloud/gophercloud v0.23.0
 	github.com/gophercloud/utils v0.0.0-20210909165623-d7085207ff6d
 	github.com/majewsky/schwift v1.0.0
 	github.com/prometheus/client_golang v1.11.0
-	github.com/sapcc/go-bits v0.0.0-20210518135053-8a9465bb1339
+	github.com/sapcc/go-bits v0.0.0-20211126150727-a872aa3c4ae0
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
-	k8s.io/apimachinery v0.22.2
-	k8s.io/client-go v0.22.2
+	k8s.io/apimachinery v0.22.4
+	k8s.io/client-go v0.22.4
 )
 
 require (
@@ -55,7 +55,7 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	k8s.io/api v0.22.2 // indirect
+	k8s.io/api v0.22.4 // indirect
 	k8s.io/klog/v2 v2.9.0 // indirect
 	k8s.io/utils v0.0.0-20210819203725-bdf08cb9a70a // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.2 // indirect

@@ -62,6 +62,8 @@ static-check: FORCE
 	@if ! hash unparam 2>/dev/null; then printf "\e[1;36m>> Installing unparam...\e[0m\n"; go install mvdan.cc/unparam@latest; fi
 	@printf "\e[1;36m>> gofmt\e[0m\n"
 	@if s="$$(gofmt -s -d $(GO_ALLFILES) 2>/dev/null)" && test -n "$$s"; then echo "$$s"; false; fi
+	@printf "\e[1;36m>> staticcheck\e[0m\n"
+	@staticcheck -checks 'inherit,-ST1015' $(GO_ALLPKGS)
 	@printf "\e[1;36m>> exportloopref\e[0m\n"
 	@exportloopref $(GO_ALLPKGS)
 	@printf "\e[1;36m>> rowserrcheck\e[0m\n"
@@ -86,6 +88,11 @@ build:
 
 vendor: FORCE
 	go mod tidy
+	go mod vendor
+	go mod verify
+
+vendor-compat: FORCE
+	go mod tidy -compat=$(shell awk '$$1 == "go" { print $$2 }' < go.mod)
 	go mod vendor
 	go mod verify
 
