@@ -30,7 +30,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-//ParseHelm3Manifest parses the `data.release` field of a Helm 2 release ConfigMap.
+//ParseHelm3Manifest parses the `data.release` field of a Helm 3 release Secret.
 func ParseHelm3Manifest(in []byte) (string, error) {
 	var err error
 
