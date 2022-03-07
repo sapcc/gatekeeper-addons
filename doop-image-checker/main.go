@@ -21,6 +21,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -40,7 +41,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthcheck", handleHealthcheck)
-	mux.HandleFunc("/v1", handleVulnCheck)
+	mux.HandleFunc("/v1/headers", handleHeaders)
 
 	handler := getLogMiddleware().Wrap(mux)
 
@@ -68,9 +69,9 @@ func handleHealthcheck(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleVulnCheck(w http.ResponseWriter, r *http.Request) {
+func handleHeaders(w http.ResponseWriter, r *http.Request) {
 	//validate request format
-	if r.URL.Path != "/v1" {
+	if r.URL.Path != "/v1/headers" {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
 	}
@@ -85,9 +86,9 @@ func handleVulnCheck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//use cache if possible
-	status, ok := checkVulnCache(imageRefStr)
+	hdr, ok := checkHeaderCache(imageRefStr)
 	if ok {
-		http.Error(w, status, http.StatusOK)
+		respondWithHeaderJSON(w, hdr)
 		return
 	}
 
@@ -111,26 +112,30 @@ func handleVulnCheck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//fill cache and return result
-	status = hc.VulnerabilityStatus
-	if status == "" {
-		status = "Unclear"
-	}
-	fillVulnCache(imageRefStr, status)
-	http.Error(w, status, http.StatusOK)
+	fillHeaderCache(imageRefStr, hc.Headers)
+	respondWithHeaderJSON(w, hc.Headers)
 }
 
 type headerCapturer struct {
-	VulnerabilityStatus string
+	Headers http.Header
 }
 
 //RoundTrip implements the http.RoundTripper interface.
 func (hc *headerCapturer) RoundTrip(req *http.Request) (*http.Response, error) {
 	resp, err := http.DefaultTransport.RoundTrip(req)
-	if err == nil {
-		status := resp.Header.Get("X-Keppel-Vulnerability-Status")
-		if status != "" {
-			hc.VulnerabilityStatus = status
-		}
+	if err == nil && resp.Header.Get("Docker-Content-Digest") != "" {
+		hc.Headers = resp.Header
 	}
 	return resp, err
+}
+
+func respondWithHeaderJSON(w http.ResponseWriter, hdr http.Header) {
+	data := make(map[string]string)
+	for k, v := range hdr {
+		data[http.CanonicalHeaderKey(k)] = v[0]
+	}
+	buf, _ := json.Marshal(data)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(buf)
 }

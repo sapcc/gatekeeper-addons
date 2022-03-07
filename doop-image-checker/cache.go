@@ -20,12 +20,13 @@
 package main
 
 import (
+	"net/http"
 	"sync"
 	"time"
 )
 
 type vulnCheckResult struct {
-	Status    string
+	Headers   http.Header
 	CheckedAt time.Time
 }
 
@@ -34,26 +35,26 @@ var (
 	cacheMutex sync.Mutex
 )
 
-func checkVulnCache(imageRefStr string) (string, bool) {
+func checkHeaderCache(imageRefStr string) (http.Header, bool) {
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
 
 	result, ok := cache[imageRefStr]
 	if !ok {
-		return "", false
+		return nil, false
 	}
 
 	if result.CheckedAt.Add(5 * time.Minute).Before(time.Now()) {
 		//clear old cache entry
 		delete(cache, imageRefStr)
-		return "", false
+		return nil, false
 	}
 
-	return result.Status, ok
+	return result.Headers, ok
 }
 
-func fillVulnCache(imageRefStr string, status string) {
+func fillHeaderCache(imageRefStr string, hdr http.Header) {
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
-	cache[imageRefStr] = vulnCheckResult{status, time.Now()}
+	cache[imageRefStr] = vulnCheckResult{hdr, time.Now()}
 }
