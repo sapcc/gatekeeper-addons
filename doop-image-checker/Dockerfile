@@ -7,7 +7,7 @@ RUN make -C /src install PREFIX=/pkg GO_BUILDFLAGS='-mod vendor'
 ################################################################################
 
 FROM alpine:3.15
-LABEL source_repository="https://github.com/sapcc/gatekeeper-addons/tree/main/doop-vuln-checker"
+LABEL source_repository="https://github.com/sapcc/gatekeeper-addons/tree/main/doop-image-checker"
 
 RUN apk add --no-cache ca-certificates
 COPY --from=builder /pkg/ /usr/
@@ -15,5 +15,5 @@ COPY --from=builder /pkg/ /usr/
 USER nobody:nobody
 WORKDIR /var/empty
 EXPOSE 8080
-ENTRYPOINT ["/usr/bin/doop-vuln-checker"]
+ENTRYPOINT ["/usr/bin/doop-image-checker"]
 CMD [":8080"]

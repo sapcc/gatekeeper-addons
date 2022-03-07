@@ -15,7 +15,7 @@ endif
 
 default: build-all
 
-DOCKER_REPO = keppel.eu-de-1.cloud.sap/ccloud/doop-vuln-checker
+DOCKER_REPO = keppel.eu-de-1.cloud.sap/ccloud/doop-image-checker
 DOCKER_TAG  = $(shell git describe --abbrev=10 --always --dirty)
 
 SUDO ?= $(shell if ! groups 2>/dev/null | grep -q docker; then echo sudo --preserve-env=DOCKER_BUILDKIT,DOCKER_CLI_EXPERIMENTAL,DOCKER_HOST,HOME,PWD; fi)
@@ -23,14 +23,14 @@ push:
 	$(SUDO) docker build -t $(DOCKER_REPO):$(DOCKER_TAG) .
 	$(SUDO) docker push $(DOCKER_REPO):$(DOCKER_TAG)
 
-build-all: build/doop-vuln-checker
+build-all: build/doop-image-checker
 
 GO_BUILDFLAGS = -mod vendor
 GO_LDFLAGS =
 GO_TESTENV =
 
-build/doop-vuln-checker: FORCE
-	go build $(GO_BUILDFLAGS) -ldflags '-s -w $(GO_LDFLAGS)' -o build/doop-vuln-checker .
+build/doop-image-checker: FORCE
+	go build $(GO_BUILDFLAGS) -ldflags '-s -w $(GO_LDFLAGS)' -o build/doop-image-checker .
 
 DESTDIR =
 ifeq ($(shell uname -s),Darwin)
@@ -39,8 +39,8 @@ else
 	PREFIX = /usr
 endif
 
-install: FORCE build/doop-vuln-checker
-	install -D -m 0755 build/doop-vuln-checker "$(DESTDIR)$(PREFIX)/bin/doop-vuln-checker"
+install: FORCE build/doop-image-checker
+	install -D -m 0755 build/doop-image-checker "$(DESTDIR)$(PREFIX)/bin/doop-image-checker"
 
 # which packages to test with static checkers
 GO_ALLPKGS := $(shell go list ./...)

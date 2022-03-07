@@ -1,4 +1,4 @@
-## doop-vuln-checker
+## doop-image-checker
 
 This small helper program provides an HTTP endpoint that Rego expressions can call via the
 [`http.send` built-in](https://www.openpolicyagent.org/docs/latest/policy-reference/#http).
@@ -14,7 +14,7 @@ address for the HTTP server, which must be supplied as the only command-line
 argument:
 
 ```bash
-$ doop-vuln-checker 0.0.0.0:8080
+$ doop-image-checker 0.0.0.0:8080
 ```
 
 ## API

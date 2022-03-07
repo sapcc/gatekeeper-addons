@@ -1,4 +1,4 @@
-module github.com/sapcc/gatekeeper-addons/doop-vuln-checker
+module github.com/sapcc/gatekeeper-addons/doop-image-checker
 
 go 1.17
 
