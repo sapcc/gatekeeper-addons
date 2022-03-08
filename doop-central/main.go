@@ -43,7 +43,7 @@ import (
 var staticContent embed.FS
 
 func main() {
-	logg.ShowDebug, _ = strconv.ParseBool(os.Getenv("DOOP_CENTRAL_DEBUG"))
+	logg.ShowDebug, _ = strconv.ParseBool(os.Getenv("DOOP_CENTRAL_DEBUG")) //nolint:errcheck
 	if len(os.Args) != 3 {
 		logg.Fatal("usage: %s <listen-address> <docs.yaml>", os.Args[0])
 	}

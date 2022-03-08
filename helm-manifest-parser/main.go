@@ -51,7 +51,7 @@ func main() {
 }
 
 func getLogMiddleware() logg.Middleware {
-	logAllRequests, _ := strconv.ParseBool(os.Getenv("LOG_ALL_REQUESTS"))
+	logAllRequests, _ := strconv.ParseBool(os.Getenv("LOG_ALL_REQUESTS")) //nolint:errcheck
 	if logAllRequests {
 		return logg.Middleware{}
 	}
@@ -92,6 +92,6 @@ func handleAPI(path string, parser func([]byte) (string, error)) func(http.Respo
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(out))
+		w.Write([]byte(out)) //nolint:errcheck
 	}
 }
