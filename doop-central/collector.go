@@ -21,7 +21,6 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"strconv"
 
@@ -81,7 +80,7 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 	dumpData, _ := strconv.ParseBool(os.Getenv("DOOP_CENTRAL_DUMP_DATA"))
 	if dumpData {
 		dataJSON, _ := json.Marshal(data)
-		_ = ioutil.WriteFile("data.json", dataJSON, 0644)
+		_ = os.WriteFile("data.json", dataJSON, 0644)
 	}
 
 	for _, check := range data.AllTemplateKinds {
