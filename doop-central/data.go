@@ -35,8 +35,8 @@ type PreprocessedData struct {
 	Docstrings       map[string]template.HTML
 }
 
-func (downloader *Downloader) retrieveData(showAll bool) (PreprocessedData, error) {
-	reports, err := downloader.GetReports()
+func (d *Downloader) retrieveData(showAll bool) (PreprocessedData, error) {
+	reports, err := d.GetReports()
 	if err != nil {
 		return PreprocessedData{}, err
 	}

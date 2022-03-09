@@ -22,7 +22,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"testing"
@@ -47,7 +46,7 @@ func TestParseManifests(t *testing.T) {
 		var outBuf bytes.Buffer
 		must(t, json.Indent(&outBuf, []byte(outStr), "", "  "))
 		outBuf.WriteString("\n")
-		must(t, ioutil.WriteFile(tc.OutputPath+".actual", outBuf.Bytes(), 0666))
+		must(t, os.WriteFile(tc.OutputPath+".actual", outBuf.Bytes(), 0666))
 
 		cmd := exec.Command("diff", "-u", tc.OutputPath, tc.OutputPath+".actual")
 		cmd.Stdout = os.Stdout

@@ -8,6 +8,9 @@ binaries:
 vendoring:
   enabled: true
 
+golangciLint:
+  createConfig: true
+
 verbatim: |
   DOCKER_REPO = keppel.eu-de-1.cloud.sap/ccloud/doop-central
   DOCKER_TAG  = $(shell git describe --abbrev=10 --always --dirty)

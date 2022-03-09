@@ -54,7 +54,7 @@ func main() {
 }
 
 func getLogMiddleware() logg.Middleware {
-	logAllRequests, _ := strconv.ParseBool(os.Getenv("LOG_ALL_REQUESTS"))
+	logAllRequests, _ := strconv.ParseBool(os.Getenv("LOG_ALL_REQUESTS")) //nolint:errcheck
 	if logAllRequests {
 		return logg.Middleware{}
 	}
@@ -134,8 +134,8 @@ func respondWithHeaderJSON(w http.ResponseWriter, hdr http.Header) {
 	for k, v := range hdr {
 		data[http.CanonicalHeaderKey(k)] = v[0]
 	}
-	buf, _ := json.Marshal(data)
+	buf, _ := json.Marshal(data) //nolint:errcheck
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(buf)
+	w.Write(buf) //nolint:errcheck
 }
