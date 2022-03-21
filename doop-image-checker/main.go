@@ -23,6 +23,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"html"
 	"net/http"
 	"os"
 	"strconv"
@@ -95,7 +96,7 @@ func handleHeaders(w http.ResponseWriter, r *http.Request) {
 	//parse image reference
 	ref, err := name.ParseReference(imageRefStr, name.WithDefaultTag("latest"))
 	if err != nil {
-		msg := fmt.Sprintf("while parsing image reference %q: %s", imageRefStr, err.Error())
+		msg := fmt.Sprintf("while parsing image reference %q: %s", html.EscapeString(imageRefStr), err.Error())
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
