@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/google/go-containerregistry v0.8.0
-	github.com/sapcc/go-bits v0.0.0-20220420150217-f782ac87d850
+	github.com/sapcc/go-bits v0.0.0-20220420152706-c002200421a4
 )
 
 require (
