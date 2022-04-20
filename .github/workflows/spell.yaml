@@ -8,9 +8,13 @@ name: Spell
   push:
     branches:
       - main
+    paths-ignore:
+      - '*/vendor/**'
   pull_request:
     branches:
       - '*'
+    paths-ignore:
+      - '*/vendor/**'
 permissions:
   contents: read
 jobs:

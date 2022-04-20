@@ -27,7 +27,8 @@ githubWorkflow:
     enabled: true
   spellCheck:
     enabled: true
-    ignorePaths: [] # override global setting so that nothing is ignored
+    ignorePaths:
+      - "*/vendor/**"
 
 renovate:
   enabled: true
