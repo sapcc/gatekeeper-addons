@@ -75,11 +75,13 @@
     }
   };
 
-  //Clear search terms that were carried across reloads.
-  $("input#search").value = "";
-
   //The event handler for the search box is easy.
   $("input#search").addEventListener("input", event => updateView());
+
+  //If search terms were carried across reloads (or entered before this script was loaded), update the view immediately.
+  if ($("input#search").value !== "") {
+    updateView();
+  }
 
   //For the layer/type filters, we need to toggle them manually.
   for (const button of $$("div.buttons > button")) {
