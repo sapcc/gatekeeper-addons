@@ -45,7 +45,7 @@ github.com/opencontainers/image-spec/specs-go/v1
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
-# github.com/sapcc/go-bits v0.0.0-20211217092338-513915db49d4
+# github.com/sapcc/go-bits v0.0.0-20220420150217-f782ac87d850
 ## explicit; go 1.17
 github.com/sapcc/go-bits/httpee
 github.com/sapcc/go-bits/httpext
@@ -56,7 +56,7 @@ github.com/sirupsen/logrus
 # golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 ## explicit
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e
+# golang.org/x/sys v0.0.0-20220209214540-3681064d5158
 ## explicit; go 1.17
 golang.org/x/sys/execabs
 golang.org/x/sys/internal/unsafeheader
