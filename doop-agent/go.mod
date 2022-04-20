@@ -7,7 +7,7 @@ require (
 	github.com/gophercloud/utils v0.0.0-20210909165623-d7085207ff6d
 	github.com/majewsky/schwift v1.0.0
 	github.com/prometheus/client_golang v1.12.1
-	github.com/sapcc/go-bits v0.0.0-20211217092338-513915db49d4
+	github.com/sapcc/go-bits v0.0.0-20220420150217-f782ac87d850
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
 	k8s.io/apimachinery v0.23.3
 	k8s.io/client-go v0.23.3
@@ -46,7 +46,7 @@ require (
 	golang.org/x/crypto v0.0.0-20211202192323-5770296d904e // indirect
 	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
 	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
-	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
+	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect

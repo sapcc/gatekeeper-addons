@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/google/go-containerregistry v0.8.0
-	github.com/sapcc/go-bits v0.0.0-20211217092338-513915db49d4
+	github.com/sapcc/go-bits v0.0.0-20220420150217-f782ac87d850
 )
 
 require (
@@ -18,5 +18,5 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
+	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 )
