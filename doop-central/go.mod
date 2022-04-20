@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/gophercloud/gophercloud v0.24.0
-	github.com/gophercloud/utils v0.0.0-20210909165623-d7085207ff6d
+	github.com/gophercloud/utils v0.0.0-20220307143606-8e7800759d16
 	github.com/majewsky/schwift v1.0.0
 	github.com/prometheus/client_golang v1.12.1
 	github.com/sapcc/go-bits v0.0.0-20220420150217-f782ac87d850
