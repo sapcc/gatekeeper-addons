@@ -7,7 +7,7 @@ require (
 	github.com/gophercloud/utils v0.0.0-20220307143606-8e7800759d16
 	github.com/majewsky/schwift v1.1.0
 	github.com/prometheus/client_golang v1.12.1
-	github.com/sapcc/go-bits v0.0.0-20220420164641-de8a04267267
+	github.com/sapcc/go-bits v0.0.0-20220421001326-5fc35d483379
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
 	k8s.io/apimachinery v0.23.5
 	k8s.io/client-go v0.23.5

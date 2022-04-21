@@ -45,7 +45,7 @@ github.com/opencontainers/image-spec/specs-go/v1
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
-# github.com/sapcc/go-bits v0.0.0-20220420164641-de8a04267267
+# github.com/sapcc/go-bits v0.0.0-20220421001326-5fc35d483379
 ## explicit; go 1.17
 github.com/sapcc/go-bits/httpee
 github.com/sapcc/go-bits/httpext
