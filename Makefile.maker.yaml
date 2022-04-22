@@ -1,0 +1,41 @@
+# Configuration file for <https://github.com/sapcc/go-makefile-maker>
+
+binaries:
+  - name:        doop-agent
+    fromPackage: ./doop-agent
+    installTo:   bin/
+  - name:        doop-central
+    fromPackage: ./doop-central
+    installTo:   bin/
+  - name:        doop-image-checker
+    fromPackage: ./doop-image-checker
+    installTo:   bin/
+  - name:        helm-manifest-parser
+    fromPackage: ./helm-manifest-parser
+    installTo:   bin/
+
+vendoring:
+  enabled: true
+
+golangciLint:
+  createConfig: true
+
+githubWorkflow:
+  global:
+    assignees:
+      - SuperSandro2000
+    ignorePaths: [ "**.md" ] # all Markdown files
+  ci:
+    enabled: true
+    coveralls: true
+    postgres:
+      enabled: true
+  license:
+    enabled: true
+  securityChecks:
+    enabled: true
+  spellCheck:
+    enabled: true
+
+renovate:
+  enabled: true

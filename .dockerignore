@@ -1,0 +1,7 @@
+/.dockerignore
+/.gitignore
+/.golangci.yaml
+/build/
+/Dockerfile
+/Makefile.maker.yaml
+/README.md

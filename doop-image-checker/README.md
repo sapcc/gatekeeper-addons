@@ -30,7 +30,7 @@ For each request, the respective manifest is pulled and all response headers are
 ```json
 {
   "Content-Type": "application/vnd.docker.distribution.manifest.v2+json",
-  "Content-Length": 1367",
+  "Content-Length": "1367",
   "Docker-Content-Digest": "sha256:64278080eee0d697343d15735979ea8c1a9c3b330a5ac5195e6e713ea2f8b9ea",
   "Docker-Distribution-Api-Version": "registry/2.0",
   "X-Keppel-Vulnerability-Status": "Clean",

@@ -9,12 +9,12 @@ name: Spell
     branches:
       - main
     paths-ignore:
-      - '*/vendor/**'
+      - '**.md'
   pull_request:
     branches:
       - '*'
     paths-ignore:
-      - '*/vendor/**'
+      - '**.md'
 permissions:
   contents: read
 jobs:
