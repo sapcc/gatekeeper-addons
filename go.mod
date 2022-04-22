@@ -12,7 +12,7 @@ require (
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.23.6
-	k8s.io/client-go v0.23.6
+	k8s.io/client-go v1.5.2
 )
 
 require (
