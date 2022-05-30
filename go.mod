@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/google/go-containerregistry v0.9.0
-	github.com/gophercloud/gophercloud v0.24.0
+	github.com/gophercloud/gophercloud v0.25.0
 	github.com/gophercloud/utils v0.0.0-20220307143606-8e7800759d16
 	github.com/majewsky/schwift v1.1.0
 	github.com/prometheus/client_golang v1.12.2
