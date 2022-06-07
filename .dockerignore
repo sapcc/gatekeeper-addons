@@ -1,7 +1,18 @@
-/.dockerignore
-/.gitignore
-/.golangci.yaml
-/build/
-/Dockerfile
-/Makefile.maker.yaml
-/README.md
+.dockerignore
+# TODO: uncomment when applications no longer use git to get version information
+#.git/
+.github/
+.gitignore
+.goreleaser.yml
+/*.env*
+.golangci.yaml
+build/
+CONTRIBUTING.md
+Dockerfile
+docs/
+LICENSE*
+Makefile.maker.yaml
+README.md
+report.html
+shell.nix
+/testing/

@@ -1,5 +1,8 @@
 # Configuration file for <https://github.com/sapcc/go-makefile-maker>
 
+metadata:
+  url: https://github.com/sapcc/gatekeeper-addons
+
 binaries:
   - name:        doop-agent
     fromPackage: ./doop-agent
@@ -15,6 +18,9 @@ binaries:
     installTo:   bin/
 
 vendoring:
+  enabled: true
+
+dockerfile:
   enabled: true
 
 golangciLint:
