@@ -32,4 +32,5 @@ jobs:
           exclude: ./vendor/*
           fail_on_error: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          ignore: importas
           reporter: github-check
