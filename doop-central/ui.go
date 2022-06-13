@@ -80,7 +80,7 @@ func titlecase(in string) string {
 	if in == "qa" {
 		return "QA"
 	}
-	return strings.Title(in)
+	return strings.Title(in) //nolint:staticcheck //ignore SA1019: this function is still good for ASCII-only inputs
 }
 
 func sortAndDedupStrings(vals []string) []string {
