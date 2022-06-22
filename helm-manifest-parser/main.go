@@ -27,6 +27,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gorilla/mux"
+	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
 )
@@ -36,11 +38,15 @@ func main() {
 		logg.Fatal("usage: %s <listen-address>", os.Args[0])
 	}
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/healthcheck", handleHealthcheck)
-	mux.HandleFunc("/v3", handleAPI("/v3", ParseHelm3Manifest))
-
-	handler := getLogMiddleware().Wrap(mux)
+	logAllRequests, _ := strconv.ParseBool(os.Getenv("LOG_ALL_REQUESTS")) //nolint:errcheck
+	apis := []httpapi.API{
+		api{},
+		httpapi.HealthCheckAPI{},
+	}
+	if !logAllRequests {
+		apis = append(apis, httpapi.WithoutLogging())
+	}
+	handler := httpapi.Compose(apis...)
 
 	logg.Info("listening on " + os.Args[1])
 	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
@@ -50,20 +56,10 @@ func main() {
 	}
 }
 
-func getLogMiddleware() logg.Middleware {
-	logAllRequests, _ := strconv.ParseBool(os.Getenv("LOG_ALL_REQUESTS")) //nolint:errcheck
-	if logAllRequests {
-		return logg.Middleware{}
-	}
-	return logg.Middleware{ExceptStatusCodes: []int{200}}
-}
+type api struct{}
 
-func handleHealthcheck(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/healthcheck" && (r.Method == "GET" || r.Method == "HEAD") {
-		http.Error(w, "OK", http.StatusOK)
-	} else {
-		http.Error(w, "not found", http.StatusNotFound)
-	}
+func (api) AddTo(r *mux.Router) {
+	r.Methods("POST").Path("/v3").HandlerFunc(handleAPI("/v3", ParseHelm3Manifest))
 }
 
 func handleAPI(path string, parser func([]byte) (string, error)) func(http.ResponseWriter, *http.Request) {

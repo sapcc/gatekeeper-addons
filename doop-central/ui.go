@@ -29,6 +29,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/sapcc/go-bits/logg"
 )
 
@@ -52,13 +53,14 @@ type UI struct {
 	docstrings map[string]template.HTML
 }
 
-//RenderMainPage is a http.HandleFunc for `GET /`.
-func (ui UI) RenderMainPage(w http.ResponseWriter, r *http.Request) {
-	if (r.URL.Path != "/" && r.URL.Path != "/all") || (r.Method != "GET" && r.Method != "HEAD") {
-		http.Error(w, "not found", http.StatusNotFound)
-		return
-	}
+//AddTo implements the httpapi.API interface.
+func (ui UI) AddTo(r *mux.Router) {
+	r.Methods("HEAD", "GET").Path("/").HandlerFunc(ui.renderMainPage)
+	r.Methods("HEAD", "GET").Path("/all").HandlerFunc(ui.renderMainPage)
+}
 
+//renderMainPage is a http.HandleFunc for `GET /` and `GET /all`.
+func (ui UI) renderMainPage(w http.ResponseWriter, r *http.Request) {
 	showAll := r.URL.Path == "/all"
 	data, err := ui.downloader.retrieveData(showAll)
 	data.Docstrings = ui.docstrings
