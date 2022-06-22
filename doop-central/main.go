@@ -34,7 +34,7 @@ import (
 	"github.com/majewsky/schwift/gopherschwift"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/sapcc/go-bits/httpee"
+	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
 	"gopkg.in/yaml.v2"
 )
@@ -84,8 +84,8 @@ func main() {
 	//start HTTP server
 	handler := logg.Middleware{}.Wrap(mux)
 	logg.Info("listening on " + os.Args[1])
-	ctx := httpee.ContextWithSIGINT(context.Background(), 10*time.Second)
-	err = httpee.ListenAndServeContext(ctx, os.Args[1], handler)
+	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
+	err = httpext.ListenAndServeContext(ctx, os.Args[1], handler)
 	if err != nil {
 		logg.Fatal(err.Error())
 	}

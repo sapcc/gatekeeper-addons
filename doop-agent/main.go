@@ -34,7 +34,7 @@ import (
 	"github.com/majewsky/schwift/gopherschwift"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/sapcc/go-bits/httpee"
+	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
 	wsk "github.com/wercker/stern/kubernetes"
 	"k8s.io/client-go/rest"
@@ -109,9 +109,9 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	logg.Info("listening on " + *flagListenAddress)
-	ctx := httpee.ContextWithSIGINT(context.Background(), 1*time.Second)
+	ctx := httpext.ContextWithSIGINT(context.Background(), 1*time.Second)
 	go func() {
-		err = httpee.ListenAndServeContext(ctx, *flagListenAddress, mux)
+		err = httpext.ListenAndServeContext(ctx, *flagListenAddress, mux)
 		if err != nil {
 			logg.Fatal(err.Error())
 		}

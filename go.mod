@@ -8,7 +8,7 @@ require (
 	github.com/gophercloud/utils v0.0.0-20220307143606-8e7800759d16
 	github.com/majewsky/schwift v1.1.0
 	github.com/prometheus/client_golang v1.12.2
-	github.com/sapcc/go-bits v0.0.0-20220620113803-c6fe6bc10906
+	github.com/sapcc/go-bits v0.0.0-20220621093742-b3e759973f94
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.23.6
