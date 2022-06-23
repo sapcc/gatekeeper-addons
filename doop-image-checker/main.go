@@ -35,16 +35,33 @@ import (
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
+	"gopkg.in/yaml.v2"
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		logg.Fatal("usage: %s <listen-address>", os.Args[0])
+	argCount := len(os.Args)
+	if !(argCount == 2 || argCount == 3) {
+		logg.Fatal("usage: %s <listen-address> [response-config.yaml]", os.Args[0])
+	}
+
+	var config map[string]map[string]string
+
+	if len(os.Args) == 3 {
+		byte, err := os.ReadFile(os.Args[2])
+		if err != nil {
+			logg.Fatal(err.Error())
+		}
+
+		config = make(map[string]map[string]string)
+		err = yaml.Unmarshal(byte, config)
+		if err != nil {
+			logg.Fatal(err.Error())
+		}
 	}
 
 	logAllRequests, _ := strconv.ParseBool(os.Getenv("LOG_ALL_REQUESTS")) //nolint:errcheck
 	apis := []httpapi.API{
-		api{},
+		api{config},
 		httpapi.HealthCheckAPI{},
 	}
 	if !logAllRequests {
@@ -60,14 +77,16 @@ func main() {
 	}
 }
 
-type api struct{}
-
-//AddTo implements the httpapi.API interface.
-func (api) AddTo(r *mux.Router) {
-	r.Methods("GET").Path("/v1/headers").HandlerFunc(handleHeaders)
+type api struct {
+	config map[string]map[string]string
 }
 
-func handleHeaders(w http.ResponseWriter, r *http.Request) {
+//AddTo implements the httpapi.API interface.
+func (a api) AddTo(r *mux.Router) {
+	r.Methods("GET").Path("/v1/headers").HandlerFunc(a.handleHeaders)
+}
+
+func (a api) handleHeaders(w http.ResponseWriter, r *http.Request) {
 	//validate request format
 	imageRefStr := r.URL.Query().Get("image")
 	if imageRefStr == "" {
@@ -90,20 +109,40 @@ func handleHeaders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//make request to Keppel's Registry API (we deliberately make a GET here in
-	//order to explicitly update the image's last_pulled_at timestamp);
-	//unfortunately we need to engage in some trickery to extract the
-	//X-Keppel-Vulnerability-Status header
-	var hc headerCapturer
-	_, err = remote.Image(ref, remote.WithTransport(&hc))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	var respHeader http.Header
+	// if a response config file is provided always use that
+	if len(a.config) != 0 {
+		respHeader = make(http.Header)
+		for header, value := range a.config[imageRefStr] {
+			if header == "X-Keppel-Max-Layer-Created-At" || header == "X-Keppel-Min-Layer-Created-At" {
+				duration, err := time.ParseDuration(value)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				clock := time.Now().Add(duration)
+				respHeader.Set(header, fmt.Sprintf("%d", clock.Unix()))
+			} else {
+				respHeader.Set(header, value)
+			}
+		}
+	} else {
+		var hc headerCapturer
+		//make request to Keppel's Registry API (we deliberately make a GET here in
+		//order to explicitly update the image's last_pulled_at timestamp);
+		//unfortunately we need to engage in some trickery to extract the
+		//X-Keppel-Vulnerability-Status header
+		_, err = remote.Image(ref, remote.WithTransport(&hc))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		respHeader = hc.Headers
 	}
 
 	//fill cache and return result
-	fillHeaderCache(imageRefStr, hc.Headers)
-	respondWithHeaderJSON(w, hc.Headers)
+	fillHeaderCache(imageRefStr, respHeader)
+	respondWithHeaderJSON(w, respHeader)
 }
 
 type headerCapturer struct {
