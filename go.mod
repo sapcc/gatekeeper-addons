@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/google/go-containerregistry v0.10.0
 	github.com/gophercloud/gophercloud v0.25.0
-	github.com/gophercloud/utils v0.0.0-20220307143606-8e7800759d16
+	github.com/gophercloud/utils v0.0.0-20220627134740-f82c2a154887
 	github.com/gorilla/mux v1.8.0
 	github.com/majewsky/schwift v1.1.0
 	github.com/prometheus/client_golang v1.12.2
