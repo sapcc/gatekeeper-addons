@@ -660,8 +660,8 @@ github.com/sagikazarmark/crypt v0.1.0/go.mod h1:B/mN0msZuINBtQ1zZLEQcegFJJf9vnYI
 github.com/sanposhiho/wastedassign/v2 v2.0.6/go.mod h1:KyZ0MWTwxxBmfwn33zh3k1dmsbF2ud9pAAGfoLfjhtI=
 github.com/sapcc/go-api-declarations v1.2.0 h1:ypzrA7dc18VgtOLVaZnJ8vJ26T3ZFskr/2JLzgInd9s=
 github.com/sapcc/go-api-declarations v1.2.0/go.mod h1:zS+2xqmbtAyQxQz1liJp0qxDgop78fb4Sfk/IB0PvH0=
-github.com/sapcc/go-bits v0.0.0-20220704133329-08fb282def7e h1:LUbtjTOQvBS1oU/YDfvQ+e23ajRTRBAVFNV4DuW4Un0=
-github.com/sapcc/go-bits v0.0.0-20220704133329-08fb282def7e/go.mod h1:dnwRlM+FlnRc8/IXvaeUADvOhHDTTgwQ/Rkkj0Dtobc=
+github.com/sapcc/go-bits v0.0.0-20220706183424-591e645cac86 h1:kuaSdCXr5ShLDcPSPgIhva8MVGlR2eDzFD1oJQaMXsk=
+github.com/sapcc/go-bits v0.0.0-20220706183424-591e645cac86/go.mod h1:dnwRlM+FlnRc8/IXvaeUADvOhHDTTgwQ/Rkkj0Dtobc=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
 github.com/securego/gosec/v2 v2.9.1/go.mod h1:oDcDLcatOJxkCGaCaq8lua1jTnYf6Sou4wdiJ1n4iHc=
 github.com/sergi/go-diff v1.1.0/go.mod h1:STckp+ISIX8hZLjrqAeVduY0gWCT9IjLuqbuNXdaHfM=
