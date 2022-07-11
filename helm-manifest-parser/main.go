@@ -24,13 +24,13 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
+	"github.com/sapcc/go-bits/osext"
 )
 
 func main() {
@@ -38,7 +38,7 @@ func main() {
 		logg.Fatal("usage: %s <listen-address>", os.Args[0])
 	}
 
-	logAllRequests, _ := strconv.ParseBool(os.Getenv("LOG_ALL_REQUESTS")) //nolint:errcheck
+	logAllRequests := osext.GetenvBool("LOG_ALL_REQUESTS")
 	apis := []httpapi.API{
 		api{},
 		httpapi.HealthCheckAPI{},

@@ -25,7 +25,6 @@ import (
 	"html/template"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/gophercloud/gophercloud"
@@ -37,6 +36,7 @@ import (
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
+	"github.com/sapcc/go-bits/osext"
 	"gopkg.in/yaml.v2"
 )
 
@@ -44,7 +44,7 @@ import (
 var staticContent embed.FS
 
 func main() {
-	logg.ShowDebug, _ = strconv.ParseBool(os.Getenv("DOOP_CENTRAL_DEBUG")) //nolint:errcheck
+	logg.ShowDebug = osext.GetenvBool("DOOP_CENTRAL_DEBUG")
 	if len(os.Args) != 3 {
 		logg.Fatal("usage: %s <listen-address> <docs.yaml>", os.Args[0])
 	}
@@ -70,7 +70,7 @@ func main() {
 		UserAgent: "doop-central/rolling",
 	})
 	must("initialize Swift account", err)
-	swiftContainer, err := account.Container(mustGetenv("REPORT_CONTAINER_NAME")).EnsureExists()
+	swiftContainer, err := account.Container(osext.MustGetenv("REPORT_CONTAINER_NAME")).EnsureExists()
 	must("initialize Swift container", err)
 
 	//collect HTTP handlers
@@ -97,12 +97,4 @@ func must(task string, err error) {
 	if err != nil {
 		logg.Fatal("could not %s: %s", task, err.Error())
 	}
-}
-
-func mustGetenv(key string) string {
-	val := os.Getenv(key)
-	if val == "" {
-		logg.Fatal("missing required environment variable: " + key)
-	}
-	return val
 }

@@ -26,7 +26,6 @@ import (
 	"html"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/google/go-containerregistry/pkg/name"
@@ -35,6 +34,7 @@ import (
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
+	"github.com/sapcc/go-bits/osext"
 	"gopkg.in/yaml.v2"
 )
 
@@ -59,7 +59,7 @@ func main() {
 		}
 	}
 
-	logAllRequests, _ := strconv.ParseBool(os.Getenv("LOG_ALL_REQUESTS")) //nolint:errcheck
+	logAllRequests := osext.GetenvBool("LOG_ALL_REQUESTS")
 	apis := []httpapi.API{
 		api{config},
 		httpapi.HealthCheckAPI{},

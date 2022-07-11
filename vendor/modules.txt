@@ -179,6 +179,7 @@ github.com/sapcc/go-api-declarations/bininfo
 github.com/sapcc/go-bits/httpapi
 github.com/sapcc/go-bits/httpext
 github.com/sapcc/go-bits/logg
+github.com/sapcc/go-bits/osext
 # github.com/sirupsen/logrus v1.8.1
 ## explicit; go 1.13
 github.com/sirupsen/logrus

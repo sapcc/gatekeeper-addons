@@ -22,10 +22,10 @@ package main
 import (
 	"encoding/json"
 	"os"
-	"strconv"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sapcc/go-bits/logg"
+	"github.com/sapcc/go-bits/osext"
 )
 
 var RawViolationsGauge = prometheus.NewGaugeVec(
@@ -77,7 +77,7 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 		logg.Error(err.Error())
 	}
 
-	dumpData, _ := strconv.ParseBool(os.Getenv("DOOP_CENTRAL_DUMP_DATA")) //nolint:errcheck
+	dumpData := osext.GetenvBool("DOOP_CENTRAL_DUMP_DATA")
 	if dumpData {
 		dataJSON, err := json.Marshal(data)
 		if err == nil {
