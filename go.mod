@@ -9,7 +9,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/majewsky/schwift v1.1.0
 	github.com/prometheus/client_golang v1.12.2
-	github.com/sapcc/go-bits v0.0.0-20220706183424-591e645cac86
+	github.com/sapcc/go-bits v0.0.0-20220801132244-1778c461b6c3
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.23.6
