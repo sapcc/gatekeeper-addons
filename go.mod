@@ -1,6 +1,6 @@
 module github.com/sapcc/gatekeeper-addons
 
-go 1.18
+go 1.19
 
 require (
 	github.com/google/go-containerregistry v0.11.0
