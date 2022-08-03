@@ -32,14 +32,14 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 // type Downloader
 
-//Downloader pulls doop-agent reports from Swift.
+// Downloader pulls doop-agent reports from Swift.
 type Downloader struct {
 	container *schwift.Container
 	objects   map[string]*objectState
 	mutex     sync.Mutex
 }
 
-//NewDownloader creates a Downloader.
+// NewDownloader creates a Downloader.
 func NewDownloader(container *schwift.Container) *Downloader {
 	return &Downloader{
 		container: container,
@@ -47,7 +47,7 @@ func NewDownloader(container *schwift.Container) *Downloader {
 	}
 }
 
-//GetReports returns all most recent doop-agent reports in their yet unpaosed form.
+// GetReports returns all most recent doop-agent reports in their yet unpaosed form.
 func (d *Downloader) GetReports() (map[string]Report, error) {
 	objInfos, err := d.container.Objects().CollectDetailed()
 	if err != nil {
@@ -110,7 +110,7 @@ func (os *objectState) NeedsUpdate(oi schwift.ObjectInfo) bool {
 ////////////////////////////////////////////////////////////////////////////////
 // data types for JSON unmarshalling of audit reports
 
-//Report is the structure of an audit report.
+// Report is the structure of an audit report.
 type Report struct {
 	Identity struct {
 		Layer string `json:"layer"`
@@ -119,7 +119,7 @@ type Report struct {
 	Templates []TemplateReport `json:"templates"`
 }
 
-//TemplateReport appears in type Report.
+// TemplateReport appears in type Report.
 type TemplateReport struct {
 	Kind        string            `json:"kind"`
 	Labels      map[string]string `json:"labels"`
@@ -127,7 +127,7 @@ type TemplateReport struct {
 	Configs     []ConfigReport    `json:"configs"`
 }
 
-//ConfigReport appears in type TemplateReport.
+// ConfigReport appears in type TemplateReport.
 type ConfigReport struct {
 	Name        string            `json:"name"`
 	Labels      map[string]string `json:"labels"`
@@ -136,7 +136,7 @@ type ConfigReport struct {
 	Violations  []ViolationReport `json:"violations"`
 }
 
-//ViolationReport appears in type ConfigReport.
+// ViolationReport appears in type ConfigReport.
 type ViolationReport struct {
 	Kind      string `json:"kind"`
 	Name      string `json:"name"`

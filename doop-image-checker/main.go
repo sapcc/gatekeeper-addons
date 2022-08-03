@@ -81,7 +81,7 @@ type api struct {
 	config map[string]map[string]string
 }
 
-//AddTo implements the httpapi.API interface.
+// AddTo implements the httpapi.API interface.
 func (a api) AddTo(r *mux.Router) {
 	r.Methods("GET").Path("/v1/headers").HandlerFunc(a.handleHeaders)
 }
@@ -149,7 +149,7 @@ type headerCapturer struct {
 	Headers http.Header
 }
 
-//RoundTrip implements the http.RoundTripper interface.
+// RoundTrip implements the http.RoundTripper interface.
 func (hc *headerCapturer) RoundTrip(req *http.Request) (*http.Response, error) {
 	resp, err := http.DefaultTransport.RoundTrip(req)
 	if err == nil && resp.Header.Get("Docker-Content-Digest") != "" {

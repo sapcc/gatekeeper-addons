@@ -136,13 +136,13 @@ func must(task string, err error) {
 	}
 }
 
-//Report is the data structure that we write into our report file.
+// Report is the data structure that we write into our report file.
 type Report struct {
 	Identity  clusterIdentity     `json:"identity"`
 	Templates []ReportForTemplate `json:"templates"`
 }
 
-//ReportForTemplate appears in type Report.
+// ReportForTemplate appears in type Report.
 type ReportForTemplate struct {
 	Kind        string            `json:"kind"`
 	Labels      map[string]string `json:"labels,omitempty"`
@@ -150,7 +150,7 @@ type ReportForTemplate struct {
 	Configs     []ReportForConfig `json:"configs"`
 }
 
-//ReportForConfig appears in type ReportForTemplate.
+// ReportForConfig appears in type ReportForTemplate.
 type ReportForConfig struct {
 	Name           string                `json:"name"`
 	Labels         map[string]string     `json:"labels,omitempty"`
@@ -159,7 +159,7 @@ type ReportForConfig struct {
 	Violations     []ConstraintViolation `json:"violations"`
 }
 
-//SendReport queries the Kubernetes API to prepare a Report, and uploads the report to Swift.
+// SendReport queries the Kubernetes API to prepare a Report, and uploads the report to Swift.
 func SendReport(ctx context.Context, cs ClientSet, swiftObj *schwift.Object, identity clusterIdentity) {
 	start := time.Now()
 

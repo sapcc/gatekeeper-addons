@@ -41,13 +41,13 @@ var (
 	}
 )
 
-//ClientSet provides access to the Gatekeeper API groups in k8s.
+// ClientSet provides access to the Gatekeeper API groups in k8s.
 type ClientSet struct {
 	constraintsV1Beta1 dynamic.Interface
 	templatesV1Beta1   dynamic.Interface
 }
 
-//NewClientSet builds a ClientSet.
+// NewClientSet builds a ClientSet.
 func NewClientSet(cfg *rest.Config) ClientSet {
 	newClient := func(gv schema.GroupVersion) dynamic.Interface {
 		cfgCloned := dynamic.ConfigFor(cfg)
@@ -64,7 +64,7 @@ func NewClientSet(cfg *rest.Config) ClientSet {
 	}
 }
 
-//ConstraintTemplate is the unpacked form of `kind: ConstraintTemplate`.
+// ConstraintTemplate is the unpacked form of `kind: ConstraintTemplate`.
 type ConstraintTemplate struct {
 	Metadata metav1.ObjectMeta `json:"metadata"`
 	Spec     struct {
@@ -82,7 +82,7 @@ type ConstraintTemplate struct {
 	} `json:"status"`
 }
 
-//ListConstraintTemplates lists all constraint templates.
+// ListConstraintTemplates lists all constraint templates.
 func (cs ClientSet) ListConstraintTemplates(ctx context.Context) []ConstraintTemplate {
 	gvr := gvTemplatesV1Beta1.WithResource("constrainttemplates")
 	list, err := cs.templatesV1Beta1.Resource(gvr).List(ctx, metav1.ListOptions{})
@@ -99,7 +99,7 @@ func (cs ClientSet) ListConstraintTemplates(ctx context.Context) []ConstraintTem
 	return result
 }
 
-//ConstraintConfig is the unpacked form of any object in the `constraints.gatekeeper.sh` API group.
+// ConstraintConfig is the unpacked form of any object in the `constraints.gatekeeper.sh` API group.
 type ConstraintConfig struct {
 	Kind     string            `json:"kind"`
 	Metadata metav1.ObjectMeta `json:"metadata"`
@@ -110,7 +110,7 @@ type ConstraintConfig struct {
 	} `json:"status"`
 }
 
-//ConstraintViolation appears in type ConstraintConfig.
+// ConstraintViolation appears in type ConstraintConfig.
 type ConstraintViolation struct {
 	Kind              string `json:"kind"`
 	Name              string `json:"name"`
@@ -119,7 +119,7 @@ type ConstraintViolation struct {
 	EnforcementAction string `json:"enforcementAction"`
 }
 
-//ListConstraintConfigs lists all constraint configs for a given template.
+// ListConstraintConfigs lists all constraint configs for a given template.
 func (cs ClientSet) ListConstraintConfigs(ctx context.Context, tmpl ConstraintTemplate) []ConstraintConfig {
 	//The following will not work unless the respective CRD was created.
 	if !tmpl.Status.Created {

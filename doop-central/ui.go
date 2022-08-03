@@ -47,19 +47,19 @@ var (
 ////////////////////////////////////////////////////////////////////////////////
 // type UI
 
-//UI provides the business logic for rendering the web dashboard.
+// UI provides the business logic for rendering the web dashboard.
 type UI struct {
 	downloader *Downloader
 	docstrings map[string]template.HTML
 }
 
-//AddTo implements the httpapi.API interface.
+// AddTo implements the httpapi.API interface.
 func (ui UI) AddTo(r *mux.Router) {
 	r.Methods("HEAD", "GET").Path("/").HandlerFunc(ui.renderMainPage)
 	r.Methods("HEAD", "GET").Path("/all").HandlerFunc(ui.renderMainPage)
 }
 
-//renderMainPage is a http.HandleFunc for `GET /` and `GET /all`.
+// renderMainPage is a http.HandleFunc for `GET /` and `GET /all`.
 func (ui UI) renderMainPage(w http.ResponseWriter, r *http.Request) {
 	showAll := r.URL.Path == "/all"
 	data, err := ui.downloader.retrieveData(showAll)
@@ -123,7 +123,7 @@ func markupPlaceholders(in string) template.HTML {
 ////////////////////////////////////////////////////////////////////////////////
 // report datatypes and structured data for HTML template
 
-//ClusterInfo contains health information for the Gatekeeper in a certain cluster.
+// ClusterInfo contains health information for the Gatekeeper in a certain cluster.
 type ClusterInfo struct {
 	Layer               string
 	Type                string
@@ -133,7 +133,7 @@ type ClusterInfo struct {
 	NewestAuditCSSClass string
 }
 
-//ToClusterInfo generates the ClusterInfo for this Report.
+// ToClusterInfo generates the ClusterInfo for this Report.
 func (r Report) ToClusterInfo() ClusterInfo {
 	now := time.Now()
 	info := ClusterInfo{
@@ -167,8 +167,8 @@ func cssClassForAge(ageSecs float64) string {
 	return "value-ok"
 }
 
-//ViolationGroup is a group of mostly identical violations across clusters and
-//across objects.
+// ViolationGroup is a group of mostly identical violations across clusters and
+// across objects.
 type ViolationGroup struct {
 	//object metadata
 	Kind        string
@@ -179,7 +179,7 @@ type ViolationGroup struct {
 	Instances []ViolationInstance
 }
 
-//ViolationInstance appears in type ViolationGroup.
+// ViolationInstance appears in type ViolationGroup.
 type ViolationInstance struct {
 	ClusterName string
 	Name        string
@@ -196,7 +196,7 @@ var (
 	regionNameInClusterNameRx  = regexp.MustCompile(`^(?:[a-z]-)?(.*)$`)
 )
 
-//NewViolationGroup creates a fresh group for a reported violation.
+// NewViolationGroup creates a fresh group for a reported violation.
 func NewViolationGroup(report ViolationReport, clusterName string) ViolationGroup {
 	computedKind := report.Kind
 	namePattern := report.Name
@@ -278,15 +278,15 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 	}
 }
 
-//CanMergeWith checks if both ViolationGroups are semantically identical and
-//can be merged.
+// CanMergeWith checks if both ViolationGroups are semantically identical and
+// can be merged.
 func (vg ViolationGroup) CanMergeWith(other ViolationGroup) bool {
 	return vg.Kind == other.Kind && vg.Namespace == other.Namespace &&
 		vg.NamePattern == other.NamePattern && vg.Message == other.Message
 }
 
-//GroupViolationsInto processes the violations in this report into
-//ViolationGroups, sorted by template kind.
+// GroupViolationsInto processes the violations in this report into
+// ViolationGroups, sorted by template kind.
 func (r Report) GroupViolationsInto(violationGroups map[string][]*ViolationGroup, clusterName string, showAll bool) {
 	for _, rt := range r.Templates {
 		for _, rc := range rt.Configs {

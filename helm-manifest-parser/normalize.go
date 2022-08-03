@@ -24,12 +24,12 @@ import (
 	"strconv"
 )
 
-//NormalizeRecursively prepares values obtained from yaml.Unmarshal() for being
-//processed by json.Marshal().
+// NormalizeRecursively prepares values obtained from yaml.Unmarshal() for being
+// processed by json.Marshal().
 //
-//yaml.Unmarshal() into a generic map will create map[interface{}]interface{}
-//members which json.Marshal() cannot process. We need to convert these into
-//map[string]interface{} recursively before proceeding.
+// yaml.Unmarshal() into a generic map will create map[interface{}]interface{}
+// members which json.Marshal() cannot process. We need to convert these into
+// map[string]interface{} recursively before proceeding.
 func NormalizeRecursively(path string, in interface{}) (interface{}, error) {
 	switch in := in.(type) {
 	case map[interface{}]interface{}:
