@@ -46,10 +46,14 @@ else
 endif
 
 install: FORCE build/doop-agent build/doop-central build/doop-image-checker build/helm-manifest-parser
-	install -D -m 0755 build/doop-agent "$(DESTDIR)$(PREFIX)/bin/doop-agent"
-	install -D -m 0755 build/doop-central "$(DESTDIR)$(PREFIX)/bin/doop-central"
-	install -D -m 0755 build/doop-image-checker "$(DESTDIR)$(PREFIX)/bin/doop-image-checker"
-	install -D -m 0755 build/helm-manifest-parser "$(DESTDIR)$(PREFIX)/bin/helm-manifest-parser"
+	install -d -m 0755 "$(DESTDIR)$(PREFIX)/bin"
+	install -m 0755 build/doop-agent "$(DESTDIR)$(PREFIX)/bin/doop-agent"
+	install -d -m 0755 "$(DESTDIR)$(PREFIX)/bin"
+	install -m 0755 build/doop-central "$(DESTDIR)$(PREFIX)/bin/doop-central"
+	install -d -m 0755 "$(DESTDIR)$(PREFIX)/bin"
+	install -m 0755 build/doop-image-checker "$(DESTDIR)$(PREFIX)/bin/doop-image-checker"
+	install -d -m 0755 "$(DESTDIR)$(PREFIX)/bin"
+	install -m 0755 build/helm-manifest-parser "$(DESTDIR)$(PREFIX)/bin/helm-manifest-parser"
 
 # which packages to test with "go test"
 GO_TESTPKGS := $(shell go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./...)
