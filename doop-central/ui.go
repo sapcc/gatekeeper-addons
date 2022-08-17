@@ -186,6 +186,7 @@ type ViolationInstance struct {
 }
 
 var (
+	supportLabelsRx            = regexp.MustCompile(`^support-group=([a-z0-9]+),service=([a-z0-9]+):\s*`)
 	helm2ReleaseNameRx         = regexp.MustCompile(`^(.*)\.v\d+$`)
 	helm3ReleaseNameRx         = regexp.MustCompile(`^sh\.helm\.release\.v1\.(.*)(\.v\d+)$`)
 	generatedNamespaceNameRx   = regexp.MustCompile(`^[0-9a-f]{32}$`)
@@ -202,6 +203,11 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 	namePattern := report.Name
 	namespacePattern := report.Namespace
 	messagePattern := report.Message
+
+	//for now, we ignore the "support-group=XXX,service=YYY: " prefixes entirely;
+	//later this will be changed once adoption is far enough to restructure the
+	//UI around these categories
+	messagePattern = supportLabelsRx.ReplaceAllString(messagePattern, "")
 
 	//special handling for Helm 2 releases
 	if report.Kind == "ConfigMap" && report.Namespace == "kube-system" {
