@@ -47,13 +47,13 @@ func main() {
 	var config map[string]map[string]string
 
 	if len(os.Args) == 3 {
-		byte, err := os.ReadFile(os.Args[2])
+		bytes, err := os.ReadFile(os.Args[2])
 		if err != nil {
 			logg.Fatal(err.Error())
 		}
 
 		config = make(map[string]map[string]string)
-		err = yaml.Unmarshal(byte, config)
+		err = yaml.Unmarshal(bytes, config)
 		if err != nil {
 			logg.Fatal(err.Error())
 		}

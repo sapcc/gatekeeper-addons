@@ -81,7 +81,7 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 	if dumpData {
 		dataJSON, err := json.Marshal(data)
 		if err == nil {
-			err = os.WriteFile("data.json", dataJSON, 0644)
+			err = os.WriteFile("data.json", dataJSON, 0644) //nolint:gosec // file only written in debug mode
 		}
 		if err != nil {
 			logg.Error(err.Error())

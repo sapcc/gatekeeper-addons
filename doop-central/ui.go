@@ -117,7 +117,7 @@ func markupPlaceholders(in string) template.HTML {
 		in = in[loc[1]:]
 	}
 
-	return template.HTML(out + template.HTMLEscapeString(in))
+	return template.HTML(out + template.HTMLEscapeString(in)) //nolint:gosec // no xss injection possible due to prior checks of input
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -46,9 +46,9 @@ func TestParseManifests(t *testing.T) {
 		var outBuf bytes.Buffer
 		must(t, json.Indent(&outBuf, []byte(outStr), "", "  "))
 		outBuf.WriteString("\n")
-		must(t, os.WriteFile(tc.OutputPath+".actual", outBuf.Bytes(), 0666))
+		must(t, os.WriteFile(tc.OutputPath+".actual", outBuf.Bytes(), 0666)) //nolint:gosec // file only written in tests
 
-		cmd := exec.Command("diff", "-u", tc.OutputPath, tc.OutputPath+".actual")
+		cmd := exec.Command("diff", "-u", tc.OutputPath, tc.OutputPath+".actual") //nolint:gosec // command only executed in tests
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		must(t, cmd.Run())
