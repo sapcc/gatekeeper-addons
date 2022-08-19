@@ -31,6 +31,7 @@ import (
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 	"github.com/gorilla/mux"
+	"github.com/sapcc/go-api-declarations/bininfo"
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
@@ -59,6 +60,9 @@ func main() {
 		}
 	}
 
+	wrap := httpext.WrapTransport(&http.DefaultTransport)
+	wrap.SetOverrideUserAgent(bininfo.Component(), bininfo.VersionOr("rolling"))
+
 	logAllRequests := osext.GetenvBool("LOG_ALL_REQUESTS")
 	apis := []httpapi.API{
 		api{config},
@@ -69,7 +73,6 @@ func main() {
 	}
 	handler := httpapi.Compose(apis...)
 
-	logg.Info("listening on " + os.Args[1])
 	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
 	err := httpext.ListenAndServeContext(ctx, os.Args[1], handler)
 	if err != nil {

@@ -33,6 +33,7 @@ import (
 	"github.com/majewsky/schwift/gopherschwift"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/sapcc/go-api-declarations/bininfo"
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
@@ -48,6 +49,9 @@ func main() {
 	if len(os.Args) != 3 {
 		logg.Fatal("usage: %s <listen-address> <docs.yaml>", os.Args[0])
 	}
+
+	wrap := httpext.WrapTransport(&http.DefaultTransport)
+	wrap.SetOverrideUserAgent(bininfo.Component(), bininfo.VersionOr("rolling"))
 
 	//parse docs.yaml
 	docstringsBytes, err := os.ReadFile(os.Args[2])
@@ -66,9 +70,7 @@ func main() {
 	must("initialize OpenStack authentication", err)
 	client, err := openstack.NewObjectStorageV1(provider, gophercloud.EndpointOpts{})
 	must("initialize Swift client", err)
-	account, err := gopherschwift.Wrap(client, &gopherschwift.Options{
-		UserAgent: "doop-central/rolling",
-	})
+	account, err := gopherschwift.Wrap(client, nil)
 	must("initialize Swift account", err)
 	swiftContainer, err := account.Container(osext.MustGetenv("REPORT_CONTAINER_NAME")).EnsureExists()
 	must("initialize Swift container", err)
@@ -85,7 +87,6 @@ func main() {
 	http.Handle("/static/", http.FileServer(http.FS(staticContent)))
 
 	//start HTTP server
-	logg.Info("listening on " + os.Args[1])
 	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
 	err = httpext.ListenAndServeContext(ctx, os.Args[1], nil)
 	if err != nil {

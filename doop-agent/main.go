@@ -34,6 +34,7 @@ import (
 	"github.com/majewsky/schwift/gopherschwift"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/sapcc/go-api-declarations/bininfo"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
 	wsk "github.com/wercker/stern/kubernetes"
@@ -82,14 +83,15 @@ func main() {
 		Type:  flag.Arg(1),
 	}
 
+	wrap := httpext.WrapTransport(&http.DefaultTransport)
+	wrap.SetOverrideUserAgent(bininfo.Component(), bininfo.VersionOr("rolling"))
+
 	//initialize OpenStack/Swift client
 	provider, err := clientconfig.AuthenticatedClient(nil)
 	must("initialize OpenStack client", err)
 	client, err := openstack.NewObjectStorageV1(provider, gophercloud.EndpointOpts{})
 	must("initialize Swift client", err)
-	account, err := gopherschwift.Wrap(client, &gopherschwift.Options{
-		UserAgent: "doop-agent/rolling",
-	})
+	account, err := gopherschwift.Wrap(client, nil)
 	must("initialize Swift account", err)
 	swiftContainer, err := account.Container(*flagContainer).EnsureExists()
 	must("initialize Swift container", err)
@@ -108,7 +110,6 @@ func main() {
 	//start HTTP server for Prometheus metrics
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
-	logg.Info("listening on " + *flagListenAddress)
 	ctx := httpext.ContextWithSIGINT(context.Background(), 1*time.Second)
 	go func() {
 		err = httpext.ListenAndServeContext(ctx, *flagListenAddress, mux)

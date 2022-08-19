@@ -48,7 +48,6 @@ func main() {
 	}
 	handler := httpapi.Compose(apis...)
 
-	logg.Info("listening on " + os.Args[1])
 	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
 	err := httpext.ListenAndServeContext(ctx, os.Args[1], handler)
 	if err != nil {
