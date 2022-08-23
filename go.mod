@@ -9,8 +9,8 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/majewsky/schwift v1.1.0
 	github.com/prometheus/client_golang v1.13.0
-	github.com/sapcc/go-api-declarations v1.2.0
-	github.com/sapcc/go-bits v0.0.0-20220819141629-31b96bd61763
+	github.com/sapcc/go-api-declarations v1.3.0
+	github.com/sapcc/go-bits v0.0.0-20220823141731-fd7850ce8cb7
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.23.6
