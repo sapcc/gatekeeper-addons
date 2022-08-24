@@ -67,7 +67,7 @@ func (a api) handleAPI(path string, parser func([]byte) (string, error)) func(ht
 			http.Error(w, "not found", http.StatusNotFound)
 			return
 		}
-		if r.Method != "POST" {
+		if r.Method != http.MethodPost {
 			http.Error(w, "only POST requests are allowed", http.StatusMethodNotAllowed)
 			return
 		}
