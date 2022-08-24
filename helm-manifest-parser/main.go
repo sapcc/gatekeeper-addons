@@ -40,11 +40,8 @@ func main() {
 
 	logAllRequests := osext.GetenvBool("LOG_ALL_REQUESTS")
 	apis := []httpapi.API{
-		api{},
-		httpapi.HealthCheckAPI{},
-	}
-	if !logAllRequests {
-		apis = append(apis, httpapi.WithoutLogging())
+		api{logAllRequests},
+		httpapi.HealthCheckAPI{SkipRequestLog: true},
 	}
 	handler := httpapi.Compose(apis...)
 
@@ -55,13 +52,15 @@ func main() {
 	}
 }
 
-type api struct{}
-
-func (api) AddTo(r *mux.Router) {
-	r.Methods("POST").Path("/v3").HandlerFunc(handleAPI("/v3", ParseHelm3Manifest))
+type api struct {
+	LogAllRequests bool
 }
 
-func handleAPI(path string, parser func([]byte) (string, error)) func(http.ResponseWriter, *http.Request) {
+func (a api) AddTo(r *mux.Router) {
+	r.Methods("POST").Path("/v3").HandlerFunc(a.handleAPI("/v3", ParseHelm3Manifest))
+}
+
+func (a api) handleAPI(path string, parser func([]byte) (string, error)) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != path {
 			http.Error(w, "not found", http.StatusNotFound)
@@ -80,9 +79,14 @@ func handleAPI(path string, parser func([]byte) (string, error)) func(http.Respo
 		}
 		out, err := parser(in)
 		if err != nil {
-			logg.Info("HTTP 400: " + err.Error())
+			logg.Error("HTTP 400: " + err.Error())
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
+		}
+
+		//HTTP 200 responses are usually silent to avoid useless log spam (but 4xx/5xx responses are always logged)
+		if !a.LogAllRequests {
+			httpapi.SkipRequestLog(r)
 		}
 
 		w.Header().Set("Content-Type", "application/json")
