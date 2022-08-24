@@ -10,7 +10,7 @@ require (
 	github.com/majewsky/schwift v1.1.0
 	github.com/prometheus/client_golang v1.13.0
 	github.com/sapcc/go-api-declarations v1.3.0
-	github.com/sapcc/go-bits v0.0.0-20220823141731-fd7850ce8cb7
+	github.com/sapcc/go-bits v0.0.0-20220824125308-0be4a179e36c
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.23.6
