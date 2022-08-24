@@ -20,6 +20,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"io"
 	"net/http"
@@ -71,8 +72,8 @@ func (a api) handleAPI(path string, parser func([]byte) (string, error)) func(ht
 			return
 		}
 
-		//never read more than 4 MiB to avoid DoS
-		in, err := io.ReadAll(io.LimitReader(r.Body, 4<<20))
+		//never read more than 4 MiB to avoid DoS (but use a 1 MiB buffer to reduce the amount of read syscalls that ReadAll needs to do)
+		in, err := io.ReadAll(bufio.NewReaderSize(io.LimitReader(r.Body, 4<<20), 1<<20))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
