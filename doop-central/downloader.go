@@ -47,7 +47,7 @@ func NewDownloader(container *schwift.Container) *Downloader {
 	}
 }
 
-// GetReports returns all most recent doop-agent reports in their yet unpaosed form.
+// GetReports returns all most recent doop-agent reports in their yet unparsed form.
 func (d *Downloader) GetReports() (map[string]Report, error) {
 	objInfos, err := d.container.Objects().CollectDetailed()
 	if err != nil {
