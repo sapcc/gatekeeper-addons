@@ -37,6 +37,7 @@ import (
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
+	"github.com/sapcc/go-bits/must"
 	"github.com/sapcc/go-bits/osext"
 	"gopkg.in/yaml.v2"
 )
@@ -54,26 +55,18 @@ func main() {
 	wrap.SetOverrideUserAgent(bininfo.Component(), bininfo.VersionOr("rolling"))
 
 	//parse docs.yaml
-	docstringsBytes, err := os.ReadFile(os.Args[2])
-	must("read docstring file", err)
+	docstringsBytes := must.Return(os.ReadFile(os.Args[2]))
 	docstrings := make(map[string]template.HTML)
-	err = yaml.Unmarshal(docstringsBytes, &docstrings)
-	must("parse docstring file", err)
+	must.Succeed(yaml.Unmarshal(docstringsBytes, &docstrings))
 
 	//initialize OpenStack/Swift client
-	ao, err := clientconfig.AuthOptions(nil)
-	must("find OpenStack credentials", err)
+	ao := must.Return(clientconfig.AuthOptions(nil))
 	ao.AllowReauth = true
-	provider, err := openstack.NewClient(ao.IdentityEndpoint)
-	must("initialize OpenStack client", err)
-	err = openstack.Authenticate(provider, *ao)
-	must("initialize OpenStack authentication", err)
-	client, err := openstack.NewObjectStorageV1(provider, gophercloud.EndpointOpts{})
-	must("initialize Swift client", err)
-	account, err := gopherschwift.Wrap(client, nil)
-	must("initialize Swift account", err)
-	swiftContainer, err := account.Container(osext.MustGetenv("REPORT_CONTAINER_NAME")).EnsureExists()
-	must("initialize Swift container", err)
+	provider := must.Return(openstack.NewClient(ao.IdentityEndpoint))
+	must.Succeed(openstack.Authenticate(provider, *ao))
+	client := must.Return(openstack.NewObjectStorageV1(provider, gophercloud.EndpointOpts{}))
+	account := must.Return(gopherschwift.Wrap(client, nil))
+	swiftContainer := must.Return(account.Container(osext.MustGetenv("REPORT_CONTAINER_NAME")).EnsureExists())
 
 	//collect HTTP handlers
 	ui := UI{NewDownloader(swiftContainer), docstrings}
@@ -88,14 +81,5 @@ func main() {
 
 	//start HTTP server
 	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
-	err = httpext.ListenAndServeContext(ctx, os.Args[1], nil)
-	if err != nil {
-		logg.Fatal(err.Error())
-	}
-}
-
-func must(task string, err error) {
-	if err != nil {
-		logg.Fatal("could not %s: %s", task, err.Error())
-	}
+	must.Succeed(httpext.ListenAndServeContext(ctx, os.Args[1], nil))
 }
