@@ -45,7 +45,13 @@ func main() {
 	}
 	handler := httpapi.Compose(apis...)
 
-	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
+	//during unit tests, we can set FAST_SHUTDOWN to avoid unnecessary waiting times
+	shutdownDelay := 10 * time.Second
+	if osext.GetenvBool("FAST_SHUTDOWN") {
+		shutdownDelay = 100 * time.Millisecond
+	}
+
+	ctx := httpext.ContextWithSIGINT(context.Background(), shutdownDelay)
 	err := httpext.ListenAndServeContext(ctx, os.Args[1], handler)
 	if err != nil {
 		logg.Fatal(err.Error())
