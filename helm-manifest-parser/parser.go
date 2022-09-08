@@ -27,6 +27,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v2"
 )
 
@@ -61,8 +62,9 @@ func ParseHelm3Manifest(in []byte) (string, error) {
 	}
 
 	var result struct {
-		Items  []interface{} `json:"items"`
-		Values interface{}   `json:"values"`
+		Items     []interface{} `json:"items"`
+		Values    interface{}   `json:"values"`
+		OwnerInfo interface{}   `json:"owner_info"`
 	}
 
 	result.Items, err = convertManifestToItemsList([]byte(parsed.Manifest))
@@ -70,6 +72,10 @@ func ParseHelm3Manifest(in []byte) (string, error) {
 		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
 	result.Values, err = NormalizeRecursively(".values", parsed.Values)
+	if err != nil {
+		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
+	}
+	result.OwnerInfo, err = extractOwnerInfo(parsed.Name, result.Items)
 	if err != nil {
 		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
@@ -106,4 +112,30 @@ func convertManifestToItemsList(in []byte) ([]interface{}, error) {
 		result = append(result, val)
 	}
 	return result, nil
+}
+
+func extractOwnerInfo(releaseName string, items []interface{}) (interface{}, error) {
+	configMapName := "owner-of-" + releaseName
+
+	//try to find the owner-info ConfigMap among all the manifest items
+	for _, item := range items {
+		var obj struct {
+			Kind     string `mapstructure:"kind"`
+			Metadata struct {
+				Name string `mapstructure:"name"`
+			} `mapstructure:"metadata"`
+			Data interface{} `mapstructure:"data"` //cannot use a specific type here because we don't know which Kind of object we have yet
+		}
+		err := mapstructure.Decode(item, &obj)
+		if err != nil {
+			return nil, fmt.Errorf("while looking for owner-info: %w", err)
+		}
+
+		if obj.Kind == "ConfigMap" && obj.Metadata.Name == configMapName {
+			return obj.Data, nil
+		}
+	}
+
+	//no owner-info ConfigMap found
+	return map[string]string{}, nil
 }
