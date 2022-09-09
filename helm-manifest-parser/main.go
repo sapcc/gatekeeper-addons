@@ -21,6 +21,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
 	"os"
@@ -31,6 +32,8 @@ import (
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
 	"github.com/sapcc/go-bits/osext"
+
+	"github.com/sapcc/gatekeeper-addons/internal/helmv3"
 )
 
 func main() {
@@ -63,7 +66,7 @@ type api struct {
 }
 
 func (a api) AddTo(r *mux.Router) {
-	r.Methods("POST").Path("/v3").HandlerFunc(a.handleAPI("/v3", ParseHelm3Manifest))
+	r.Methods("POST").Path("/v3").HandlerFunc(a.handleAPI("/v3", helm3parse))
 }
 
 func (a api) handleAPI(path string, parser func([]byte) (string, error)) func(http.ResponseWriter, *http.Request) {
@@ -99,4 +102,13 @@ func (a api) handleAPI(path string, parser func([]byte) (string, error)) func(ht
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(out)) //nolint:errcheck
 	}
+}
+
+func helm3parse(in []byte) (string, error) {
+	result, err := helmv3.ParseRelease(in)
+	if err != nil {
+		return "", err
+	}
+	out, err := json.Marshal(result)
+	return string(out), err
 }

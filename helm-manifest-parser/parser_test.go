@@ -33,8 +33,8 @@ func TestParseManifests(t *testing.T) {
 		OutputPath string
 		Parser     func([]byte) (string, error)
 	}{
-		{"fixtures/helm-v3-manifest.dat", "fixtures/helm-v3-parsed.json", ParseHelm3Manifest},
-		{"fixtures/helm-v3-with-ownerinfo-manifest.dat", "fixtures/helm-v3-with-ownerinfo-parsed.json", ParseHelm3Manifest},
+		{"fixtures/helm-v3-manifest.dat", "fixtures/helm-v3-parsed.json", helm3parse},
+		{"fixtures/helm-v3-with-ownerinfo-manifest.dat", "fixtures/helm-v3-with-ownerinfo-parsed.json", helm3parse},
 	}
 
 	for _, tc := range testCases {
