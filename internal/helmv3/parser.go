@@ -17,7 +17,7 @@
 *
 *******************************************************************************/
 
-package main
+package helmv3
 
 import (
 	"bytes"
@@ -29,59 +29,52 @@ import (
 
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v2"
+
+	"github.com/sapcc/gatekeeper-addons/internal/util"
 )
 
-// ParseHelm3Manifest parses the `data.release` field of a Helm 3 release Secret.
-func ParseHelm3Manifest(in []byte) (string, error) {
+// ParseRelease parses the `data.release` field of a Helm 3 release Secret.
+func ParseRelease(in []byte) (*ReleaseContents, error) {
 	var err error
 
 	in, err = base64.StdEncoding.DecodeString(string(in))
 	if err != nil {
-		return "", fmt.Errorf("cannot decode Base64: %w", err)
+		return nil, fmt.Errorf("cannot decode Base64: %w", err)
 	}
 
 	in, err = base64.StdEncoding.DecodeString(string(in))
 	if err != nil {
-		return "", fmt.Errorf("cannot decode Base64: %w", err)
+		return nil, fmt.Errorf("cannot decode Base64: %w", err)
 	}
 
 	in, err = gunzip(in)
 	if err != nil {
-		return "", fmt.Errorf("cannot decompress GZip: %w", err)
+		return nil, fmt.Errorf("cannot decompress GZip: %w", err)
 	}
 
-	var parsed struct {
-		Name     string      `json:"name"`
-		Version  int         `json:"version"`
-		Manifest string      `json:"manifest"`
-		Values   interface{} `json:"config"`
-	}
+	var parsed releasePayload
 	err = json.Unmarshal(in, &parsed)
 	if err != nil {
-		return "", fmt.Errorf("cannot parse Protobuf: %w", err)
+		return nil, fmt.Errorf("cannot parse Protobuf: %w", err)
 	}
 
-	var result struct {
-		Items     []interface{} `json:"items"`
-		Values    interface{}   `json:"values"`
-		OwnerInfo interface{}   `json:"owner_info"`
+	result := ReleaseContents{
+		Name: parsed.Name,
 	}
-
 	result.Items, err = convertManifestToItemsList([]byte(parsed.Manifest))
 	if err != nil {
-		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
+		return nil, fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
-	result.Values, err = NormalizeRecursively(".values", parsed.Values)
+	result.Values, err = util.NormalizeRecursively(".values", parsed.Values)
 	if err != nil {
-		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
+		return nil, fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
 	result.OwnerInfo, err = extractOwnerInfo(parsed.Name, result.Items)
 	if err != nil {
-		return "", fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
+		return nil, fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
 
-	out, err := json.Marshal(result)
-	return string(out), err
+	return &result, nil
 }
 
 func gunzip(in []byte) ([]byte, error) {
@@ -105,7 +98,7 @@ func convertManifestToItemsList(in []byte) ([]interface{}, error) {
 		if err != nil {
 			return nil, fmt.Errorf("cannot unmarshal YAML objects[%d]: %w", idx, err)
 		}
-		val, err = NormalizeRecursively(fmt.Sprintf(".items[%d]", idx), val)
+		val, err = util.NormalizeRecursively(fmt.Sprintf(".items[%d]", idx), val)
 		if err != nil {
 			return nil, err
 		}
