@@ -3,6 +3,7 @@ module github.com/sapcc/gatekeeper-addons
 go 1.19
 
 require (
+	github.com/gofrs/uuid v4.2.0+incompatible
 	github.com/google/go-containerregistry v0.11.0
 	github.com/gophercloud/gophercloud v1.0.0
 	github.com/gophercloud/utils v0.0.0-20220704184730-55bdbbaec4ba

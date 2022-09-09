@@ -58,14 +58,12 @@ func ParseRelease(in []byte) (*ReleaseContents, error) {
 		return nil, fmt.Errorf("cannot parse Protobuf: %w", err)
 	}
 
-	result := ReleaseContents{
-		Name: parsed.Name,
-	}
+	var result ReleaseContents
 	result.Items, err = convertManifestToItemsList([]byte(parsed.Manifest))
 	if err != nil {
 		return nil, fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
-	result.Values, err = util.NormalizeRecursively(".values", parsed.Values)
+	result.Values, err = util.NormalizeRecursively(".values", parsed.Config)
 	if err != nil {
 		return nil, fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
