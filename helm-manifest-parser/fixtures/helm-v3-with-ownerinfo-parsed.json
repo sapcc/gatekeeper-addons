@@ -1,0 +1,37 @@
+{
+  "items": [
+    {
+      "apiVersion": "v1",
+      "data": {
+        "password": "c3dvcmRmaXNo"
+      },
+      "kind": "Secret",
+      "metadata": {
+        "name": "not-owner-info"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "data": {
+        "helm-chart-url": "https://example.com",
+        "maintainers": "Jane Doe, Max Mustermann",
+        "service": "some-service",
+        "support-group": "my-group"
+      },
+      "kind": "ConfigMap",
+      "metadata": {
+        "labels": {
+          "owner-info-version": "0.2.0"
+        },
+        "name": "owner-of-example"
+      }
+    }
+  ],
+  "values": null,
+  "owner_info": {
+    "helm-chart-url": "https://example.com",
+    "maintainers": "Jane Doe, Max Mustermann",
+    "service": "some-service",
+    "support-group": "my-group"
+  }
+}
