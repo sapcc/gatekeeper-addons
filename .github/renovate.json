@@ -39,13 +39,6 @@
         "k8s.io/"
       ],
       "allowedVersions": "0.22.x"
-    },
-    {
-      "matchPackagePrefixes": [
-        "github.com/sapcc/go-api-declarations",
-        "github.com/sapcc/go-bits"
-      ],
-      "automerge": true
     }
   ],
   "prHourlyLimit": 0,
