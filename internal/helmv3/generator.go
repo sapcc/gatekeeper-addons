@@ -213,9 +213,8 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 			"resourceVersion": mockSecretResourceVersion,
 			"uuid":            mockSecretUUID.String(),
 		},
-		"data": map[string]string{
-			"release": packedPayload,
-		},
+		"type": "helm.sh/release.v1",
+		"data": map[string]string{"release": packedPayload},
 	}, nil
 }
 
