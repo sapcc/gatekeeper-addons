@@ -58,14 +58,12 @@ func ParseRelease(in []byte) (*ReleaseContents, error) {
 		return nil, fmt.Errorf("cannot parse Protobuf: %w", err)
 	}
 
-	result := ReleaseContents{
-		Name: parsed.Name,
-	}
+	var result ReleaseContents
 	result.Items, err = convertManifestToItemsList([]byte(parsed.Manifest))
 	if err != nil {
 		return nil, fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
-	result.Values, err = util.NormalizeRecursively(".values", parsed.Values)
+	result.Values, err = util.NormalizeRecursively(".values", parsed.Config)
 	if err != nil {
 		return nil, fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
@@ -73,6 +71,11 @@ func ParseRelease(in []byte) (*ReleaseContents, error) {
 	if err != nil {
 		return nil, fmt.Errorf("in manifest %s.v%d: %w", parsed.Name, parsed.Version, err)
 	}
+
+	result.Metadata.Name = parsed.Name
+	result.Metadata.Namespace = parsed.Namespace
+	result.Metadata.Status = parsed.Info.Status
+	result.Metadata.Version = parsed.Version
 
 	return &result, nil
 }
@@ -107,7 +110,7 @@ func convertManifestToItemsList(in []byte) ([]interface{}, error) {
 	return result, nil
 }
 
-func extractOwnerInfo(releaseName string, items []interface{}) (interface{}, error) {
+func extractOwnerInfo(releaseName string, items []interface{}) (map[string]string, error) {
 	configMapName := "owner-of-" + releaseName
 
 	//try to find the owner-info ConfigMap among all the manifest items
@@ -125,7 +128,9 @@ func extractOwnerInfo(releaseName string, items []interface{}) (interface{}, err
 		}
 
 		if obj.Kind == "ConfigMap" && obj.Metadata.Name == configMapName {
-			return obj.Data, nil
+			var result map[string]string
+			err = mapstructure.Decode(obj.Data, &result)
+			return result, err
 		}
 	}
 

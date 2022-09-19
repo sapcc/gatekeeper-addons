@@ -13,6 +13,9 @@ binaries:
   - name:        doop-image-checker
     fromPackage: ./doop-image-checker
     installTo:   bin/
+  - name:        helm-manifest-generator
+    fromPackage: ./helm-manifest-generator
+    installTo:   bin/
   - name:        helm-manifest-parser
     fromPackage: ./helm-manifest-parser
     installTo:   bin/

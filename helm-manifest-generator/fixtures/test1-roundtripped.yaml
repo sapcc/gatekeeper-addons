@@ -1,0 +1,29 @@
+items:
+- apiVersion: v1
+  data:
+    foo: bar
+  kind: ConfigMap
+  metadata:
+    name: keks
+- apiVersion: v1
+  data:
+    helm-chart-url: https://example.com
+    maintainers: Jane Doe, Max Mustermann
+    service: bar
+    support-group: foo
+  kind: ConfigMap
+  metadata:
+    name: owner-of-tenso-seeds
+values:
+  global:
+    region: qa-de-1
+owner-info:
+  helm-chart-url: https://example.com
+  maintainers: Jane Doe, Max Mustermann
+  service: bar
+  support-group: foo
+metadata:
+  name: tenso-seeds
+  namespace: tenso
+  status: deployed
+  version: 73
