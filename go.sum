@@ -699,8 +699,8 @@ github.com/ryanrolds/sqlclosecheck v0.3.0/go.mod h1:1gREqxyTGR3lVtpngyFo3hZAgk0K
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
 github.com/sagikazarmark/crypt v0.1.0/go.mod h1:B/mN0msZuINBtQ1zZLEQcegFJJf9vnYIR88KRMEuODE=
 github.com/sanposhiho/wastedassign/v2 v2.0.6/go.mod h1:KyZ0MWTwxxBmfwn33zh3k1dmsbF2ud9pAAGfoLfjhtI=
-github.com/sapcc/go-api-declarations v1.3.0 h1:4FMj0UR+Pydil1cpIewa068w/55mqvg3+/ILy3hGQ0g=
-github.com/sapcc/go-api-declarations v1.3.0/go.mod h1:EA4x5xxJGyG/3JTteUOYBg6cJLJgsBHrDj3ryfNU4dQ=
+github.com/sapcc/go-api-declarations v1.4.0 h1:6X1DYraMthwvrRW1hXyH785Jg7pUXmM2cb6F8RD06ag=
+github.com/sapcc/go-api-declarations v1.4.0/go.mod h1:EA4x5xxJGyG/3JTteUOYBg6cJLJgsBHrDj3ryfNU4dQ=
 github.com/sapcc/go-bits v0.0.0-20220919133313-cbe76a8983ac h1:MsAwYxjc45hgUfStA9xr3VRMKzRscAFBG3O1vqOmL90=
 github.com/sapcc/go-bits v0.0.0-20220919133313-cbe76a8983ac/go.mod h1:rxtXaI5YwlaopZXSED/4GKTz4Azq9mAuywdz+FQ5ns0=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
