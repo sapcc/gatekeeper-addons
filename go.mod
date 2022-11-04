@@ -3,14 +3,14 @@ module github.com/sapcc/gatekeeper-addons
 go 1.19
 
 require (
-	github.com/gofrs/uuid v4.3.0+incompatible
+	github.com/gofrs/uuid v4.3.1+incompatible
 	github.com/google/go-containerregistry v0.12.0
 	github.com/gophercloud/gophercloud v1.0.0
 	github.com/gophercloud/utils v0.0.0-20220927104426-4113af8d2663
 	github.com/gorilla/mux v1.8.0
-	github.com/majewsky/schwift v1.1.0
+	github.com/majewsky/schwift v1.2.0
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/prometheus/client_golang v1.13.0
+	github.com/prometheus/client_golang v1.13.1
 	github.com/sapcc/go-api-declarations v1.4.1
 	github.com/sapcc/go-bits v0.0.0-20221101210225-82a3f52a69ee
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
