@@ -11,8 +11,8 @@ require (
 	github.com/majewsky/schwift v1.1.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/prometheus/client_golang v1.13.0
-	github.com/sapcc/go-api-declarations v1.4.0
-	github.com/sapcc/go-bits v0.0.0-20221014034219-692408a2c3e8
+	github.com/sapcc/go-api-declarations v1.4.1
+	github.com/sapcc/go-bits v0.0.0-20221101210225-82a3f52a69ee
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.23.6
