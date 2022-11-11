@@ -37,8 +37,9 @@ import (
 	"github.com/sapcc/go-api-declarations/bininfo"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
-	wsk "github.com/wercker/stern/kubernetes"
 	"k8s.io/client-go/rest"
+
+	k8sinternal "github.com/sapcc/gatekeeper-addons/internal/kubernetes"
 )
 
 var (
@@ -100,7 +101,7 @@ func main() {
 	//initialize Kubernetes client
 	var clientConfig *rest.Config
 	if *flagKubeconfig != "" {
-		clientConfig, err = wsk.NewClientConfig(*flagKubeconfig, *flagContext).ClientConfig()
+		clientConfig, err = k8sinternal.NewClientConfig(*flagKubeconfig, *flagContext).ClientConfig()
 	} else {
 		clientConfig, err = rest.InClusterConfig()
 	}

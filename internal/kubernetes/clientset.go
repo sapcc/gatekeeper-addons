@@ -12,6 +12,9 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+// Package kubernetes was imported from
+// <https://github.com/wercker/stern/blob/4fa46dd6987fca563d3ab42e61099658f4cade93/kubernetes/clientset.go>,
+// but the imports of Azure auth and GCP auth were dropped to simplify our module dependency graph.
 package kubernetes
 
 import (
@@ -22,8 +25,6 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	// auth providers
-	_ "k8s.io/client-go/plugin/pkg/client/auth/azure"
-	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
 )
 
