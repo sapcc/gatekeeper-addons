@@ -29,7 +29,7 @@ import (
 )
 
 // NewClientConfig returns a new Kubernetes client config set for a context
-func NewClientConfig(configPath string, contextName string) clientcmd.ClientConfig {
+func NewClientConfig(configPath, contextName string) clientcmd.ClientConfig {
 	configPathList := filepath.SplitList(configPath)
 	configLoadingRules := &clientcmd.ClientConfigLoadingRules{}
 	if len(configPathList) <= 1 {
