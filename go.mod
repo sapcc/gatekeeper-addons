@@ -12,7 +12,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/prometheus/client_golang v1.13.1
 	github.com/sapcc/go-api-declarations v1.4.2
-	github.com/sapcc/go-bits v0.0.0-20221104151042-8e590b61fda5
+	github.com/sapcc/go-bits v0.0.0-20221111045434-04255a220839
 	github.com/wercker/stern v0.0.0-20190705090245-4fa46dd6987f
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.23.6
