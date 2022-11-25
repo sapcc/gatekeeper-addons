@@ -5,8 +5,8 @@ go 1.19
 require (
 	github.com/gofrs/uuid v4.3.1+incompatible
 	github.com/google/go-containerregistry v0.12.1
-	github.com/gophercloud/gophercloud v1.0.0
-	github.com/gophercloud/utils v0.0.0-20220927104426-4113af8d2663
+	github.com/gophercloud/gophercloud v1.1.0
+	github.com/gophercloud/utils v0.0.0-20221124081324-7bac6f5cdf99
 	github.com/gorilla/mux v1.8.0
 	github.com/majewsky/schwift v1.2.0
 	github.com/mitchellh/mapstructure v1.5.0
@@ -58,7 +58,7 @@ require (
 	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/oauth2 v0.1.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/term v0.1.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
