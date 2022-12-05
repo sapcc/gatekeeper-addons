@@ -186,7 +186,7 @@ type ViolationInstance struct {
 }
 
 var (
-	supportLabelsRx            = regexp.MustCompile(`^support-group=([a-z0-9]+),service=([a-z0-9]+):\s*`)
+	supportLabelsRx            = regexp.MustCompile(`^support-group=([a-z0-9-]+),service=([a-z0-9-]+):\s*`)
 	helm2ReleaseNameRx         = regexp.MustCompile(`^(.*)\.v\d+$`)
 	helm3ReleaseNameRx         = regexp.MustCompile(`^sh\.helm\.release\.v1\.(.*)(\.v\d+)$`)
 	generatedNamespaceNameRx   = regexp.MustCompile(`^[0-9a-f]{32}$`)
