@@ -95,7 +95,7 @@
               {{ $vgroup.Message | markupPlaceholders }}
             </div>
             <div class="violation-instances {{ if gt (len $vgroup.Instances) 3 }}folded{{ end }}">
-              <div class="unfolder">{{ len $vgroup.Instances }} instances in total <a href="#">(expand)</a></div>
+              {{ if gt (len $vgroup.Instances) 3 }}<div class="unfolder">{{ len $vgroup.Instances }} instances in total <a href="#">(expand)</a></div>{{ end }}
               {{- range $instance := $vgroup.Instances }}
                 {{- $info := index $.ClusterInfos $instance.ClusterName }}
                 <div class="violation-instance" data-layer="{{ $info.Layer }}" data-type="{{ $info.Type }}">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
