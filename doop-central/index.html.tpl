@@ -36,7 +36,7 @@
     <div class="stats">
       {{- range $ctype := $.AllClusterTypes }}
         {{- range $cluster := $.AllClusters }}
-          {{- $info := index $.ClusterInfos $cluster }}
+          {{- $info := index $.APIData.ClusterInfos $cluster }}
           {{- if eq $info.Type $ctype }}
             <table>
               <thead><tr><th class="nobr">{{ $cluster }}</th></tr></thead>
@@ -57,7 +57,7 @@
       {{- end }}
 
       <ul class="violations">
-        {{- range $vgroup := index $.ViolationGroups $kind }}
+        {{- range $vgroup := index $.APIData.ViolationGroups $kind }}
           <li>
             <div class="violation-details">
               {{ $vgroup.Kind }}
@@ -77,7 +77,7 @@
             <div class="violation-instances {{ if gt (len $vgroup.Instances) 3 }}folded{{ end }}">
               {{ if gt (len $vgroup.Instances) 3 }}<div class="unfolder">{{ len $vgroup.Instances }} instances in total <a href="#">(expand)</a></div>{{ end }}
               {{- range $instance := $vgroup.Instances }}
-                {{- $info := index $.ClusterInfos $instance.ClusterName }}
+                {{- $info := index $.APIData.ClusterInfos $instance.ClusterName }}
                 <div class="violation-instance" data-layer="{{ $info.Layer }}" data-type="{{ $info.Type }}">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
               {{- end }}
             </div>

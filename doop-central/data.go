@@ -24,14 +24,19 @@ import (
 	"sort"
 )
 
+// APIData is the data type that is returned by the GET /json and GET /json/all endpoints.
+type APIData struct {
+	ClusterInfos    map[string]ClusterInfo       `json:"clusters"`
+	ViolationGroups map[string][]*ViolationGroup `json:"violation_groups"`
+}
+
 type PreprocessedData struct {
 	ShowAll          bool
 	AllClusters      []string
 	AllClusterLayers []string
 	AllClusterTypes  []string
-	ClusterInfos     map[string]ClusterInfo
 	AllTemplateKinds []string
-	ViolationGroups  map[string][]*ViolationGroup
+	APIData          APIData
 	Docstrings       map[string]template.HTML
 }
 
@@ -42,23 +47,25 @@ func (d *Downloader) retrieveData(showAll bool) (PreprocessedData, error) {
 	}
 
 	data := PreprocessedData{
-		ClusterInfos:    make(map[string]ClusterInfo),
-		ViolationGroups: make(map[string][]*ViolationGroup),
-		ShowAll:         showAll,
+		APIData: APIData{
+			ClusterInfos:    make(map[string]ClusterInfo),
+			ViolationGroups: make(map[string][]*ViolationGroup),
+		},
+		ShowAll: showAll,
 	}
 
 	for clusterName, report := range reports {
 		data.AllClusters = append(data.AllClusters, clusterName)
 		data.AllClusterLayers = append(data.AllClusterLayers, report.Identity.Layer)
 		data.AllClusterTypes = append(data.AllClusterTypes, report.Identity.Type)
-		data.ClusterInfos[clusterName] = report.ToClusterInfo()
-		report.GroupViolationsInto(data.ViolationGroups, clusterName, data.ShowAll)
+		data.APIData.ClusterInfos[clusterName] = report.ToClusterInfo()
+		report.GroupViolationsInto(data.APIData.ViolationGroups, clusterName, data.ShowAll)
 	}
 
 	sort.Strings(data.AllClusters)
 	data.AllClusterLayers = sortAndDedupStrings(data.AllClusterLayers)
 	data.AllClusterTypes = sortAndDedupStrings(data.AllClusterTypes)
-	for kind, violationGroups := range data.ViolationGroups {
+	for kind, violationGroups := range data.APIData.ViolationGroups {
 		data.AllTemplateKinds = append(data.AllTemplateKinds, kind)
 		sortViolationGroups(violationGroups)
 	}

@@ -79,7 +79,7 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 	}
 
 	for _, check := range data.AllTemplateKinds {
-		groupedViolations := data.ViolationGroups[check]
+		groupedViolations := data.APIData.ViolationGroups[check]
 
 		ch <- prometheus.MustNewConstMetric(
 			groupedViolationDesc,
@@ -104,7 +104,7 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 			)
 		}
 	}
-	for cluster, infos := range data.ClusterInfos {
+	for cluster, infos := range data.APIData.ClusterInfos {
 		ch <- prometheus.MustNewConstMetric(
 			auditAgeOldestDesc,
 			prometheus.GaugeValue, infos.AuditAgeSecs,

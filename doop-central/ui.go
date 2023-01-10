@@ -31,6 +31,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/sapcc/go-bits/logg"
+	"github.com/sapcc/go-bits/respondwith"
 )
 
 //go:embed index.html.tpl
@@ -57,6 +58,18 @@ type UI struct {
 func (ui UI) AddTo(r *mux.Router) {
 	r.Methods("HEAD", "GET").Path("/").HandlerFunc(ui.renderMainPage)
 	r.Methods("HEAD", "GET").Path("/all").HandlerFunc(ui.renderMainPage)
+	r.Methods("GET").Path("/json").HandlerFunc(ui.renderAPI)
+	r.Methods("GET").Path("/json/all").HandlerFunc(ui.renderAPI)
+}
+
+// renderAPI is a http.HandleFunc for `GET /json` and `GET /json/all`.
+func (ui UI) renderAPI(w http.ResponseWriter, r *http.Request) {
+	showAll := r.URL.Path == "/json/all"
+	data, err := ui.downloader.retrieveData(showAll)
+	if respondwith.ErrorText(w, err) {
+		return
+	}
+	respondwith.JSON(w, http.StatusOK, data.APIData)
 }
 
 // renderMainPage is a http.HandleFunc for `GET /` and `GET /all`.
@@ -64,8 +77,7 @@ func (ui UI) renderMainPage(w http.ResponseWriter, r *http.Request) {
 	showAll := r.URL.Path == "/all"
 	data, err := ui.downloader.retrieveData(showAll)
 	data.Docstrings = ui.docstrings
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if respondwith.ErrorText(w, err) {
 		return
 	}
 
@@ -121,14 +133,14 @@ func markupPlaceholders(in string) template.HTML {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// report datatypes and structured data for HTML template
+// report datatypes and structured data for API and HTML template
 
 // ClusterInfo contains health information for the Gatekeeper in a certain cluster.
 type ClusterInfo struct {
-	Layer        string
-	Type         string
-	AuditAgeSecs float64
-	AuditStatus  string
+	Layer        string  `json:"layer"`
+	Type         string  `json:"type"`
+	AuditAgeSecs float64 `json:"audit_age_secs"`
+	AuditStatus  string  `json:"audit_status"`
 }
 
 // ToClusterInfo generates the ClusterInfo for this Report.
@@ -161,18 +173,18 @@ func (r Report) ToClusterInfo() ClusterInfo {
 // across objects.
 type ViolationGroup struct {
 	//object metadata
-	Kind        string
-	NamePattern string
-	Namespace   string
+	Kind        string `json:"kind"`
+	NamePattern string `json:"name_pattern"`
+	Namespace   string `json:"namespace"`
 	//violation details
-	Message   string
-	Instances []ViolationInstance
+	Message   string              `json:"msg_pattern"`
+	Instances []ViolationInstance `json:"instances"`
 }
 
 // ViolationInstance appears in type ViolationGroup.
 type ViolationInstance struct {
-	ClusterName string
-	Name        string
+	ClusterName string `json:"cluster"`
+	Name        string `json:"name"`
 }
 
 var (
