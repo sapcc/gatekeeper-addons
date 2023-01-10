@@ -48,6 +48,10 @@ header h1 small a:hover {
   opacity: 1.0;
 }
 
+header form {
+  display: contents;
+}
+
 header input[type=text] {
   flex: 1;
   min-width: 5rem;
@@ -60,39 +64,16 @@ header input[type=text] {
   font-size: 1.2rem;
 }
 
-header div.buttons {
-  display: flex;
-  vertical-align: middle;
+header select {
   margin: 0.6rem 0.25rem;
-  box-shadow: 0 0 3px #CCC;
-}
-header div.buttons button {
-  padding: 0 0.5rem;
   border: 1px solid #999;
-  font-family: inherit;
-  font-weight: normal;
-  font-size: 1.2rem;
-  line-height: calc(1.8rem - 1px);
-  cursor: pointer;
-}
-header div.buttons button:focus, header div.buttons button:hover {
-  border-color: #666;
-  z-index: 10;
-}
-header div.buttons button.selected {
+  padding: 0 0.5rem;
   background: white;
-  font-weight: bold;
-}
-header div.buttons *:first-child {
-  border-top-left-radius: 0.25rem;
-  border-bottom-left-radius: 0.25rem;
-}
-header div.buttons *:last-child {
-  border-top-right-radius: 0.25rem;
-  border-bottom-right-radius: 0.25rem;
-}
-header div.buttons * + * {
-  margin-left: -1px;
+  border-radius: 0.25rem;
+  box-shadow: 0 0 3px #CCC;
+  font-family: inherit;
+  font-size: 1.2rem;
+  line-height: 1.8rem;
 }
 
 /*******************************************************************************

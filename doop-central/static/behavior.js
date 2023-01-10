@@ -32,22 +32,27 @@
     }
   }
 
+  //This reads the search/filter controls in the header.
+  const getSearchAndFilter = () => {
+    const formData = new FormData($("header > form"));
+    const searchTerms = (formData.get("search") || "").toLowerCase().split(/\s+/);
+    formData.delete("search");
+    const filters = [...formData.entries()].filter(pair => pair[1] !== "all");
+    return { filters, searchTerms };
+  };
+
   //This updates the view after a filter or search phrase was set. We will use
   //this in event handlers below.
-  let updateView = () => {
-    //collect filter settings
-    const searchTerms = $("input#search").value.toLowerCase().split(/\s+/);
-    const isSelected = {};
-    for (const button of $$("div.buttons > button")) {
-      isSelected[button.dataset.value] = button.classList.contains("selected");
-    }
+  const updateView = () => {
+    const { filters, searchTerms } = getSearchAndFilter();
+    console.log(`Applying ${JSON.stringify({ "filter": Object.fromEntries(filters), "search": searchTerms })}`);
 
     //foreach violation...
     for (const violation of $$("ul.violations > li")) {
       //...show only if at least once instance remains on screen
       let hasVisibleInstances = false;
       for (const instance of violation.querySelectorAll(".violation-instance")) {
-        const isVisible = isSelected[instance.dataset.layer] && isSelected[instance.dataset.type];
+        const isVisible = filters.every(pair => pair[1] === instance.dataset[pair[0]]);
         if (isVisible) {
           hasVisibleInstances = true;
         }
@@ -75,21 +80,16 @@
     }
   };
 
-  //The event handler for the search box is easy.
-  $("input#search").addEventListener("input", event => updateView());
-
-  //If search terms were carried across reloads (or entered before this script was loaded), update the view immediately.
-  if ($("input#search").value !== "") {
-    updateView();
+  //We need to listen on input events to update the view accordingly.
+  $("header input").addEventListener("input", event => updateView());
+  for (const selector of $$("header select")) {
+    selector.addEventListener("change", event => updateView());
   }
 
-  //For the layer/type filters, we need to toggle them manually.
-  for (const button of $$("div.buttons > button")) {
-    button.addEventListener("click", event => {
-      event.preventDefault();
-      button.classList.toggle("selected");
-      updateView();
-    });
+  //If search terms were carried across reloads (or entered before this script was loaded), update the view immediately.
+  const initial = getSearchAndFilter();
+  if (initial.searchTerms.length > 0 || initial.filters.length > 0) {
+    updateView();
   }
 
   //Foldable sections need a click handler to fold/unfold.

@@ -4,17 +4,21 @@
 
 <header>
   <h1>Decentralized Observer of Policies</h1>
-  <div class="buttons">
-    {{- range $layer := $.AllClusterLayers }}
-      <button type="button" class="selected" data-value="{{ $layer }}">{{ $layer | titlecase }}</button>
-    {{- end }}
-  </div>
-  <div class="buttons">
-    {{- range $type := $.AllClusterTypes }}
-      <button type="button" class="selected" data-value="{{ $type }}">{{ $type | titlecase }}</button>
-    {{- end }}
-  </div>
-  <input id="search" autofocus type="text" placeholder="Search">
+  <form>
+    <select name="layer">
+      <option value="all" selected>All regions</option>
+      {{- range $layer := $.AllClusterLayers }}
+        <option value="{{ $layer }}">{{ $layer | titlecase }}</option>
+      {{- end }}
+    </select>
+    <select name="type">
+      <option value="all" selected>All clusters</option>
+      {{- range $type := $.AllClusterTypes }}
+        <option value="{{ $type }}">{{ $type | titlecase }}</option>
+      {{- end }}
+    </select>
+    <input name="search" id="search" autofocus type="text" placeholder="Search">
+  </form>
 </header>
 
 <main>
