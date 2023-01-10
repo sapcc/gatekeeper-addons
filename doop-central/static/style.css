@@ -165,8 +165,17 @@ span.collation-variable {
 }
 
 /*******************************************************************************
- * table styling
+ * table styling <div class="stats">
  */
+
+div.stats {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 0 -0.5rem 0;
+}
+div.stats > table {
+  margin: 0 0.5rem 0.5rem 0;
+}
 
 .nobr {
   white-space: nowrap;

@@ -125,12 +125,10 @@ func markupPlaceholders(in string) template.HTML {
 
 // ClusterInfo contains health information for the Gatekeeper in a certain cluster.
 type ClusterInfo struct {
-	Layer               string
-	Type                string
-	OldestAuditAgeSecs  float64
-	OldestAuditCSSClass string
-	NewestAuditAgeSecs  float64
-	NewestAuditCSSClass string
+	Layer        string
+	Type         string
+	AuditAgeSecs float64
+	AuditStatus  string
 }
 
 // ToClusterInfo generates the ClusterInfo for this Report.
@@ -143,28 +141,20 @@ func (r Report) ToClusterInfo() ClusterInfo {
 	for _, rt := range r.Templates {
 		for _, rc := range rt.Configs {
 			auditAgeSecs := now.Sub(rc.AuditAt).Seconds()
-			if info.OldestAuditAgeSecs == 0 || info.OldestAuditAgeSecs < auditAgeSecs {
-				info.OldestAuditAgeSecs = auditAgeSecs
-			}
-			if info.NewestAuditAgeSecs == 0 || info.NewestAuditAgeSecs > auditAgeSecs {
-				info.NewestAuditAgeSecs = auditAgeSecs
+			if info.AuditAgeSecs == 0 || info.AuditAgeSecs < auditAgeSecs {
+				info.AuditAgeSecs = auditAgeSecs
 			}
 		}
 	}
 
-	info.OldestAuditCSSClass = cssClassForAge(info.OldestAuditAgeSecs)
-	info.NewestAuditCSSClass = cssClassForAge(info.NewestAuditAgeSecs)
+	info.AuditStatus = "ok"
+	if info.AuditAgeSecs >= 300 {
+		info.AuditStatus = "warning"
+	}
+	if info.AuditAgeSecs >= 900 {
+		info.AuditStatus = "danger"
+	}
 	return info
-}
-
-func cssClassForAge(ageSecs float64) string {
-	if ageSecs >= 900 {
-		return "value-danger"
-	}
-	if ageSecs >= 300 {
-		return "value-warning"
-	}
-	return "value-ok"
 }
 
 // ViolationGroup is a group of mostly identical violations across clusters and

@@ -44,14 +44,6 @@ var GroupedViolationGauge = prometheus.NewGaugeVec(
 	[]string{"check"},
 )
 
-var AuditAgeNewestGauge = prometheus.NewGaugeVec(
-	prometheus.GaugeOpts{
-		Name: "doop_newest_audit_age_seconds",
-		Help: "Data age for each cluster",
-	},
-	[]string{"cluster"},
-)
-
 var AuditAgeOldestGauge = prometheus.NewGaugeVec(
 	prometheus.GaugeOpts{
 		Name: "doop_oldest_audit_age_seconds",
@@ -66,8 +58,6 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 	rawViolationsDesc := <-descCh
 	GroupedViolationGauge.Describe(descCh)
 	groupedViolationDesc := <-descCh
-	AuditAgeNewestGauge.Describe(descCh)
-	auditAgeNewestDesc := <-descCh
 	AuditAgeOldestGauge.Describe(descCh)
 	auditAgeOldestDesc := <-descCh
 
@@ -116,13 +106,8 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 	}
 	for cluster, infos := range data.ClusterInfos {
 		ch <- prometheus.MustNewConstMetric(
-			auditAgeNewestDesc,
-			prometheus.GaugeValue, infos.NewestAuditAgeSecs,
-			cluster,
-		)
-		ch <- prometheus.MustNewConstMetric(
 			auditAgeOldestDesc,
-			prometheus.GaugeValue, infos.OldestAuditAgeSecs,
+			prometheus.GaugeValue, infos.AuditAgeSecs,
 			cluster,
 		)
 	}
@@ -131,6 +116,5 @@ func (ui UI) Collect(ch chan<- prometheus.Metric) {
 func (ui UI) Describe(ch chan<- *prometheus.Desc) {
 	RawViolationsGauge.Describe(ch)
 	GroupedViolationGauge.Describe(ch)
-	AuditAgeNewestGauge.Describe(ch)
 	AuditAgeOldestGauge.Describe(ch)
 }
