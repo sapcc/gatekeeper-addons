@@ -17,6 +17,24 @@
         <option value="{{ $type }}">{{ $type | titlecase }}</option>
       {{- end }}
     </select>
+    <select name="supportGroup">
+      <option value="all" selected>All support groups</option>
+      <option value="none">No support group</option>
+      {{- range $support_group := $.AllSupportGroups }}
+        {{- if ne $support_group "none" }}
+          <option value="{{ $support_group }}">{{ $support_group }}</option>
+        {{- end }}
+      {{- end }}
+    </select>
+    <select name="service">
+      <option value="all" selected>All services</option>
+      <option value="none">No service</option>
+      {{- range $service := $.AllServiceLabels }}
+        {{- if ne $service "none" }}
+          <option value="{{ $service }}">{{ $service }}</option>
+        {{- end }}
+      {{- end }}
+    </select>
     <input name="search" id="search" autofocus type="text" placeholder="Search">
   </form>
 </header>
@@ -64,10 +82,10 @@
         {{- range $vgroup := index $.APIData.ViolationGroups $kind }}
           <li>
             <div class="violation-details">
-              {{- if $vgroup.SupportGroupLabel -}}
+              {{- if ne $vgroup.SupportGroupLabel "none" -}}
                 <span class="support-labels">
                   <span class="support-group">{{ $vgroup.SupportGroupLabel }}</span>
-                  {{- if $vgroup.ServiceLabel -}}<span class="service">{{ $vgroup.ServiceLabel }}</span>{{- end -}}
+                  {{- if ne $vgroup.ServiceLabel "none" -}}<span class="service">{{ $vgroup.ServiceLabel }}</span>{{- end -}}
                 </span>
               {{- end }}
               {{ $vgroup.Kind }}

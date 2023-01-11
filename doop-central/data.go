@@ -36,6 +36,8 @@ type PreprocessedData struct {
 	AllClusterLayers []string
 	AllClusterTypes  []string
 	AllTemplateKinds []string
+	AllSupportGroups []string
+	AllServiceLabels []string
 	APIData          APIData
 	Docstrings       map[string]template.HTML
 }
@@ -67,9 +69,15 @@ func (d *Downloader) retrieveData(showAll bool) (PreprocessedData, error) {
 	data.AllClusterTypes = sortAndDedupStrings(data.AllClusterTypes)
 	for kind, violationGroups := range data.APIData.ViolationGroups {
 		data.AllTemplateKinds = append(data.AllTemplateKinds, kind)
+		for _, vg := range violationGroups {
+			data.AllSupportGroups = append(data.AllSupportGroups, vg.SupportGroupLabel)
+			data.AllServiceLabels = append(data.AllServiceLabels, vg.ServiceLabel)
+		}
 		sortViolationGroups(violationGroups)
 	}
 	sort.Strings(data.AllTemplateKinds)
+	data.AllSupportGroups = sortAndDedupStrings(data.AllSupportGroups)
+	data.AllServiceLabels = sortAndDedupStrings(data.AllServiceLabels)
 
 	return data, nil
 }

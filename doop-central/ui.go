@@ -209,16 +209,10 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 	messagePattern := report.Message
 
 	//extract the "support-group=XXX,service=YYY: " prefix
-	supportGroupLabel, serviceLabel := "", ""
+	supportGroupLabel, serviceLabel := "none", "none"
 	match := supportLabelsRx.FindStringSubmatch(messagePattern)
 	if match != nil {
 		supportGroupLabel, serviceLabel, messagePattern = match[1], match[2], match[3]
-		if supportGroupLabel == "none" {
-			supportGroupLabel = ""
-		}
-		if serviceLabel == "none" {
-			serviceLabel = ""
-		}
 	}
 
 	//for now, we ignore the "support-group=XXX,service=YYY: " prefixes entirely;
