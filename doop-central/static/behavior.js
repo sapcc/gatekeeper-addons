@@ -41,6 +41,21 @@
     return { filters, searchTerms };
   };
 
+  //This helper function takes an `ul.violations > li` and checks if the given
+  //search terms appear in its top line (in the `div.violation-details`).
+  const doesViolationMatchSearch = (violation, searchTerms) => {
+    //optimization: if nothing is searched for, show everything
+    if (searchTerms.length === 0) {
+      return true;
+    }
+
+    //optimization: since `innerText` is quite expensive, cache its result as a data attribute
+    const text = (violation.dataset.cachedDetailsText ||= violation.querySelector(".violation-details").innerText.toLowerCase());
+
+    //require all search terms to be present
+    return searchTerms.every(term => text.includes(term));
+  };
+
   //This updates the view after a filter or search phrase was set. We will use
   //this in event handlers below.
   const updateView = () => {
@@ -60,14 +75,7 @@
       }
 
       //...show only if all search terms are found in the top line
-      const text = violation.querySelector(".violation-details").innerText.toLowerCase();
-      let matchesSearch = true;
-      for (const searchTerm of searchTerms) {
-        if (!text.includes(searchTerm)) {
-          matchesSearch = false;
-          break;
-        }
-      }
+      const matchesSearch = doesViolationMatchSearch(violation, searchTerms);
 
       //apply computed visibility
       violation.classList.toggle("hidden", !(matchesSearch && hasVisibleInstances));
