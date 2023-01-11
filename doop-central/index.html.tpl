@@ -64,6 +64,12 @@
         {{- range $vgroup := index $.APIData.ViolationGroups $kind }}
           <li>
             <div class="violation-details">
+              {{- if $vgroup.SupportGroupLabel -}}
+                <span class="support-labels">
+                  <span class="support-group">{{ $vgroup.SupportGroupLabel }}</span>
+                  {{- if $vgroup.ServiceLabel -}}<span class="service">{{ $vgroup.ServiceLabel }}</span>{{- end -}}
+                </span>
+              {{- end }}
               {{ $vgroup.Kind }}
               <strong>
                 {{- if gt (len $vgroup.Instances) 1 -}}
@@ -82,7 +88,7 @@
               {{ if gt (len $vgroup.Instances) 3 }}<div class="unfolder">{{ len $vgroup.Instances }} instances in total <a href="#">(expand)</a></div>{{ end }}
               {{- range $instance := $vgroup.Instances }}
                 {{- $info := index $.APIData.ClusterInfos $instance.ClusterName }}
-                <div class="violation-instance" data-layer="{{ $info.Layer }}" data-type="{{ $info.Type }}">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
+                <div class="violation-instance" data-layer="{{ $info.Layer }}" data-type="{{ $info.Type }}" data-support-group="{{ $vgroup.SupportGroupLabel }}" data-service="{{ $vgroup.ServiceLabel }}">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
               {{- end }}
             </div>
           </li>

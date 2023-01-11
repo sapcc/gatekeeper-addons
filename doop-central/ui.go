@@ -173,9 +173,11 @@ func (r Report) ToClusterInfo() ClusterInfo {
 // across objects.
 type ViolationGroup struct {
 	//object metadata
-	Kind        string `json:"kind"`
-	NamePattern string `json:"name_pattern"`
-	Namespace   string `json:"namespace"`
+	Kind              string `json:"kind"`
+	NamePattern       string `json:"name_pattern"`
+	Namespace         string `json:"namespace"`
+	SupportGroupLabel string `json:"support_group"`
+	ServiceLabel      string `json:"service"`
 	//violation details
 	Message   string              `json:"msg_pattern"`
 	Instances []ViolationInstance `json:"instances"`
@@ -188,7 +190,7 @@ type ViolationInstance struct {
 }
 
 var (
-	supportLabelsRx            = regexp.MustCompile(`^support-group=([a-z0-9-]+),service=([a-z0-9-]+):\s*`)
+	supportLabelsRx            = regexp.MustCompile(`^support-group=([a-z0-9-]+),service=([a-z0-9-]+):\s*(.*)$`)
 	helm2ReleaseNameRx         = regexp.MustCompile(`^(.*)\.v\d+$`)
 	helm3ReleaseNameRx         = regexp.MustCompile(`^sh\.helm\.release\.v1\.(.*)(\.v\d+)$`)
 	generatedNamespaceNameRx   = regexp.MustCompile(`^[0-9a-f]{32}$`)
@@ -205,6 +207,19 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 	namePattern := report.Name
 	namespacePattern := report.Namespace
 	messagePattern := report.Message
+
+	//extract the "support-group=XXX,service=YYY: " prefix
+	supportGroupLabel, serviceLabel := "", ""
+	match := supportLabelsRx.FindStringSubmatch(messagePattern)
+	if match != nil {
+		supportGroupLabel, serviceLabel, messagePattern = match[1], match[2], match[3]
+		if supportGroupLabel == "none" {
+			supportGroupLabel = ""
+		}
+		if serviceLabel == "none" {
+			serviceLabel = ""
+		}
+	}
 
 	//for now, we ignore the "support-group=XXX,service=YYY: " prefixes entirely;
 	//later this will be changed once adoption is far enough to restructure the
@@ -275,10 +290,12 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 	messagePattern = strings.Replace(messagePattern, regionName, "<region>", -1)
 
 	return ViolationGroup{
-		Kind:        computedKind,
-		NamePattern: namePattern,
-		Namespace:   namespacePattern,
-		Message:     messagePattern,
+		Kind:              computedKind,
+		NamePattern:       namePattern,
+		Namespace:         namespacePattern,
+		SupportGroupLabel: supportGroupLabel,
+		ServiceLabel:      serviceLabel,
+		Message:           messagePattern,
 		Instances: []ViolationInstance{{
 			ClusterName: clusterName,
 			Name:        report.Name,
@@ -290,6 +307,7 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 // can be merged.
 func (vg ViolationGroup) CanMergeWith(other ViolationGroup) bool {
 	return vg.Kind == other.Kind && vg.Namespace == other.Namespace &&
+		vg.SupportGroupLabel == other.SupportGroupLabel && vg.ServiceLabel == other.ServiceLabel &&
 		vg.NamePattern == other.NamePattern && vg.Message == other.Message
 }
 

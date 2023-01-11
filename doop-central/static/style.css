@@ -145,6 +145,29 @@ span.collation-variable {
   padding: 0 0.25rem;
 }
 
+span.support-labels > span {
+  display: inline-block;
+  padding: 0 0.25rem;
+  line-height: 1.3rem;
+  font-size: 0.8rem;
+}
+span.support-labels > span:first-child {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+span.support-labels > span:last-child {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+span.support-labels > span.support-group {
+  background: #66C;
+  color: white;
+}
+span.support-labels > span.service {
+  background: #CCF;
+  color: black;
+}
+
 /*******************************************************************************
  * table styling <div class="stats">
  */
