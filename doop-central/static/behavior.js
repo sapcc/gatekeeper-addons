@@ -96,7 +96,6 @@
     if (searchTerms.length > 0) {
       url.searchParams.set("search", searchTerms.join(" "));
     }
-    console.log({ computed: url.toString(), current: window.location.toString() });
     if (url.toString() !== window.location.toString()) {
       window.history.pushState({}, "", url);
     }
@@ -130,6 +129,9 @@
   //We need to listen on popstate events to update the filters accordingly.
   window.addEventListener("popstate", event => updateFiltersFromURL());
   updateFiltersFromURL(); //to reflect initial settings
+
+  //The <form> does not need to be submitted, it's just for collecting values from the input fields.
+  $("header > form").addEventListener("submit", event => event.preventDefault());
 
   //Foldable sections need a click handler to fold/unfold.
   for (const section of $$("section")) {
