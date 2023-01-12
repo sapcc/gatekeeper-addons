@@ -32,10 +32,10 @@
     }
   }
 
-  //This reads the search/filter controls in the header.
+  //This reads the search/filter controls in the <header>.
   const getSearchAndFilter = () => {
     const formData = new FormData($("header > form"));
-    const searchTerms = (formData.get("search") || "").toLowerCase().split(/\s+/);
+    const searchTerms = (formData.get("search") || "").toLowerCase().split(/\s+/).filter(s => s !== "");
     formData.delete("search");
     const filters = [...formData.entries()].filter(pair => pair[1] !== "all");
     return { filters, searchTerms };
@@ -86,6 +86,39 @@
       const isHidden = section.querySelectorAll("ul.violations > li:not(.hidden)").length == 0;
       section.classList.toggle("hidden", isHidden);
     }
+
+    //encode current filter state into URL
+    const url = new URL(window.location);
+    url.search = "";
+    for (const [key, value] of filters) {
+      url.searchParams.set(key, value);
+    }
+    if (searchTerms.length > 0) {
+      url.searchParams.set("search", searchTerms.join(" "));
+    }
+    console.log({ computed: url.toString(), current: window.location.toString() });
+    if (url.toString() !== window.location.toString()) {
+      window.history.pushState({}, "", url);
+    }
+  };
+
+  //This updates the <header> after a popstate event.
+  const updateFiltersFromURL = () => {
+    const url = new URL(window.location);
+
+    for (const selectBox of $$("header > form select")) {
+      const value = url.searchParams.get(selectBox.name) || "all";
+      //only apply values that are valid
+      if ([...selectBox.options].some(o => o.value == value)) {
+        selectBox.value = value;
+      } else {
+        selectBox.value = "all";
+      }
+    }
+    $("header > form input[type=text]").value = url.searchParams.get("search") || "";
+
+    //apply the changed filters
+    updateView();
   };
 
   //We need to listen on input events to update the view accordingly.
@@ -94,11 +127,9 @@
     selector.addEventListener("change", event => updateView());
   }
 
-  //If search terms were carried across reloads (or entered before this script was loaded), update the view immediately.
-  const initial = getSearchAndFilter();
-  if (initial.searchTerms.length > 0 || initial.filters.length > 0) {
-    updateView();
-  }
+  //We need to listen on popstate events to update the filters accordingly.
+  window.addEventListener("popstate", event => updateFiltersFromURL());
+  updateFiltersFromURL(); //to reflect initial settings
 
   //Foldable sections need a click handler to fold/unfold.
   for (const section of $$("section")) {
