@@ -2,6 +2,10 @@
 <title>DOOP: Decentralized Observer of Policies</title>
 <link rel="stylesheet" href="/static/style.css">
 
+<div class="loading-overlay">
+  Loading...
+</div>
+
 <header>
   <h1>Decentralized Observer of Policies</h1>
   <form>

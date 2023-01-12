@@ -139,4 +139,7 @@
     });
   }
 
+  //Now we're ready to remove the "Loading..." overlay.
+  $(".loading-overlay").remove();
+
 })();

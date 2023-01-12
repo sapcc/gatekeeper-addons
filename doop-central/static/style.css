@@ -10,6 +10,20 @@ html {
   background-position: bottom 1rem right 1rem;
 }
 
+div.loading-overlay {
+  position: fixed;
+  top: 3rem;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-top: 40vh;
+  background: rgba(255,255,255,80%);
+  backdrop-filter: blur(3px);
+  text-align: center;
+  font-size: 3rem;
+  font-weight: bold;
+}
+
 /*******************************************************************************
  * header
  */
