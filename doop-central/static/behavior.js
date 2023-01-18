@@ -135,7 +135,7 @@
 
   //Foldable sections need a click handler to fold/unfold.
   for (const section of $$("section")) {
-    section.querySelector("section > h2").addEventListener("click", event => {
+    section.querySelector("section > h2 > span.folding-button").addEventListener("click", event => {
       event.preventDefault();
       section.classList.toggle("folded");
     });

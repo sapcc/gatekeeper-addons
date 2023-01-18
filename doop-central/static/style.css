@@ -228,23 +228,32 @@ table td.value-danger {
  * foldable sections
  */
 
-section > h2 {
+section > h2 > span.folding-button {
   cursor: pointer;
 }
-section > h2:hover {
+section > h2 > span.folding-button:hover {
   background: #EEE;
 }
 
-section > h2:before {
+section > h2 > span.folding-button:before {
   content: '\2B9F';
   display: inline-block;
   width: 2rem;
 }
 
-section.folded > h2:before {
+section.folded > h2 > span.folding-button:before {
   content: '\2B9E';
 }
 
 section.folded > :not(h2) {
   display: none;
+}
+section.folded > h2 > :not(span.folding-button) {
+  display: none;
+}
+
+section > h2 > span.source-refs {
+  font-weight: normal;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
 }

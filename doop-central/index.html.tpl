@@ -57,7 +57,7 @@
   </p>
 
   <section class="folded">
-    <h2>Gatekeeper stats (Audit age)</h2>
+    <h2><span class="folding-button">Gatekeeper stats (Audit age)</span></h2>
 
     <div class="stats">
       {{- range $ctype := $.AllClusterTypes }}
@@ -76,7 +76,33 @@
 
   {{- range $kind := $.AllTemplateKinds }}
     <section class="check">
-      <h2>Check: {{ $kind }}</h2>
+      <h2>
+        <span class="folding-button">Check: {{ $kind }}</span>
+        <span class="source-refs">
+          {{- $urls := (index $.APIData.KindInfos $kind).TemplateSources }}
+          {{- if eq (len $urls) 1 }}
+            Template:
+          {{- else if gt (len $urls) 1 }}
+            Templates:
+          {{- end }}
+          {{- range $idx, $url := $urls }}
+            {{- if gt $idx 0 }},{{ end }}
+            <a href="{{ $url }}">{{ basenameAndTrim "constrainttemplate-" $url ".yaml" }}</a>
+          {{- end }}
+        </span>
+        <span class="source-refs">
+          {{- $urls := (index $.APIData.KindInfos $kind).ConstraintSources }}
+          {{- if eq (len $urls) 1 }}
+            Constraint:
+          {{- else if gt (len $urls) 1 }}
+            Constraints:
+          {{- end }}
+          {{- range $idx, $url := $urls }}
+            {{- if gt $idx 0 }},{{ end }}
+            <a href="{{ $url }}">{{ basenameAndTrim "constraint-" $url ".yaml" }}</a>
+          {{- end }}
+        </span>
+      </h2>
 
       {{- if index $.Docstrings $kind }}
         <blockquote>{{ index $.Docstrings $kind }}</blockquote>

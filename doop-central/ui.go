@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"path"
 	"regexp"
 	"sort"
 	"strings"
@@ -42,6 +43,7 @@ var (
 	funcMap      = template.FuncMap{
 		"titlecase":          titlecase,
 		"markupPlaceholders": markupPlaceholders,
+		"basenameAndTrim":    basenameAndTrim,
 	}
 )
 
@@ -95,6 +97,13 @@ func titlecase(in string) string {
 		return "QA"
 	}
 	return strings.Title(in) //nolint:staticcheck //ignore SA1019: this function is still good for ASCII-only inputs
+}
+
+func basenameAndTrim(prefix, text, suffix string) string {
+	text = path.Base(text)
+	text = strings.TrimPrefix(text, prefix)
+	text = strings.TrimSuffix(text, suffix)
+	return text
 }
 
 func sortAndDedupStrings(vals []string) []string {
@@ -171,8 +180,8 @@ func (r Report) ToClusterInfo() ClusterInfo {
 
 // KindInfo contains structured metadata for a certain kind of constraint template.
 type KindInfo struct {
-	TemplateSources   []string `json:"template_sources"`
-	ConstraintSources []string `json:"constraint_sources"`
+	TemplateSources   []string `json:"template_source_urls"`
+	ConstraintSources []string `json:"constraint_source_urls"`
 }
 
 func (k *KindInfo) addTemplateSource(src string) {
