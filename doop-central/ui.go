@@ -169,6 +169,32 @@ func (r Report) ToClusterInfo() ClusterInfo {
 	return info
 }
 
+// KindInfo contains structured metadata for a certain kind of constraint template.
+type KindInfo struct {
+	TemplateSources   []string `json:"template_sources"`
+	ConstraintSources []string `json:"constraint_sources"`
+}
+
+func (k *KindInfo) addTemplateSource(src string) {
+	for _, existing := range k.TemplateSources {
+		if existing == src {
+			return
+		}
+	}
+	k.TemplateSources = append(k.TemplateSources, src)
+	sort.Strings(k.TemplateSources)
+}
+
+func (k *KindInfo) addConstraintSource(src string) {
+	for _, existing := range k.ConstraintSources {
+		if existing == src {
+			return
+		}
+	}
+	k.ConstraintSources = append(k.ConstraintSources, src)
+	sort.Strings(k.ConstraintSources)
+}
+
 // ViolationGroup is a group of mostly identical violations across clusters and
 // across objects.
 type ViolationGroup struct {
@@ -307,19 +333,31 @@ func (vg ViolationGroup) CanMergeWith(other ViolationGroup) bool {
 
 // GroupViolationsInto processes the violations in this report into
 // ViolationGroups, sorted by template kind.
-func (r Report) GroupViolationsInto(violationGroups map[string][]*ViolationGroup, clusterName string, showAll bool) {
+func (r Report) GroupViolationsInto(apiData APIData, clusterName string, showAll bool) {
 	for _, rt := range r.Templates {
 		for _, rc := range rt.Configs {
 			if !showAll && rc.Labels["on-prod-ui"] != "true" {
 				continue
 			}
+
+			//collect source backrefs from this config
+			if apiData.KindInfos[rt.Kind] == nil {
+				apiData.KindInfos[rt.Kind] = &KindInfo{}
+			}
+			if sourceStr := rc.Annotations["template-source"]; sourceStr != "" {
+				apiData.KindInfos[rt.Kind].addTemplateSource(sourceStr)
+			}
+			if sourceStr := rc.Annotations["constraint-source"]; sourceStr != "" {
+				apiData.KindInfos[rt.Kind].addConstraintSource(sourceStr)
+			}
+
 		VIOLATION:
 			for _, rv := range rc.Violations {
 				//start with a fresh violation group for this violation...
 				vgNew := NewViolationGroup(rv, clusterName)
 
 				//...but prefer to merge it with an existing group
-				for _, vgOld := range violationGroups[rt.Kind] {
+				for _, vgOld := range apiData.ViolationGroups[rt.Kind] {
 					if vgOld.CanMergeWith(vgNew) {
 						vgOld.Instances = append(vgOld.Instances, vgNew.Instances...)
 						continue VIOLATION
@@ -327,7 +365,7 @@ func (r Report) GroupViolationsInto(violationGroups map[string][]*ViolationGroup
 				}
 
 				//otherwise it gets inserted on its own
-				violationGroups[rt.Kind] = append(violationGroups[rt.Kind], &vgNew)
+				apiData.ViolationGroups[rt.Kind] = append(apiData.ViolationGroups[rt.Kind], &vgNew)
 			}
 		}
 	}
