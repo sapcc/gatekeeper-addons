@@ -38,8 +38,6 @@ githubWorkflow:
   ci:
     enabled: true
     coveralls: true
-    postgres:
-      enabled: true
   license:
     enabled: true
   securityChecks:
