@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/google/go-containerregistry v0.13.0
-	github.com/gophercloud/gophercloud v1.1.1
+	github.com/gophercloud/gophercloud v1.2.0
 	github.com/gophercloud/utils v0.0.0-20221207145018-e8fba78967ca
 	github.com/gorilla/mux v1.8.0
 	github.com/majewsky/schwift v1.2.0
