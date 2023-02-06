@@ -110,7 +110,7 @@
 
       <ul class="violations">
         {{- range $vgroup := index $.APIData.ViolationGroups $kind }}
-          <li>
+          <li class="{{ if ge (len $vgroup.Instances) 3 }}many-instances{{ end }}">
             <div class="violation-details">
               {{- if ne $vgroup.SupportGroupLabel "none" -}}
                 <span class="support-labels">
@@ -132,12 +132,13 @@
               {{- end }}:
               {{ $vgroup.Message | markupPlaceholders }}
             </div>
-            <div class="violation-instances {{ if gt (len $vgroup.Instances) 3 }}folded{{ end }}">
-              {{ if gt (len $vgroup.Instances) 3 }}<div class="unfolder">{{ len $vgroup.Instances }} instances in total <a href="#">(expand)</a></div>{{ end }}
-              {{- range $instance := $vgroup.Instances }}
-                {{- $info := index $.APIData.ClusterInfos $instance.ClusterName }}
-                <div class="violation-instance" data-layer="{{ $info.Layer }}" data-type="{{ $info.Type }}" data-support-group="{{ $vgroup.SupportGroupLabel }}" data-service="{{ $vgroup.ServiceLabel }}">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
-              {{- end }}
+            <div class="violation-instances-container">
+              <div class="violation-instances">
+                {{- range $instance := $vgroup.Instances }}
+                  {{- $info := index $.APIData.ClusterInfos $instance.ClusterName }}
+                  <div class="violation-instance" data-layer="{{ $info.Layer }}" data-type="{{ $info.Type }}" data-support-group="{{ $vgroup.SupportGroupLabel }}" data-service="{{ $vgroup.ServiceLabel }}">{{ $instance.ClusterName }}: {{ $instance.Name }}</div>
+                {{- end }}
+              </div>
             </div>
           </li>
         {{- end }}

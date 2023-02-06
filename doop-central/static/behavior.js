@@ -21,17 +21,6 @@
   var $ = selector => document.querySelector(selector);
   var $$ = selector => document.querySelectorAll(selector);
 
-  //Long lists of violation instances get folded by default. This is the
-  //behavior for the unfold button.
-  for (const list of $$(".violation-instances")) {
-    for (const button of list.querySelectorAll(".unfolder a")) {
-      button.addEventListener("click", event => {
-        event.preventDefault();
-        list.classList.remove("folded");
-      });
-    }
-  }
-
   //This reads the search/filter controls in the <header>.
   const getSearchAndFilter = () => {
     const formData = new FormData($("header > form"));
@@ -65,11 +54,11 @@
     //foreach violation...
     for (const violation of $$("ul.violations > li")) {
       //...show only if at least once instance remains on screen
-      let hasVisibleInstances = false;
+      let visibleInstances = 0;
       for (const instance of violation.querySelectorAll(".violation-instance")) {
         const isVisible = filters.every(pair => pair[1] === instance.dataset[pair[0]]);
         if (isVisible) {
-          hasVisibleInstances = true;
+          visibleInstances += 1;
         }
         instance.classList.toggle("hidden", !isVisible);
       }
@@ -78,7 +67,8 @@
       const matchesSearch = doesViolationMatchSearch(violation, searchTerms);
 
       //apply computed visibility
-      violation.classList.toggle("hidden", !(matchesSearch && hasVisibleInstances));
+      violation.classList.toggle("hidden", !(matchesSearch && visibleInstances > 0));
+      violation.classList.toggle("many-instances", matchesSearch && visibleInstances >= 3);
     }
 
     //hide checks that have all violations hidden

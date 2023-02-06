@@ -22,6 +22,7 @@ div.loading-overlay {
   text-align: center;
   font-size: 3rem;
   font-weight: bold;
+  z-index: 10;
 }
 
 /*******************************************************************************
@@ -42,6 +43,7 @@ header {
   display: flex;
   white-space: nowrap;
   box-shadow: 0 0 5px #333;
+  z-index: 10;
 }
 
 header h1 {
@@ -135,21 +137,49 @@ ul.violations {
   list-style: none;
 }
 
-ul.violations li div.violation-instances {
+ul.violations li div.violation-instances-container {
+  width: fit-content;
   margin: 0.5rem 0 1rem 1rem;
   font-size: 0.8rem;
   color: #333;
 }
 
-.hidden {
+.hidden { /* for violation instances that are dynamically hidden with JS */
   display: none;
 }
 
-ul.violations li div.violation-instances:not(.folded) div.unfolder {
-  display: none;
+div.violation-instances-container {
+  max-height: 3.5rem;
+  overflow: hidden;
+  position: relative;
 }
-ul.violations li div.violation-instances.folded div.violation-instance {
-  display: none;
+div.violation-instances-container:hover {
+  overflow: visible;
+  z-index: 1;
+}
+
+div.violation-instances {
+  white-space: nowrap;
+  width: fit-content;
+  padding: 0.25rem 0.5rem;
+  background: white;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+li.many-instances > div.violation-instances-container:hover > div.violation-instances {
+  background: #DDF;
+  box-shadow: 0 0 5px #AAF;
+  border-color: #AAF;
+}
+div.violation-instances-container:not(:hover) > div.violation-instances:after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(rgba(255,255,255,0.0) 0rem, rgba(255,255,255,0.0) 2.5rem, rgba(255,255,255,1.0) 3.5rem);
 }
 
 span.collation-variable {
