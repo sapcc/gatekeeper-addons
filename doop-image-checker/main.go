@@ -172,7 +172,7 @@ func respondWithHeaderJSON(w http.ResponseWriter, hdr http.Header) {
 	for k, v := range hdr {
 		data[http.CanonicalHeaderKey(k)] = v[0]
 	}
-	buf, _ := json.Marshal(data) //nolint:errcheck
+	buf, _ := json.Marshal(data) //nolint:errcheck,errchkjson
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(buf) //nolint:errcheck
