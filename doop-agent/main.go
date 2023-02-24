@@ -112,12 +112,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	ctx := httpext.ContextWithSIGINT(context.Background(), 1*time.Second)
-	go func() {
-		err = httpext.ListenAndServeContext(ctx, *flagListenAddress, mux)
-		if err != nil {
-			logg.Fatal(err.Error())
-		}
-	}()
+	go must.Succeed(httpext.ListenAndServeContext(ctx, *flagListenAddress, mux))
 
 	//send a report immediately, then once a minute
 	SendReport(ctx, clientset, swiftObj, identity)

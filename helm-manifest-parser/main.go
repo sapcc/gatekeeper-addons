@@ -31,6 +31,7 @@ import (
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
+	"github.com/sapcc/go-bits/must"
 	"github.com/sapcc/go-bits/osext"
 
 	"github.com/sapcc/gatekeeper-addons/internal/helmv3"
@@ -55,10 +56,7 @@ func main() {
 	}
 
 	ctx := httpext.ContextWithSIGINT(context.Background(), shutdownDelay)
-	err := httpext.ListenAndServeContext(ctx, os.Args[1], handler)
-	if err != nil {
-		logg.Fatal(err.Error())
-	}
+	must.Succeed(httpext.ListenAndServeContext(ctx, os.Args[1], handler))
 }
 
 type api struct {
