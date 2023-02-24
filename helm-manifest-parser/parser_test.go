@@ -39,24 +39,24 @@ func TestParseManifests(t *testing.T) {
 
 	for _, tc := range testCases {
 		inBytes, err := os.ReadFile(tc.InputPath)
-		must(t, err)
+		mustT(t, err)
 		outStr, err := tc.Parser(bytes.TrimSpace(inBytes))
-		must(t, err)
+		mustT(t, err)
 
 		//in order to diff(1) with `tc.OutputPath`, we need to apply the same indentation
 		var outBuf bytes.Buffer
-		must(t, json.Indent(&outBuf, []byte(outStr), "", "  "))
+		mustT(t, json.Indent(&outBuf, []byte(outStr), "", "  "))
 		outBuf.WriteString("\n")
-		must(t, os.WriteFile(tc.OutputPath+".actual", outBuf.Bytes(), 0o666))
+		mustT(t, os.WriteFile(tc.OutputPath+".actual", outBuf.Bytes(), 0o666))
 
 		cmd := exec.Command("diff", "-u", tc.OutputPath, tc.OutputPath+".actual") //nolint:gosec // command only executed in tests
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-		must(t, cmd.Run())
+		mustT(t, cmd.Run())
 	}
 }
 
-func must(t *testing.T, err error) {
+func mustT(t *testing.T, err error) {
 	t.Helper()
 	if err != nil {
 		t.Fatal(err.Error())
