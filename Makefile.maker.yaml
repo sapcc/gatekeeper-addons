@@ -20,9 +20,6 @@ binaries:
     fromPackage: ./helm-manifest-parser
     installTo:   bin/
 
-vendoring:
-  enabled: true
-
 dockerfile:
   enabled: true
 
@@ -31,9 +28,6 @@ golangciLint:
 
 githubWorkflow:
   global:
-    assignees:
-      - majewsky
-      - SuperSandro2000
     ignorePaths: [ "**.md" ] # all Markdown files
   ci:
     enabled: true
@@ -46,4 +40,10 @@ githubWorkflow:
     enabled: true
 
 renovate:
+  enabled: true
+  assignees:
+    - majewsky
+    - SuperSandro2000
+
+vendoring:
   enabled: true
