@@ -92,7 +92,7 @@ github.com/google/go-containerregistry/pkg/v1/types
 # github.com/google/gofuzz v1.1.0
 ## explicit; go 1.12
 github.com/google/gofuzz
-# github.com/gophercloud/gophercloud v1.2.0
+# github.com/gophercloud/gophercloud v1.3.0
 ## explicit; go 1.14
 github.com/gophercloud/gophercloud
 github.com/gophercloud/gophercloud/openstack
@@ -189,10 +189,10 @@ github.com/prometheus/common/model
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
-# github.com/sapcc/go-api-declarations v1.4.3
+# github.com/sapcc/go-api-declarations v1.5.0
 ## explicit; go 1.19
 github.com/sapcc/go-api-declarations/bininfo
-# github.com/sapcc/go-bits v0.0.0-20230323091343-206e6dcb3e83
+# github.com/sapcc/go-bits v0.0.0-20230330081034-6c004b82649f
 ## explicit; go 1.19
 github.com/sapcc/go-bits/httpapi
 github.com/sapcc/go-bits/httpext
