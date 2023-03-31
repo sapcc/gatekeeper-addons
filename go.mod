@@ -15,8 +15,8 @@ require (
 	github.com/sapcc/go-api-declarations v1.5.0
 	github.com/sapcc/go-bits v0.0.0-20230330081034-6c004b82649f
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/apimachinery v0.26.1
-	k8s.io/client-go v0.26.1
+	k8s.io/apimachinery v0.26.3
+	k8s.io/client-go v0.26.3
 )
 
 require (
@@ -66,7 +66,7 @@ require (
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.26.1 // indirect
+	k8s.io/api v0.26.3 // indirect
 	k8s.io/klog/v2 v2.80.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20221012153701-172d655c2280 // indirect
 	k8s.io/utils v0.0.0-20221107191617-1a15be271d1d // indirect
