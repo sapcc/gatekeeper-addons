@@ -13,7 +13,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.14.0
 	github.com/sapcc/go-api-declarations v1.5.0
-	github.com/sapcc/go-bits v0.0.0-20230330081034-6c004b82649f
+	github.com/sapcc/go-bits v0.0.0-20230404144215-11076993c8aa
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.26.3
 	k8s.io/client-go v0.26.3
