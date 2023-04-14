@@ -31,7 +31,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/mitchellh/mapstructure"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 
 	"github.com/sapcc/gatekeeper-addons/internal/util"
 )

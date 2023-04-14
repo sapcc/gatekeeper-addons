@@ -24,7 +24,7 @@ import (
 	"os"
 
 	"github.com/sapcc/go-bits/must"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 
 	"github.com/sapcc/gatekeeper-addons/internal/helmv3"
 )
