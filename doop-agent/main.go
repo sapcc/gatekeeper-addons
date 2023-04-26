@@ -62,7 +62,8 @@ type clusterIdentity struct {
 
 func main() {
 	logg.ShowDebug = osext.GetenvBool("DOOP_AGENT_DEBUG")
-	undoMaxprocs := must.Return(maxprocs.Set(maxprocs.Logger(logg.Debug)))
+	undoMaxprocs, err := maxprocs.Set(maxprocs.Logger(logg.Debug))
+	must("setup GOMAXPROCS", err)
 	defer undoMaxprocs()
 
 	prometheus.MustRegister(metricLastSuccessfulReport)
