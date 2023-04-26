@@ -37,10 +37,15 @@ import (
 	"github.com/sapcc/go-bits/logg"
 	"github.com/sapcc/go-bits/must"
 	"github.com/sapcc/go-bits/osext"
+	"go.uber.org/automaxprocs/maxprocs"
 	"gopkg.in/yaml.v2"
 )
 
 func main() {
+	logg.ShowDebug = osext.GetenvBool("DOOP_IMAGE_CHECKER_DEBUG")
+	undoMaxprocs := must.Return(maxprocs.Set(maxprocs.Logger(logg.Debug)))
+	defer undoMaxprocs()
+
 	argCount := len(os.Args)
 	if !(argCount == 2 || argCount == 3) {
 		logg.Fatal("usage: %s <listen-address> [response-config.yaml]", os.Args[0])

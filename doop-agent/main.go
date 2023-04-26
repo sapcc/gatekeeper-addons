@@ -37,6 +37,8 @@ import (
 	"github.com/sapcc/go-api-declarations/bininfo"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
+	"github.com/sapcc/go-bits/osext"
+	"go.uber.org/automaxprocs/maxprocs"
 	"k8s.io/client-go/rest"
 
 	k8sinternal "github.com/sapcc/gatekeeper-addons/internal/kubernetes"
@@ -59,6 +61,10 @@ type clusterIdentity struct {
 }
 
 func main() {
+	logg.ShowDebug = osext.GetenvBool("DOOP_AGENT_DEBUG")
+	undoMaxprocs := must.Return(maxprocs.Set(maxprocs.Logger(logg.Debug)))
+	defer undoMaxprocs()
+
 	prometheus.MustRegister(metricLastSuccessfulReport)
 	prometheus.MustRegister(metricReportDurationSecs)
 

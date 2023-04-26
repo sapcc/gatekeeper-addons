@@ -39,6 +39,7 @@ import (
 	"github.com/sapcc/go-bits/logg"
 	"github.com/sapcc/go-bits/must"
 	"github.com/sapcc/go-bits/osext"
+	"go.uber.org/automaxprocs/maxprocs"
 	"gopkg.in/yaml.v2"
 )
 
@@ -47,6 +48,9 @@ var staticContent embed.FS
 
 func main() {
 	logg.ShowDebug = osext.GetenvBool("DOOP_CENTRAL_DEBUG")
+	undoMaxprocs := must.Return(maxprocs.Set(maxprocs.Logger(logg.Debug)))
+	defer undoMaxprocs()
+
 	if len(os.Args) != 3 {
 		logg.Fatal("usage: %s <listen-address> <docs.yaml>", os.Args[0])
 	}

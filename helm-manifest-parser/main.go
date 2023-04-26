@@ -33,11 +33,16 @@ import (
 	"github.com/sapcc/go-bits/logg"
 	"github.com/sapcc/go-bits/must"
 	"github.com/sapcc/go-bits/osext"
+	"go.uber.org/automaxprocs/maxprocs"
 
 	"github.com/sapcc/gatekeeper-addons/internal/helmv3"
 )
 
 func main() {
+	logg.ShowDebug = osext.GetenvBool("HELM_MANIFEST_PARSER_DEBUG")
+	undoMaxprocs := must.Return(maxprocs.Set(maxprocs.Logger(logg.Debug)))
+	defer undoMaxprocs()
+
 	if len(os.Args) != 2 {
 		logg.Fatal("usage: %s <listen-address>", os.Args[0])
 	}
