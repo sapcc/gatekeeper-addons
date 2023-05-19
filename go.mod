@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/gofrs/uuid v4.4.0+incompatible
-	github.com/google/go-containerregistry v0.15.1
+	github.com/google/go-containerregistry v0.15.2
 	github.com/gophercloud/gophercloud v1.3.0
 	github.com/gophercloud/utils v0.0.0-20230418172808-6eab72e966e1
 	github.com/gorilla/mux v1.8.0
@@ -16,8 +16,8 @@ require (
 	github.com/sapcc/go-bits v0.0.0-20230511083554-fcf45d69f407
 	go.uber.org/automaxprocs v1.5.2
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/apimachinery v0.26.4
-	k8s.io/client-go v0.26.4
+	k8s.io/apimachinery v0.26.5
+	k8s.io/client-go v0.26.5
 )
 
 require (
@@ -70,7 +70,7 @@ require (
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.26.4 // indirect
+	k8s.io/api v0.26.5 // indirect
 	k8s.io/klog/v2 v2.80.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20221012153701-172d655c2280 // indirect
 	k8s.io/utils v0.0.0-20221107191617-1a15be271d1d // indirect
