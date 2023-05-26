@@ -6,7 +6,7 @@ require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/google/go-containerregistry v0.15.2
 	github.com/gophercloud/gophercloud v1.4.0
-	github.com/gophercloud/utils v0.0.0-20230418172808-6eab72e966e1
+	github.com/gophercloud/utils v0.0.0-20230523080330-de873b9cf00d
 	github.com/gorilla/mux v1.8.0
 	github.com/majewsky/schwift v1.2.0
 	github.com/mitchellh/mapstructure v1.5.0
