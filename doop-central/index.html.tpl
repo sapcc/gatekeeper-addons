@@ -6,6 +6,10 @@
   Loading...
 </div>
 
+{{- if .ShowAll }}
+<div id="development-view-marker">Development view</div>
+{{- end }}
+
 <header>
   <h1>Decentralized Observer of Policies</h1>
   <form>
