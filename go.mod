@@ -12,8 +12,8 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.15.1
-	github.com/sapcc/go-api-declarations v1.5.1
-	github.com/sapcc/go-bits v0.0.0-20230609124502-ada8add2e99b
+	github.com/sapcc/go-api-declarations v1.6.0
+	github.com/sapcc/go-bits v0.0.0-20230614140115-83eb3a701632
 	go.uber.org/automaxprocs v1.5.2
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.27.2
