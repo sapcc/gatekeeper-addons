@@ -119,7 +119,7 @@ func sortAndDedupStrings(vals []string) []string {
 	return result
 }
 
-var placeholderRx = regexp.MustCompile(`<(variable|cluster|region)>`)
+var placeholderRx = regexp.MustCompile(`<(variable|index|cluster|region)>`)
 
 func markupPlaceholders(in string) template.HTML {
 	//When grouping violations together (see below), we do certain string
@@ -225,15 +225,16 @@ type ViolationInstance struct {
 }
 
 var (
-	supportLabelsRx            = regexp.MustCompile(`^support-group=([a-z0-9-]+),service=([a-z0-9-]+):\s*(.*)$`)
-	helm2ReleaseNameRx         = regexp.MustCompile(`^(.*)\.v\d+$`)
-	helm3ReleaseNameRx         = regexp.MustCompile(`^sh\.helm\.release\.v1\.(.*)(\.v\d+)$`)
-	generatedNamespaceNameRx   = regexp.MustCompile(`^[0-9a-f]{32}$`)
-	generatedKubernikusUUIDRx  = regexp.MustCompile(`\b[0-9a-f]{32}\b`)
-	generatedPodNameRx         = regexp.MustCompile(`^(.+)-[0-9a-z]{5}$`)
-	generatedReplicasetNameRx  = regexp.MustCompile(`^(.+)-[0-9a-f]{8,10}(-<variable>)?$`)
-	generatedOverlongPodNameRx = regexp.MustCompile(`^(.+)-[0-9a-f]{3,10}[0-9a-z]{5}$`)
-	regionNameInClusterNameRx  = regexp.MustCompile(`^(?:[a-z]-)?(.*)$`)
+	supportLabelsRx                 = regexp.MustCompile(`^support-group=([a-z0-9-]+),service=([a-z0-9-]+):\s*(.*)$`)
+	helm3ReleaseNameRx              = regexp.MustCompile(`^sh\.helm\.release\.v1\.(.*)(\.v\d+)$`)
+	generatedNamespaceNameRx        = regexp.MustCompile(`^[0-9a-f]{32}$`)
+	generatedKubernikusUUIDRx       = regexp.MustCompile(`\b[0-9a-f]{32}\b`)
+	generatedPodNameRx              = regexp.MustCompile(`^(.+)-[0-9a-z]{5}$`)
+	generatedReplicasetNameRx       = regexp.MustCompile(`^(.+)-[0-9a-f]{8,10}(-<variable>)?$`)
+	generatedPodInStatefulsetNameRx = regexp.MustCompile(`^(.+)-[0-9]{1,2}$`)
+	generatedOverlongPodNameRx      = regexp.MustCompile(`^(.+)-[0-9a-f]{3,10}[0-9a-z]{5}$`)
+	generatedCloudShellPodNameRx    = regexp.MustCompile(`^shell-(?:c[0-9]{7}|[di][0-9]{6})$`)
+	regionNameInClusterNameRx       = regexp.MustCompile(`^(?:[a-z]-)?(.*)$`)
 )
 
 // NewViolationGroup creates a fresh group for a reported violation.
@@ -255,16 +256,6 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 	//UI around these categories
 	messagePattern = supportLabelsRx.ReplaceAllString(messagePattern, "")
 
-	//special handling for Helm 2 releases
-	if report.Kind == "ConfigMap" && report.Namespace == "kube-system" {
-		match := helm2ReleaseNameRx.FindStringSubmatch(report.Name)
-		if match != nil {
-			computedKind = "Helm 2 release"
-			namePattern = match[1]
-			namespacePattern = ""
-		}
-	}
-
 	//special handling for Helm 3 releases
 	if report.Kind == "Secret" {
 		match := helm3ReleaseNameRx.FindStringSubmatch(report.Name)
@@ -280,6 +271,10 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 		match := generatedPodNameRx.FindStringSubmatch(namePattern)
 		if match != nil {
 			namePattern = match[1] + "-<variable>"
+		}
+		match = generatedPodInStatefulsetNameRx.FindStringSubmatch(namePattern)
+		if match != nil {
+			namePattern = match[1] + "-<index>"
 		}
 	}
 	if report.Kind == "Pod" || report.Kind == "ReplicaSet" {
@@ -308,6 +303,14 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 	//special case for Kubernikus: merge violations for Kubernikus clusters with the same name that only differ in UUID
 	namePattern = generatedKubernikusUUIDRx.ReplaceAllString(namePattern, "<variable>")
 	messagePattern = generatedKubernikusUUIDRx.ReplaceAllString(messagePattern, "<variable>")
+
+	//special case for cloud-shell: merge violations for pods managed by cloud-shell
+	if report.Namespace == "cloud-shell" {
+		match := generatedCloudShellPodNameRx.FindStringSubmatch(namePattern)
+		if match != nil {
+			namePattern = "shell-<variable>"
+		}
+	}
 
 	//merge violations that only differ in a name or message part that is equal to the cluster name
 	namePattern = strings.Replace(namePattern, clusterName, "<cluster>", -1)
