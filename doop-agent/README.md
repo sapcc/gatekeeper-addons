@@ -10,14 +10,10 @@ The agent itself is completely stateless, but some configuration must be provide
 
 ### Identity
 
-Two positional arguments must be given to classify the cluster where the agent
-is running:
-
-- The first argument ("layer") describes whether this is a productive system or
-  not. Reasonable values include `dev`, `qa`, `prod` or such.
-- The second argument ("type") describes the type of cluster. This depends on
-  the structure of your environment. For SAP CC, we use this to distinguish
-  baremetal from virtualized clusters, among other things.
+A positional argument must be given to classify the cluster where the agent
+is running. The value must be a `map[string]string` serialized as JSON, e.g.
+`{"layer":"prod","type":"admin"}`. The set of keys should be consistent among
+all agents that send reports into the same Swift container.
 
 ### Swift API
 

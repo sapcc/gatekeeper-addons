@@ -55,10 +55,7 @@ var (
 	})
 )
 
-type clusterIdentity struct {
-	Layer string `json:"layer"`
-	Type  string `json:"type"`
-}
+type clusterIdentity map[string]string
 
 func main() {
 	logg.ShowDebug = osext.GetenvBool("DOOP_AGENT_DEBUG")
@@ -83,13 +80,12 @@ func main() {
 		logg.Fatal("missing required option: -object")
 	}
 
-	if flag.NArg() != 2 {
+	if flag.NArg() != 1 {
 		logg.Fatal("need exactly two positional arguments")
 	}
-	identity := clusterIdentity{
-		Layer: flag.Arg(0),
-		Type:  flag.Arg(1),
-	}
+	var identity clusterIdentity
+	err = json.Unmarshal([]byte(flag.Arg(0)), &identity)
+	must("parse cluster identity", err)
 
 	wrap := httpext.WrapTransport(&http.DefaultTransport)
 	wrap.SetOverrideUserAgent(bininfo.Component(), bininfo.VersionOr("rolling"))
