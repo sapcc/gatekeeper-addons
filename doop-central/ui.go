@@ -21,6 +21,7 @@ package main
 
 import (
 	_ "embed"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -208,11 +209,12 @@ func (k *KindInfo) addConstraintSource(src string) {
 // across objects.
 type ViolationGroup struct {
 	//object metadata
-	Kind              string `json:"kind"`
-	NamePattern       string `json:"name_pattern"`
-	Namespace         string `json:"namespace"`
-	SupportGroupLabel string `json:"support_group"`
-	ServiceLabel      string `json:"service"`
+	Kind              string            `json:"kind"`
+	NamePattern       string            `json:"name_pattern"`
+	Namespace         string            `json:"namespace"`
+	ObjectIdentity    map[string]string `json:"object_identity"`
+	SupportGroupLabel string            `json:"support_group"` //TODO: deprecated, remove
+	ServiceLabel      string            `json:"service"`       //TODO: deprecated, remove
 	//violation details
 	Message   string              `json:"msg_pattern"`
 	Instances []ViolationInstance `json:"instances"`
@@ -225,7 +227,8 @@ type ViolationInstance struct {
 }
 
 var (
-	supportLabelsRx                 = regexp.MustCompile(`^support-group=([a-z0-9-]+),service=([a-z0-9-]+):\s*(.*)$`)
+	objectIdentityRx                = regexp.MustCompile(`^(\{.*?\})\s*>>\s*(.*)$`)
+	supportLabelsRx                 = regexp.MustCompile(`^support-group=([a-z0-9-]+),service=([a-z0-9-]+):\s*(.*)$`) //TODO: deprecated, remove
 	helm3ReleaseNameRx              = regexp.MustCompile(`^sh\.helm\.release\.v1\.(.*)(\.v\d+)$`)
 	generatedNamespaceNameRx        = regexp.MustCompile(`^[0-9a-f]{32}$`)
 	generatedKubernikusUUIDRx       = regexp.MustCompile(`\b[0-9a-f]{32}\b`)
@@ -244,17 +247,38 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 	namespacePattern := report.Namespace
 	messagePattern := report.Message
 
-	//extract the "support-group=XXX,service=YYY: " prefix
-	supportGroupLabel, serviceLabel := "none", "none"
-	match := supportLabelsRx.FindStringSubmatch(messagePattern)
+	//extract the object identity prefix
+	var objectIdentity map[string]string
+	match := objectIdentityRx.FindStringSubmatch(messagePattern)
 	if match != nil {
-		supportGroupLabel, serviceLabel, messagePattern = match[1], match[2], match[3]
+		err := json.Unmarshal([]byte(match[1]), &objectIdentity)
+		if err == nil {
+			messagePattern = match[2]
+		} else {
+			objectIdentity = nil
+		}
 	}
 
-	//for now, we ignore the "support-group=XXX,service=YYY: " prefixes entirely;
-	//later this will be changed once adoption is far enough to restructure the
-	//UI around these categories
-	messagePattern = supportLabelsRx.ReplaceAllString(messagePattern, "")
+	//otherwise, extract the "support-group=XXX,service=YYY: " prefix
+	//TODO: deprecated, remove
+	supportGroupLabel, serviceLabel := "none", "none"
+	if objectIdentity != nil {
+		var ok bool
+		supportGroupLabel, ok = objectIdentity["support_group"]
+		if !ok {
+			supportGroupLabel = "none"
+		}
+		serviceLabel, ok = objectIdentity["service"]
+		if !ok {
+			serviceLabel = "none"
+		}
+	} else {
+		match = supportLabelsRx.FindStringSubmatch(messagePattern)
+		if match != nil {
+			supportGroupLabel, serviceLabel, messagePattern = match[1], match[2], match[3]
+			objectIdentity = map[string]string{"support_group": supportGroupLabel, "service": serviceLabel}
+		}
+	}
 
 	//special handling for Helm 3 releases
 	if report.Kind == "Secret" {
@@ -325,6 +349,7 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 		Kind:              computedKind,
 		NamePattern:       namePattern,
 		Namespace:         namespacePattern,
+		ObjectIdentity:    objectIdentity,
 		SupportGroupLabel: supportGroupLabel,
 		ServiceLabel:      serviceLabel,
 		Message:           messagePattern,
