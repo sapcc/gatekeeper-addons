@@ -60,8 +60,8 @@ func (d *Downloader) retrieveData(showAll bool) (PreprocessedData, error) {
 
 	for clusterName, report := range reports {
 		data.AllClusters = append(data.AllClusters, clusterName)
-		data.AllClusterLayers = append(data.AllClusterLayers, report.Identity.Layer)
-		data.AllClusterTypes = append(data.AllClusterTypes, report.Identity.Type)
+		data.AllClusterLayers = append(data.AllClusterLayers, report.ClusterIdentity["layer"])
+		data.AllClusterTypes = append(data.AllClusterTypes, report.ClusterIdentity["type"])
 		data.APIData.ClusterInfos[clusterName] = report.ToClusterInfo()
 		report.GroupViolationsInto(data.APIData, clusterName, data.ShowAll)
 	}

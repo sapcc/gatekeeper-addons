@@ -147,18 +147,20 @@ func markupPlaceholders(in string) template.HTML {
 
 // ClusterInfo contains health information for the Gatekeeper in a certain cluster.
 type ClusterInfo struct {
-	Layer        string  `json:"layer"`
-	Type         string  `json:"type"`
-	AuditAgeSecs float64 `json:"audit_age_secs"`
-	AuditStatus  string  `json:"audit_status"`
+	ClusterIdentity map[string]string `json:"cluster_identity"`
+	Layer           string            `json:"layer"` //TODO: deprecated, remove
+	Type            string            `json:"type"`  //TODO: deprecated, remove
+	AuditAgeSecs    float64           `json:"audit_age_secs"`
+	AuditStatus     string            `json:"audit_status"`
 }
 
 // ToClusterInfo generates the ClusterInfo for this Report.
 func (r Report) ToClusterInfo() ClusterInfo {
 	now := time.Now()
 	info := ClusterInfo{
-		Layer: r.Identity.Layer,
-		Type:  r.Identity.Type,
+		ClusterIdentity: r.ClusterIdentity,
+		Layer:           r.ClusterIdentity["layer"], //TODO: deprecated, remove
+		Type:            r.ClusterIdentity["type"],  //TODO: deprecated, remove
 	}
 	for _, rt := range r.Templates {
 		for _, rc := range rt.Configs {
