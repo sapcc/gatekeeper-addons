@@ -219,14 +219,30 @@ type ViolationGroup struct {
 	SupportGroupLabel string            `json:"support_group"` //TODO: deprecated, remove
 	ServiceLabel      string            `json:"service"`       //TODO: deprecated, remove
 	//violation details
-	Message   string              `json:"msg_pattern"`
-	Instances []ViolationInstance `json:"instances"`
+	Message        string              `json:"msg_pattern"`
+	DocstringIndex *int                `json:"docstring_idx,omitempty"`
+	Instances      []ViolationInstance `json:"instances"`
 }
 
 // ViolationInstance appears in type ViolationGroup.
 type ViolationInstance struct {
 	ClusterName string `json:"cluster"`
 	Name        string `json:"name"`
+}
+
+// DocstringSet is an unordered, deduplicated set of docstrings.
+type DocstringSet []string
+
+// LocateOrInsert returns the index of the given docstring within the set. If
+// the docstring cannot be found in the set, it is added to it.
+func (s *DocstringSet) LocateOrInsert(entry string) int {
+	for idx, val := range *s {
+		if val == entry {
+			return idx
+		}
+	}
+	*s = append(*s, entry)
+	return len(*s) - 1
 }
 
 var (
@@ -244,7 +260,7 @@ var (
 )
 
 // NewViolationGroup creates a fresh group for a reported violation.
-func NewViolationGroup(report ViolationReport, clusterName string) ViolationGroup {
+func NewViolationGroup(report ViolationReport, clusterName string, docstringIndex *int) ViolationGroup {
 	computedKind := report.Kind
 	namePattern := report.Name
 	namespacePattern := report.Namespace
@@ -356,6 +372,7 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 		SupportGroupLabel: supportGroupLabel,
 		ServiceLabel:      serviceLabel,
 		Message:           messagePattern,
+		DocstringIndex:    docstringIndex,
 		Instances: []ViolationInstance{{
 			ClusterName: clusterName,
 			Name:        report.Name,
@@ -366,7 +383,7 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 // CanMergeWith checks if both ViolationGroups are semantically identical and
 // can be merged.
 func (vg ViolationGroup) CanMergeWith(other ViolationGroup) bool {
-	//make explicit copies to compare both
+	//make explicit copies to compare everything on both sides except for the Instances
 	copyOfLHS := vg
 	copyOfLHS.Instances = nil
 	copyOfRHS := other
@@ -376,7 +393,7 @@ func (vg ViolationGroup) CanMergeWith(other ViolationGroup) bool {
 
 // GroupViolationsInto processes the violations in this report into
 // ViolationGroups, sorted by template kind.
-func (r Report) GroupViolationsInto(apiData APIData, clusterName string, showAll bool) {
+func (r Report) GroupViolationsInto(apiData *APIData, clusterName string, showAll bool) {
 	for _, rt := range r.Templates {
 		for _, rc := range rt.Configs {
 			if !showAll && rc.Labels["on-prod-ui"] != "true" {
@@ -393,11 +410,16 @@ func (r Report) GroupViolationsInto(apiData APIData, clusterName string, showAll
 			if sourceStr := rc.Annotations["constraint-source"]; sourceStr != "" {
 				apiData.KindInfos[rt.Kind].addConstraintSource(sourceStr)
 			}
+			var docstringIndex *int
+			if docstring := rc.Annotations["docstring"]; docstring != "" {
+				idx := apiData.DocstringSet.LocateOrInsert(docstring)
+				docstringIndex = &idx
+			}
 
 		VIOLATION:
 			for _, rv := range rc.Violations {
 				//start with a fresh violation group for this violation...
-				vgNew := NewViolationGroup(rv, clusterName)
+				vgNew := NewViolationGroup(rv, clusterName, docstringIndex)
 
 				//...but prefer to merge it with an existing group
 				for _, vgOld := range apiData.ViolationGroups[rt.Kind] {

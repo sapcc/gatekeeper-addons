@@ -29,6 +29,7 @@ type APIData struct {
 	ClusterInfos    map[string]ClusterInfo       `json:"clusters"`
 	KindInfos       map[string]*KindInfo         `json:"kinds"`
 	ViolationGroups map[string][]*ViolationGroup `json:"violation_groups"`
+	DocstringSet    DocstringSet                 `json:"docstrings"`
 }
 
 type PreprocessedData struct {
@@ -63,7 +64,7 @@ func (d *Downloader) retrieveData(showAll bool) (PreprocessedData, error) {
 		data.AllClusterLayers = append(data.AllClusterLayers, report.ClusterIdentity["layer"])
 		data.AllClusterTypes = append(data.AllClusterTypes, report.ClusterIdentity["type"])
 		data.APIData.ClusterInfos[clusterName] = report.ToClusterInfo()
-		report.GroupViolationsInto(data.APIData, clusterName, data.ShowAll)
+		report.GroupViolationsInto(&data.APIData, clusterName, data.ShowAll)
 	}
 
 	sort.Strings(data.AllClusters)
