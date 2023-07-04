@@ -218,6 +218,7 @@ type ViolationGroup struct {
 	ObjectIdentity    map[string]string `json:"object_identity"`
 	SupportGroupLabel string            `json:"support_group"` //TODO: deprecated, remove
 	ServiceLabel      string            `json:"service"`       //TODO: deprecated, remove
+	Severity          string            `json:"severity,omitempty"`
 	//violation details
 	Message        string              `json:"msg_pattern"`
 	DocstringIndex *int                `json:"docstring_idx,omitempty"`
@@ -260,7 +261,7 @@ var (
 )
 
 // NewViolationGroup creates a fresh group for a reported violation.
-func NewViolationGroup(report ViolationReport, clusterName string, docstringIndex *int) ViolationGroup {
+func NewViolationGroup(report ViolationReport, clusterName string, docstringIndex *int, severity string) ViolationGroup {
 	computedKind := report.Kind
 	namePattern := report.Name
 	namespacePattern := report.Namespace
@@ -371,6 +372,7 @@ func NewViolationGroup(report ViolationReport, clusterName string, docstringInde
 		ObjectIdentity:    objectIdentity,
 		SupportGroupLabel: supportGroupLabel,
 		ServiceLabel:      serviceLabel,
+		Severity:          severity,
 		Message:           messagePattern,
 		DocstringIndex:    docstringIndex,
 		Instances: []ViolationInstance{{
@@ -396,8 +398,13 @@ func (vg ViolationGroup) CanMergeWith(other ViolationGroup) bool {
 func (r Report) GroupViolationsInto(apiData *APIData, clusterName string, showAll bool) {
 	for _, rt := range r.Templates {
 		for _, rc := range rt.Configs {
-			if !showAll && rc.Labels["on-prod-ui"] != "true" {
-				continue
+			severity := ""
+			if rc.Labels["on-prod-ui"] != "true" {
+				if showAll {
+					severity = "debug"
+				} else {
+					continue
+				}
 			}
 
 			//collect source backrefs from this config
@@ -419,7 +426,7 @@ func (r Report) GroupViolationsInto(apiData *APIData, clusterName string, showAl
 		VIOLATION:
 			for _, rv := range rc.Violations {
 				//start with a fresh violation group for this violation...
-				vgNew := NewViolationGroup(rv, clusterName, docstringIndex)
+				vgNew := NewViolationGroup(rv, clusterName, docstringIndex, severity)
 
 				//...but prefer to merge it with an existing group
 				for _, vgOld := range apiData.ViolationGroups[rt.Kind] {
