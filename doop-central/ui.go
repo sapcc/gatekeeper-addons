@@ -26,6 +26,7 @@ import (
 	"html/template"
 	"net/http"
 	"path"
+	"reflect"
 	"regexp"
 	"sort"
 	"strings"
@@ -365,9 +366,12 @@ func NewViolationGroup(report ViolationReport, clusterName string) ViolationGrou
 // CanMergeWith checks if both ViolationGroups are semantically identical and
 // can be merged.
 func (vg ViolationGroup) CanMergeWith(other ViolationGroup) bool {
-	return vg.Kind == other.Kind && vg.Namespace == other.Namespace &&
-		vg.SupportGroupLabel == other.SupportGroupLabel && vg.ServiceLabel == other.ServiceLabel &&
-		vg.NamePattern == other.NamePattern && vg.Message == other.Message
+	//make explicit copies to compare both
+	copyOfLHS := vg
+	copyOfLHS.Instances = nil
+	copyOfRHS := other
+	copyOfRHS.Instances = nil
+	return reflect.DeepEqual(copyOfLHS, copyOfRHS)
 }
 
 // GroupViolationsInto processes the violations in this report into
