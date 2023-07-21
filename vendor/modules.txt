@@ -228,6 +228,9 @@ github.com/vbatts/tar-split/archive/tar
 go.uber.org/automaxprocs/internal/cgroups
 go.uber.org/automaxprocs/internal/runtime
 go.uber.org/automaxprocs/maxprocs
+# golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
+## explicit; go 1.20
+golang.org/x/exp/maps
 # golang.org/x/net v0.10.0
 ## explicit; go 1.17
 golang.org/x/net/context

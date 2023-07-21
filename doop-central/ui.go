@@ -26,7 +26,6 @@ import (
 	"html/template"
 	"net/http"
 	"path"
-	"reflect"
 	"regexp"
 	"sort"
 	"strings"
@@ -35,6 +34,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sapcc/go-bits/logg"
 	"github.com/sapcc/go-bits/respondwith"
+	"golang.org/x/exp/maps"
 )
 
 //go:embed index.html.tpl
@@ -385,12 +385,25 @@ func NewViolationGroup(report ViolationReport, clusterName string, docstringInde
 // CanMergeWith checks if both ViolationGroups are semantically identical and
 // can be merged.
 func (vg ViolationGroup) CanMergeWith(other ViolationGroup) bool {
-	//make explicit copies to compare everything on both sides except for the Instances
-	copyOfLHS := vg
-	copyOfLHS.Instances = nil
-	copyOfRHS := other
-	copyOfRHS.Instances = nil
-	return reflect.DeepEqual(copyOfLHS, copyOfRHS)
+	//all fields except for Instances must be equal (NOTE: we are not using
+	//reflect.DeepEqual here because it is too inefficient for this hot function)
+	return vg.Kind == other.Kind &&
+		vg.NamePattern == other.NamePattern &&
+		vg.Namespace == other.Namespace &&
+		maps.Equal(vg.ObjectIdentity, other.ObjectIdentity) &&
+		vg.SupportGroupLabel == other.SupportGroupLabel &&
+		vg.ServiceLabel == other.ServiceLabel &&
+		vg.Severity == other.Severity &&
+		vg.Message == other.Message &&
+		pointerValuesEqual(vg.DocstringIndex, other.DocstringIndex)
+}
+
+// Return whether lhs and rhs are semantically equal (i.e. either both nil or both pointing to equal values).
+func pointerValuesEqual[T comparable](lhs, rhs *T) bool {
+	if lhs == nil {
+		return rhs == nil
+	}
+	return rhs != nil && *lhs == *rhs
 }
 
 // GroupViolationsInto processes the violations in this report into
