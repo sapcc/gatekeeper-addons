@@ -248,7 +248,6 @@ func (s *DocstringSet) LocateOrInsert(entry string) int {
 
 var (
 	objectIdentityRx                = regexp.MustCompile(`^(\{.*?\})\s*>>\s*(.*)$`)
-	supportLabelsRx                 = regexp.MustCompile(`^support-group=([a-z0-9-]+),service=([a-z0-9-]+):\s*(.*)$`) //TODO: deprecated, remove
 	helm3ReleaseNameRx              = regexp.MustCompile(`^sh\.helm\.release\.v1\.(.*)(\.v\d+)$`)
 	generatedNamespaceNameRx        = regexp.MustCompile(`^[0-9a-f]{32}$`)
 	generatedKubernikusUUIDRx       = regexp.MustCompile(`\b[0-9a-f]{32}\b`)
@@ -279,25 +278,14 @@ func NewViolationGroup(report ViolationReport, clusterName string, docstringInde
 		}
 	}
 
-	//otherwise, extract the "support-group=XXX,service=YYY: " prefix
-	//TODO: deprecated, remove
-	supportGroupLabel, serviceLabel := "none", "none"
-	if objectIdentity != nil {
-		var ok bool
-		supportGroupLabel, ok = objectIdentity["support_group"]
-		if !ok {
-			supportGroupLabel = "none"
-		}
-		serviceLabel, ok = objectIdentity["service"]
-		if !ok {
-			serviceLabel = "none"
-		}
-	} else {
-		match = supportLabelsRx.FindStringSubmatch(messagePattern)
-		if match != nil {
-			supportGroupLabel, serviceLabel, messagePattern = match[1], match[2], match[3]
-			objectIdentity = map[string]string{"support_group": supportGroupLabel, "service": serviceLabel}
-		}
+	//fill hardcoded object identity labels (TODO: deprecated, remove)
+	supportGroupLabel, ok := objectIdentity["support_group"]
+	if !ok {
+		supportGroupLabel = "none"
+	}
+	serviceLabel, ok := objectIdentity["service"]
+	if !ok {
+		serviceLabel = "none"
 	}
 
 	//special handling for Helm 3 releases
