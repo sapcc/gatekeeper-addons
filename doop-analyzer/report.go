@@ -73,7 +73,7 @@ type Violation struct {
 }
 
 // GatherReport reads all constraint templates and configs and compiles a report.
-func GatherReport(ctx context.Context, cfg Configuration, cs ClientSet) (Report, error) {
+func GatherReport(ctx context.Context, cfg Configuration, cs ClientSetInterface) (Report, error) {
 	r := Report{ClusterIdentity: cfg.ClusterIdentity}
 
 	templates, err := cs.ListConstraintTemplates(ctx)
@@ -93,7 +93,7 @@ func GatherReport(ctx context.Context, cfg Configuration, cs ClientSet) (Report,
 	return r, nil
 }
 
-func gatherReportForTemplate(ctx context.Context, cs ClientSet, t ConstraintTemplate) (ReportForTemplate, error) {
+func gatherReportForTemplate(ctx context.Context, cs ClientSetInterface, t ConstraintTemplate) (ReportForTemplate, error) {
 	rt := ReportForTemplate{
 		Kind: t.Spec.CRD.Spec.Names.Kind,
 	}

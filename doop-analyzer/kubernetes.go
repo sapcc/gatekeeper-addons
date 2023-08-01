@@ -48,6 +48,13 @@ type ClientSet struct {
 	templatesV1Beta1   dynamic.Interface
 }
 
+// ClientSetInterface contains the methods that ClientSet provides. This
+// interface can be mocked in unit tests.
+type ClientSetInterface interface {
+	ListConstraintTemplates(ctx context.Context) ([]ConstraintTemplate, error)
+	ListConstraints(ctx context.Context, tmpl ConstraintTemplate) ([]Constraint, error)
+}
+
 // NewClientSet builds a ClientSet.
 func NewClientSet(cfg Configuration) (cs ClientSet, err error) {
 	var kcfg *rest.Config
