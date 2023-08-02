@@ -61,6 +61,7 @@ func main() {
 }
 
 func taskRun(ctx context.Context, configPath string) {
+	//TODO do not forget metrics
 	panic("TODO: unimplemented")
 }
 
@@ -73,5 +74,11 @@ func taskCollectOnce(ctx context.Context, configPath string) {
 }
 
 func taskAnalyzeOnce(ctx context.Context, configPath string) {
-	panic("TODO: unimplemented")
+	cfg := must.Return(ReadConfiguration(configPath))
+	cfg.ValidateRules().LogFatalIfError()
+	var report Report
+	must.Succeed(json.NewDecoder(os.Stdin).Decode(&report))
+	report.Process(cfg)
+	buf := must.Return(json.MarshalIndent(report, "", "  "))
+	_ = must.Return(os.Stdout.Write(buf))
 }

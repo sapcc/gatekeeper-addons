@@ -22,6 +22,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"maps"
 	"regexp"
 )
 
@@ -43,8 +44,8 @@ type ReportForConstraint struct {
 	Metadata MetadataForConstraint `json:"metadata"`
 	// Before processing, Violations is filled and ViolationGroups is nil.
 	// After processing, Violations is nil and ViolationGroups is filled.
-	Violations      []Violation      `json:"violations,omitempty"`
-	ViolationGroups []ViolationGroup `json:"violation_groups,omitempty"`
+	Violations      []Violation       `json:"violations,omitempty"`
+	ViolationGroups []*ViolationGroup `json:"violation_groups,omitempty"`
 }
 
 // MetadataForConstraint appears in type ReportForConstraint.
@@ -62,14 +63,54 @@ type ViolationGroup struct {
 	Instances []Violation `json:"instances"`
 }
 
-// Violation describes a single policy violation, or the common pattern within a
-// ViolationGroup.
+// Violation describes a single policy violation, or the common pattern within a ViolationGroup.
 type Violation struct {
-	Kind           string            `json:"kind"`
-	Name           string            `json:"name"`
-	Namespace      string            `json:"namespace"`
-	Message        string            `json:"message"`
+	// All fields are omitempty because we compress ViolationGroups by omitting all fields
+	// from instances that are identical to the respective fields in the pattern.
+	Kind           string            `json:"kind,omitempty"`
+	Name           string            `json:"name,omitempty"`
+	Namespace      string            `json:"namespace,omitempty"`
+	Message        string            `json:"message,omitempty"`
 	ObjectIdentity map[string]string `json:"object_identity,omitempty"`
+}
+
+// Cloned returns a deep copy of this Violation.
+func (v Violation) Cloned() Violation {
+	result := v
+	result.ObjectIdentity = maps.Clone(v.ObjectIdentity)
+	return result
+}
+
+// IsEqualTo works like reflect.DeepEqual(), but is faster and thus a better
+// fit for hot loops.
+func (v Violation) IsEqualTo(other Violation) bool {
+	return v.Kind == other.Kind &&
+		v.Name == other.Name &&
+		v.Namespace == other.Namespace &&
+		v.Message == other.Message &&
+		maps.Equal(v.ObjectIdentity, other.ObjectIdentity)
+}
+
+// DifferenceTo returns a copy of this violation, with all fields cleared out
+// that are identical to the pattern.
+func (v Violation) DifferenceTo(pattern Violation) Violation {
+	result := v
+	if result.Kind == pattern.Kind {
+		result.Kind = ""
+	}
+	if result.Name == pattern.Name {
+		result.Name = ""
+	}
+	if result.Namespace == pattern.Namespace {
+		result.Namespace = ""
+	}
+	if result.Message == pattern.Message {
+		result.Message = ""
+	}
+	if maps.Equal(result.ObjectIdentity, pattern.ObjectIdentity) {
+		result.ObjectIdentity = nil
+	}
+	return result
 }
 
 // GatherReport reads all constraint templates and configs and compiles a report.

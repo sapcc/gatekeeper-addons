@@ -24,6 +24,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/sapcc/go-bits/errext"
+	"github.com/sapcc/go-bits/regexpext"
 	"gopkg.in/yaml.v2"
 )
 
@@ -37,12 +39,26 @@ type Configuration struct {
 	Metrics struct {
 		ListenAddress string `yaml:"listen_address"`
 	} `yaml:"metrics"`
-	MergingRules    any `yaml:"merging_rules"`    //TODO type
-	ProcessingRules any `yaml:"processing_rules"` //TODO type
+	MergingRules    []Rule `yaml:"merging_rules"`
+	ProcessingRules []Rule `yaml:"processing_rules"`
 	Swift           struct {
 		ContainerName string `yaml:"container_name"`
 		ObjectName    string `yaml:"object_name"`
 	} `yaml:"swift"`
+}
+
+// Rule is a rule that can appear in `processing_rules` or `merging_rules`.
+type Rule struct {
+	Description string                             `yaml:"description"`
+	Match       map[string]regexpext.BoundedRegexp `yaml:"match"`
+	Replace     ReplaceRule                        `yaml:"replace"`
+}
+
+// ReplaceRule appears in type Rule.
+type ReplaceRule struct {
+	Source  string                  `yaml:"source"`
+	Pattern regexpext.BoundedRegexp `yaml:"pattern"`
+	Target  map[string]string       `yaml:"target"`
 }
 
 // ReadConfiguration reads the config file at the given path.
@@ -67,4 +83,34 @@ func ReadConfiguration(configPath string) (Configuration, error) {
 	}
 
 	return cfg, nil
+}
+
+// ValidateRules returns a list of validation errors for the configuration's
+// MergingRules and ProcessingRules.
+func (cfg Configuration) ValidateRules() (errs errext.ErrorSet) {
+	for idx, rule := range cfg.ProcessingRules {
+		errs.Append(rule.validate(fmt.Sprintf("processing_rules[%d]", idx)))
+	}
+	for idx, rule := range cfg.MergingRules {
+		errs.Append(rule.validate(fmt.Sprintf("merging_rules[%d]", idx)))
+	}
+	return
+}
+
+func (r Rule) validate(path string) (errs errext.ErrorSet) {
+	for key, pattern := range r.Match {
+		if pattern == "" {
+			errs.Addf("empty regex in %s.match[%q] (rule %q) will probably not do what you think (if you actually want to match empty strings only, write `^$` to confirm your intention)", key, path, r.Description)
+		}
+	}
+	if r.Replace.Source == "" {
+		errs.Addf("missing required configuration value: %s.replace.source (rule %q)", path, r.Description)
+	}
+	if r.Replace.Pattern == "" {
+		errs.Addf("empty regex in %s.replace.pattern (rule %q) will probably not do what you think (if you actually want to match empty strings only, write `^$` to confirm your intention)", path, r.Description)
+	}
+	if len(r.Replace.Target) == 0 {
+		errs.Addf("missing required configuration value: %s.replace.target (rule %q) needs at least one entry", path, r.Description)
+	}
+	return
 }
