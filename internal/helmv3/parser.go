@@ -24,6 +24,7 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 
@@ -95,7 +96,7 @@ func convertManifestToItemsList(in []byte) ([]interface{}, error) {
 	for idx := 0; ; idx++ {
 		var val interface{}
 		err := dec.Decode(&val)
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		if err != nil {
