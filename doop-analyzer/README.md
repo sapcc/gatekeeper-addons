@@ -30,8 +30,8 @@ with `collect-once`, and the effect of configuration on these fixtures can be te
 
 The analyzer itself is completely stateless, but some configuration must be provided.
 
-- For uploading reports into Swift, the `run` subcommand requires OpenStack credentials must be present in the usual
-  `OS_...` environment variables.
+- For uploading reports into Swift, the `run` subcommand requires OpenStack credentials which must be present in the
+  usual `OS_...` environment variables.
 - The rest of the configuration is collected from a YAML configuration file whose path is given as positional argument
   after the subcommand.
 
@@ -71,7 +71,7 @@ constraints (i.e. all objects within the API group `constraints.gatekeeper.sh`):
   and fix violations reported for this constraint.
 - The label `severity` may contain one of the following strings to indicate the severity of the policy violation:
   `error`, `warning`, `info`, `debug`. The severity can be used by the UI to order violations and apply styling, e.g.
-  different background colors. Constraints with `spec.enforcementAction = "dryrun"` should probably have a severity of
+  different background colors. Constraints with `spec.enforcementAction = "deny"` should probably have a severity of
   `error`. Violations for constraints with severity `debug` should be hidden by default and only shown when explicitly
   requested by the user.
 
@@ -112,6 +112,9 @@ will be parsed into this:
   }
 }
 ```
+
+To ensure that the object identity is parsed correctly, the `>>` separator should not be included in any keys or values
+inside the object identity's JSON payload.
 
 As with the cluster identity, doop-analyzer does not care about the exact keys and values in the object identity (except
 that object identity must be equal when merging violations, see below), but to make further processing easier, it's
@@ -170,7 +173,7 @@ Each processing rule may contain the following fields:
 | Field | Type | Description |
 | ----- | ---- | ----------- |
 | `description` | string | A human-readable description of what this rule is about. This field is not interpreted by doop-analyzer at all, but it can be used for documentation purposes. Since it's a structured field instead of just a YAML comment, it is more likely to be preserved when editing rules in a specialized UI. |
-| `match` | object of regexes | If given, the rule will only be applied if, for each key-value pair in this object, the violation has an attribute whose name matches the key, and whose value matches the regex. (In the example above, the rule only applies to violations whose `kind` attribute matches the regex `Secret`.) See below for notes on attribute names and regex syntax. |
+| `match` | object of regexes | If given, the rule will only be applied if, for each key-value pair in this object, the violation has an attribute whose name matches the key and whose value matches the regex. (In the example above, the rule only applies to violations whose `kind` attribute matches the regex `Secret`.) See below for notes on attribute names and regex syntax. |
 | `replace.source` | string | *Required.* The attribute name within the violation whose value will be matched for this rule's replacement. See below for notes on attribute names. |
 | `replace.pattern` | regex | *Required.* The rule will apply if the value from the `replace.source` attribute matches this regex. (In the example above, the rule performs a replacement if its regex matches the violation's `name` attribute.) See below for notes on regex syntax. |
 | `replace.target` | object of regexes | *Required.* For each key-value pair in this object, the violation's attribute whose name matches the key will have its value replaced with the value in this object, except that placeholders like `$1`, `$2` and so on are replaced by the respective capture groups from the `replace.pattern` match. (In the example above, the rule updates the violation's `name` and `kind` attributes if the regex matches.) See below for notes on attribute names. |

@@ -26,10 +26,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/sapcc/gatekeeper-addons/internal/util"
 	"github.com/sapcc/go-bits/assert"
 	"github.com/sapcc/go-bits/logg"
 	"gopkg.in/yaml.v2"
+
+	"github.com/sapcc/gatekeeper-addons/internal/util"
 )
 
 func TestGatherReport(t *testing.T) {

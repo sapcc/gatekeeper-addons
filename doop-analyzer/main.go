@@ -73,7 +73,7 @@ func taskCollectOnce(ctx context.Context, configPath string) {
 	_ = must.Return(os.Stdout.Write(buf))
 }
 
-func taskAnalyzeOnce(ctx context.Context, configPath string) {
+func taskAnalyzeOnce(_ context.Context, configPath string) {
 	cfg := must.Return(ReadConfiguration(configPath))
 	cfg.ValidateRules().LogFatalIfError()
 	var report Report

@@ -24,11 +24,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	k8sinternal "github.com/sapcc/gatekeeper-addons/internal/kubernetes"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
+
+	k8sinternal "github.com/sapcc/gatekeeper-addons/internal/kubernetes"
 )
 
 var (
