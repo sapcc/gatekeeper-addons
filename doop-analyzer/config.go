@@ -39,12 +39,9 @@ type Configuration struct {
 	Metrics struct {
 		ListenAddress string `yaml:"listen_address"`
 	} `yaml:"metrics"`
-	MergingRules    []Rule `yaml:"merging_rules"`
-	ProcessingRules []Rule `yaml:"processing_rules"`
-	Swift           struct {
-		ContainerName string `yaml:"container_name"`
-		ObjectName    string `yaml:"object_name"`
-	} `yaml:"swift"`
+	MergingRules    []Rule             `yaml:"merging_rules"`
+	ProcessingRules []Rule             `yaml:"processing_rules"`
+	Swift           SwiftConfiguration `yaml:"swift"`
 }
 
 // Rule is a rule that can appear in `processing_rules` or `merging_rules`.

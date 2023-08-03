@@ -23,9 +23,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
 	"github.com/sapcc/go-bits/must"
@@ -46,7 +49,7 @@ func main() {
 	}
 	defer undoMaxprocs()
 
-	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
+	ctx := httpext.ContextWithSIGINT(context.Background(), 1*time.Second)
 	if len(os.Args) != 3 {
 		usage()
 	}
@@ -60,9 +63,57 @@ func main() {
 	}
 }
 
+var (
+	metricLastSuccessfulReport = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "doop_analyzer_last_successful_report",
+		Help: "UNIX timestamp in seconds when last report was submitted.",
+	})
+	metricReportDurationSecs = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "doop_analyzer_report_duration_secs",
+		Help: "How long it took to collect and submit the last report, in seconds.",
+	})
+)
+
 func taskRun(ctx context.Context, configPath string) {
-	//TODO do not forget metrics
-	panic("TODO: unimplemented")
+	prometheus.MustRegister(metricLastSuccessfulReport)
+	prometheus.MustRegister(metricReportDurationSecs)
+
+	cfg := must.Return(ReadConfiguration(configPath))
+	cs := must.Return(NewClientSet(cfg))
+	must.Succeed(cfg.Swift.Connect())
+
+	//start HTTP server for Prometheus metrics
+	mux := http.NewServeMux()
+	mux.Handle("/metrics", promhttp.Handler())
+	go func() {
+		must.Succeed(httpext.ListenAndServeContext(ctx, cfg.Metrics.ListenAddress, mux))
+	}()
+
+	//send a report immediately, then once a minute
+	sendReport(ctx, cfg, cs)
+	ticker := time.NewTicker(1 * time.Minute)
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			sendReport(ctx, cfg, cs)
+		}
+	}
+}
+
+func sendReport(ctx context.Context, cfg Configuration, cs ClientSetInterface) {
+	start := time.Now()
+
+	report := must.Return(GatherReport(ctx, cfg, cs))
+	report.Process(cfg)
+	must.Succeed(cfg.Swift.SendReport(ctx, report))
+
+	end := time.Now()
+	duration := end.Sub(start)
+	metricLastSuccessfulReport.Set(float64(end.Unix()))
+	metricReportDurationSecs.Set(duration.Seconds())
+	logg.Info("report uploaded in %g seconds", duration.Seconds())
 }
 
 func taskCollectOnce(ctx context.Context, configPath string) {

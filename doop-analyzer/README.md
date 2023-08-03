@@ -261,7 +261,5 @@ The `run` subcommand starts an HTTP server and provides a `/metrics` endpoint fo
 
 | Metric | Description |
 | ------ | ----------- |
-| `doop_analyzer_report_submitted_at` | UNIX timestamp of when last report was submitted |
-| `doop_analyzer_report_duration_secs` | how long it took to collect and submit the last report, in seconds |
-
-Metrics are absent until the first report has been submitted.
+| `doop_analyzer_last_successful_report` | UNIX timestamp in seconds when last report was submitted. |
+| `doop_analyzer_report_duration_secs` | How long it took to collect and submit the last report, in seconds. |
