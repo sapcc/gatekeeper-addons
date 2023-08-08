@@ -20,11 +20,11 @@ available to execute parts of this chain manually:
 
 - `doop-analyzer collect-once <config-file>` gathers Gatekeeper audit data once and prints the gathered data onto stdout
   as JSON.
-- `doop-analyzer analyze-once <config-file>` reads the output of `collect-once` from stdin and applies the configured
+- `doop-analyzer process-once <config-file>` reads the output of `collect-once` from stdin and applies the configured
   rules to them. The resulting report is printed to stdout as JSON instead of being uploaded to Swift.
 
 These subcommands are intended for automated tests of analyzer configuration files. Report data fixtures can be gathered
-with `collect-once`, and the effect of configuration on these fixtures can be tested with `analyze-once`.
+with `collect-once`, and the effect of configuration on these fixtures can be tested with `process-once`.
 
 ### Configuration
 
@@ -44,8 +44,8 @@ The following fields are allowed in the YAML configuration file:
 | `kubernetes.kubeconfig` | string | Path to a kubectl configuration file. |
 | `kubernetes.context` | string | If not empty, overrides the default context setting in the kubeconfig. |
 | `metrics.listen_address` | string | Listen address for Prometheus metrics endpoint. Defaults to `:8080`. Only needed for `run`. |
-| `merging_rules` | list of objects | A sequence of rules that will be applied to each violation in order to group similar violations together. [See below](#rule-based-rewriting) for details. Only needed for `run` and `analyze-once`. |
-| `processing_rules` | list of objects | A sequence of rules that will be applied to each violation in order to normalize its attributes. [See below](#rule-based-rewriting) for details. Only needed for `run` and `analyze-once`. |
+| `merging_rules` | list of objects | A sequence of rules that will be applied to each violation in order to group similar violations together. [See below](#rule-based-rewriting) for details. Only needed for `run` and `process-once`. |
+| `processing_rules` | list of objects | A sequence of rules that will be applied to each violation in order to normalize its attributes. [See below](#rule-based-rewriting) for details. Only needed for `run` and `process-once`. |
 | `swift.container_name` | string | Name of Swift container in which to upload report. Only needed for `run`. |
 | `swift.object_name` | string | Object name with which report will be uploaded in Swift. Only needed for `run`. |
 

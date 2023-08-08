@@ -37,7 +37,7 @@ import (
 )
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage: %s [run|collect-once|analyze-once] <config-file>\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "usage: %s [run|collect-once|process-once] <config-file>\n", os.Args[0])
 	os.Exit(1)
 }
 
@@ -58,8 +58,10 @@ func main() {
 		taskRun(ctx, os.Args[2])
 	case "collect-once":
 		taskCollectOnce(ctx, os.Args[2])
-	case "analyze-once":
-		taskAnalyzeOnce(ctx, os.Args[2])
+	case "process-once":
+		taskProcessOnce(ctx, os.Args[2])
+	default:
+		usage()
 	}
 }
 
@@ -124,7 +126,7 @@ func taskCollectOnce(ctx context.Context, configPath string) {
 	_ = must.Return(os.Stdout.Write(buf))
 }
 
-func taskAnalyzeOnce(_ context.Context, configPath string) {
+func taskProcessOnce(_ context.Context, configPath string) {
 	cfg := must.Return(ReadConfiguration(configPath))
 	cfg.ValidateRules().LogFatalIfError()
 	var report Report
