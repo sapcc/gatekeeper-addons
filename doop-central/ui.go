@@ -24,6 +24,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"maps"
 	"net/http"
 	"path"
 	"regexp"
@@ -34,7 +35,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sapcc/go-bits/logg"
 	"github.com/sapcc/go-bits/respondwith"
-	"golang.org/x/exp/maps"
 )
 
 //go:embed index.html.tpl
