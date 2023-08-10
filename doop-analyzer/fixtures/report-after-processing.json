@@ -1,0 +1,116 @@
+{
+  "cluster_identity": {
+    "ci_key1": "ci_value1",
+    "ci_key2": "ci_value2"
+  },
+  "templates": [
+    {
+      "kind": "GkOutdatedImageBases",
+      "constraints": [
+        {
+          "name": "outdatedimagebases",
+          "metadata": {
+            "severity": "info",
+            "template_source": "https://example.com/constrainttemplate-outdated-image-bases.yaml",
+            "constraint_source": "https://example.com/constraint-outdated-image-bases.yaml",
+            "docstring": "This checks finds containers whose images depend on very old base images, by checking the build timestamp of each layer.",
+            "auditTimestamp": "2023-08-01T09:25:53Z"
+          },
+          "violation_groups": [
+            {
+              "pattern": {
+                "kind": "Pod",
+                "name": "kube-monitoring-prometheus-node-exporter-\u003cvariable\u003e",
+                "namespace": "kube-monitoring",
+                "message": "image dockerhubmirror.example.com/prom/node-exporter:v1.3.1 for container \"node-exporter\" uses a very old base image (oldest layer is 819 days old)",
+                "object_identity": {
+                  "service": "none",
+                  "support_group": "containers"
+                }
+              },
+              "instances": [
+                {
+                  "name": "kube-monitoring-prometheus-node-exporter-8944q"
+                },
+                {
+                  "name": "kube-monitoring-prometheus-node-exporter-l67vv"
+                },
+                {
+                  "name": "kube-monitoring-prometheus-node-exporter-t49jm"
+                }
+              ]
+            },
+            {
+              "pattern": {
+                "kind": "Pod",
+                "name": "kube-monitoring-prometheus-node-exporter-\u003cvariable\u003e",
+                "namespace": "kube-monitoring",
+                "message": "image dockerhubmirror.example.com/prom/node-exporter:v1.4.0 for container \"node-exporter\" uses a very old base image (oldest layer is 413 days old)",
+                "object_identity": {
+                  "service": "none",
+                  "support_group": "containers"
+                }
+              },
+              "instances": [
+                {
+                  "name": "kube-monitoring-prometheus-node-exporter-fz2rg"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "GkOwnerInfoOnHelmReleases",
+      "constraints": [
+        {
+          "name": "ownerinfoonhelmreleases",
+          "metadata": {
+            "severity": "error",
+            "template_source": "https://example.com/constrainttemplate-owner-info-on-helm-releases.yaml",
+            "constraint_source": "https://example.com/constraint-owner-info-on-helm-releases.yaml",
+            "docstring": "This check finds Helm releases that do not define owner info.",
+            "auditTimestamp": "2023-08-01T11:35:53Z"
+          },
+          "violation_groups": [
+            {
+              "pattern": {
+                "kind": "Helm 3 release",
+                "name": "qa-c67f19d507d543a3a9eaa3607729826f.\u003cvariable\u003e",
+                "namespace": "kubernikus",
+                "message": "Chart does not contain owner info. Please add the common/owner-info chart as a direct dependency.",
+                "object_identity": {
+                  "service": "none",
+                  "support_group": "none"
+                }
+              },
+              "instances": [
+                {
+                  "name": "qa-c67f19d507d543a3a9eaa3607729826f.v45"
+                }
+              ]
+            },
+            {
+              "pattern": {
+                "kind": "Helm 3 release",
+                "name": "vsphere-csi.\u003cvariable\u003e",
+                "namespace": "vmware-system-csi",
+                "message": "Chart does not contain owner info. Please add the common/owner-info chart as a direct dependency.",
+                "object_identity": {
+                  "service": "none",
+                  "support_group": "none"
+                }
+              },
+              "instances": [
+                {
+                  "name": "vsphere-csi.v1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

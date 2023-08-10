@@ -7,6 +7,9 @@ binaries:
   - name:        doop-agent
     fromPackage: ./doop-agent
     installTo:   bin/
+  - name:        doop-analyzer
+    fromPackage: ./doop-analyzer
+    installTo:   bin/
   - name:        doop-central
     fromPackage: ./doop-central
     installTo:   bin/

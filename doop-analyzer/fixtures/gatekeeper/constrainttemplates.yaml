@@ -1,0 +1,26 @@
+# NOTE: most fields elided for brevity
+apiVersion: v1
+kind: List
+items:
+- apiVersion: templates.gatekeeper.sh/v1
+  kind: ConstraintTemplate
+  metadata:
+    name: gkoutdatedimagebases
+  spec:
+    crd:
+      spec:
+        names:
+          kind: GkOutdatedImageBases
+  status:
+    created: true
+- apiVersion: templates.gatekeeper.sh/v1
+  kind: ConstraintTemplate
+  metadata:
+    name: gkownerinfoonhelmreleases
+  spec:
+    crd:
+      spec:
+        names:
+          kind: GkOwnerInfoOnHelmReleases
+  status:
+    created: true

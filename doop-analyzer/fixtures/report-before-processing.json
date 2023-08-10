@@ -1,0 +1,102 @@
+{
+  "cluster_identity": {
+    "ci_key1": "ci_value1",
+    "ci_key2": "ci_value2"
+  },
+  "templates": [
+    {
+      "kind": "GkOutdatedImageBases",
+      "constraints": [
+        {
+          "name": "outdatedimagebases",
+          "metadata": {
+            "severity": "info",
+            "template_source": "https://example.com/constrainttemplate-outdated-image-bases.yaml",
+            "constraint_source": "https://example.com/constraint-outdated-image-bases.yaml",
+            "docstring": "This checks finds containers whose images depend on very old base images, by checking the build timestamp of each layer.",
+            "auditTimestamp": "2023-08-01T09:25:53Z"
+          },
+          "violations": [
+            {
+              "kind": "Pod",
+              "name": "kube-monitoring-prometheus-node-exporter-8944q",
+              "namespace": "kube-monitoring",
+              "message": "image dockerhubmirror.example.com/prom/node-exporter:v1.3.1 for container \"node-exporter\" uses a very old base image (oldest layer is 819 days old)",
+              "object_identity": {
+                "service": "none",
+                "support_group": "containers"
+              }
+            },
+            {
+              "kind": "Pod",
+              "name": "kube-monitoring-prometheus-node-exporter-l67vv",
+              "namespace": "kube-monitoring",
+              "message": "image dockerhubmirror.example.com/prom/node-exporter:v1.3.1 for container \"node-exporter\" uses a very old base image (oldest layer is 819 days old)",
+              "object_identity": {
+                "service": "none",
+                "support_group": "containers"
+              }
+            },
+            {
+              "kind": "Pod",
+              "name": "kube-monitoring-prometheus-node-exporter-t49jm",
+              "namespace": "kube-monitoring",
+              "message": "image dockerhubmirror.example.com/prom/node-exporter:v1.3.1 for container \"node-exporter\" uses a very old base image (oldest layer is 819 days old)",
+              "object_identity": {
+                "service": "none",
+                "support_group": "containers"
+              }
+            },
+            {
+              "kind": "Pod",
+              "name": "kube-monitoring-prometheus-node-exporter-fz2rg",
+              "namespace": "kube-monitoring",
+              "message": "image dockerhubmirror.example.com/prom/node-exporter:v1.4.0 for container \"node-exporter\" uses a very old base image (oldest layer is 413 days old)",
+              "object_identity": {
+                "service": "none",
+                "support_group": "containers"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "GkOwnerInfoOnHelmReleases",
+      "constraints": [
+        {
+          "name": "ownerinfoonhelmreleases",
+          "metadata": {
+            "severity": "error",
+            "template_source": "https://example.com/constrainttemplate-owner-info-on-helm-releases.yaml",
+            "constraint_source": "https://example.com/constraint-owner-info-on-helm-releases.yaml",
+            "docstring": "This check finds Helm releases that do not define owner info.",
+            "auditTimestamp": "2023-08-01T11:35:53Z"
+          },
+          "violations": [
+            {
+              "kind": "Secret",
+              "name": "sh.helm.release.v1.qa-c67f19d507d543a3a9eaa3607729826f.v45",
+              "namespace": "kubernikus",
+              "message": "Chart does not contain owner info. Please add the common/owner-info chart as a direct dependency.",
+              "object_identity": {
+                "service": "none",
+                "support_group": "none"
+              }
+            },
+            {
+              "kind": "Secret",
+              "name": "sh.helm.release.v1.vsphere-csi.v1",
+              "namespace": "vmware-system-csi",
+              "message": "Chart does not contain owner info. Please add the common/owner-info chart as a direct dependency.",
+              "object_identity": {
+                "service": "none",
+                "support_group": "none"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

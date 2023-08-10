@@ -24,10 +24,13 @@ BININFO_VERSION     ?= $(shell git describe --tags --always --abbrev=7)
 BININFO_COMMIT_HASH ?= $(shell git rev-parse --verify HEAD)
 BININFO_BUILD_DATE  ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-build-all: build/doop-agent build/doop-central build/doop-image-checker build/helm-manifest-generator build/helm-manifest-parser
+build-all: build/doop-agent build/doop-analyzer build/doop-central build/doop-image-checker build/helm-manifest-generator build/helm-manifest-parser
 
 build/doop-agent: FORCE
 	go build $(GO_BUILDFLAGS) -ldflags '-s -w -X github.com/sapcc/go-api-declarations/bininfo.binName=doop-agent -X github.com/sapcc/go-api-declarations/bininfo.version=$(BININFO_VERSION) -X github.com/sapcc/go-api-declarations/bininfo.commit=$(BININFO_COMMIT_HASH) -X github.com/sapcc/go-api-declarations/bininfo.buildDate=$(BININFO_BUILD_DATE) $(GO_LDFLAGS)' -o build/doop-agent ./doop-agent
+
+build/doop-analyzer: FORCE
+	go build $(GO_BUILDFLAGS) -ldflags '-s -w -X github.com/sapcc/go-api-declarations/bininfo.binName=doop-analyzer -X github.com/sapcc/go-api-declarations/bininfo.version=$(BININFO_VERSION) -X github.com/sapcc/go-api-declarations/bininfo.commit=$(BININFO_COMMIT_HASH) -X github.com/sapcc/go-api-declarations/bininfo.buildDate=$(BININFO_BUILD_DATE) $(GO_LDFLAGS)' -o build/doop-analyzer ./doop-analyzer
 
 build/doop-central: FORCE
 	go build $(GO_BUILDFLAGS) -ldflags '-s -w -X github.com/sapcc/go-api-declarations/bininfo.binName=doop-central -X github.com/sapcc/go-api-declarations/bininfo.version=$(BININFO_VERSION) -X github.com/sapcc/go-api-declarations/bininfo.commit=$(BININFO_COMMIT_HASH) -X github.com/sapcc/go-api-declarations/bininfo.buildDate=$(BININFO_BUILD_DATE) $(GO_LDFLAGS)' -o build/doop-central ./doop-central
@@ -48,9 +51,11 @@ else
 	PREFIX = /usr
 endif
 
-install: FORCE build/doop-agent build/doop-central build/doop-image-checker build/helm-manifest-generator build/helm-manifest-parser
+install: FORCE build/doop-agent build/doop-analyzer build/doop-central build/doop-image-checker build/helm-manifest-generator build/helm-manifest-parser
 	install -d -m 0755 "$(DESTDIR)$(PREFIX)/bin"
 	install -m 0755 build/doop-agent "$(DESTDIR)$(PREFIX)/bin/doop-agent"
+	install -d -m 0755 "$(DESTDIR)$(PREFIX)/bin"
+	install -m 0755 build/doop-analyzer "$(DESTDIR)$(PREFIX)/bin/doop-analyzer"
 	install -d -m 0755 "$(DESTDIR)$(PREFIX)/bin"
 	install -m 0755 build/doop-central "$(DESTDIR)$(PREFIX)/bin/doop-central"
 	install -d -m 0755 "$(DESTDIR)$(PREFIX)/bin"
@@ -130,6 +135,7 @@ help: FORCE
 	@printf "\e[1mBuild\e[0m\n"
 	@printf "  \e[36mbuild-all\e[0m                      Build all binaries.\n"
 	@printf "  \e[36mbuild/doop-agent\e[0m               Build doop-agent.\n"
+	@printf "  \e[36mbuild/doop-analyzer\e[0m            Build doop-analyzer.\n"
 	@printf "  \e[36mbuild/doop-central\e[0m             Build doop-central.\n"
 	@printf "  \e[36mbuild/doop-image-checker\e[0m       Build doop-image-checker.\n"
 	@printf "  \e[36mbuild/helm-manifest-generator\e[0m  Build helm-manifest-generator.\n"
