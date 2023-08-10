@@ -21,6 +21,7 @@ package main
 
 import (
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -93,6 +94,11 @@ func (r *Report) Process(cfg Configuration) {
 			//In this loop, we need to address via index instead of copy-by-value
 			//because the slice elements are not pointers.
 			rt.Constraints[idx].process(cfg)
+
+			//When running on a pod with strict CPU limits, Process() may take a very long time.
+			//To ensure that Prometheus metrics can still be scraped in the meantime,
+			//here are some explicit goroutine yields.
+			runtime.Gosched()
 		}
 	}
 }
