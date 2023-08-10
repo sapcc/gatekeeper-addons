@@ -20,6 +20,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -122,8 +123,7 @@ func taskCollectOnce(ctx context.Context, configPath string) {
 	cfg := must.Return(ReadConfiguration(configPath))
 	cs := must.Return(NewClientSet(cfg))
 	report := must.Return(GatherReport(ctx, cfg, cs))
-	buf := must.Return(json.MarshalIndent(report, "", "  "))
-	_ = must.Return(os.Stdout.Write(buf))
+	printJSON(report)
 }
 
 func taskProcessOnce(_ context.Context, configPath string) {
@@ -132,6 +132,14 @@ func taskProcessOnce(_ context.Context, configPath string) {
 	var report Report
 	must.Succeed(json.NewDecoder(os.Stdin).Decode(&report))
 	report.Process(cfg)
-	buf := must.Return(json.MarshalIndent(report, "", "  "))
-	_ = must.Return(os.Stdout.Write(buf))
+	printJSON(report)
+}
+
+func printJSON(data any) {
+	writer := bufio.NewWriter(os.Stdout)
+	enc := json.NewEncoder(writer)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("", "  ")
+	must.Succeed(enc.Encode(data))
+	must.Succeed(writer.Flush())
 }
