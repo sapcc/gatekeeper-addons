@@ -399,10 +399,12 @@ func pointerValuesEqual[T comparable](lhs, rhs *T) bool {
 func (r Report) GroupViolationsInto(apiData *APIData, clusterName string, showAll bool) {
 	for _, rt := range r.Templates {
 		for _, rc := range rt.Configs {
-			severity := ""
+			severity := rc.Labels["severity"]
 			if rc.Labels["on-prod-ui"] != "true" {
 				if showAll {
-					severity = "debug"
+					if severity == "" {
+						severity = "debug"
+					}
 				} else {
 					continue
 				}
