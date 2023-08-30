@@ -79,11 +79,12 @@ func main() {
 		ui,
 		httpapi.HealthCheckAPI{SkipRequestLog: true},
 	)
-	http.Handle("/", handler)
-	http.Handle("/metrics", promhttp.Handler())
-	http.Handle("/static/", http.FileServer(http.FS(staticContent)))
+	mux := http.NewServeMux()
+	mux.Handle("/", handler)
+	mux.Handle("/metrics", promhttp.Handler())
+	mux.Handle("/static/", http.FileServer(http.FS(staticContent)))
 
 	//start HTTP server
 	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
-	must.Succeed(httpext.ListenAndServeContext(ctx, os.Args[1], nil))
+	must.Succeed(httpext.ListenAndServeContext(ctx, os.Args[1], mux))
 }
