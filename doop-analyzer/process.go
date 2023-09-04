@@ -121,16 +121,18 @@ VIOLATION:
 		//apply merging rules to obtain group pattern, then try to merge into an
 		//existing ViolationGroup if possible
 		ExecuteRulesOnViolation(cfg.MergingRules, &vg.Pattern)
-		for _, other := range rc.ViolationGroups {
+		for idx, other := range rc.ViolationGroups {
 			if vg.Pattern.IsEqualTo(other.Pattern) {
-				other.Instances = append(other.Instances, v.DifferenceTo(vg.Pattern))
+				//NOTE: The left-hand side of this assignment refers to `other.Instances`,
+				//but we cannot write it as such because `other` is a *copy* of the list element, not a reference to it.
+				rc.ViolationGroups[idx].Instances = append(other.Instances, v.DifferenceTo(vg.Pattern))
 				continue VIOLATION
 			}
 		}
 
 		//cannot merge -> remember new ViolationGroup
 		vg.Instances = []doop.Violation{v.DifferenceTo(vg.Pattern)}
-		rc.ViolationGroups = append(rc.ViolationGroups, &vg)
+		rc.ViolationGroups = append(rc.ViolationGroups, vg)
 	}
 
 	rc.Violations = nil

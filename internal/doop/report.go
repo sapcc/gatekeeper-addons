@@ -37,8 +37,8 @@ type ReportForConstraint struct {
 	Metadata MetadataForConstraint `json:"metadata"`
 	// Before processing, Violations is filled and ViolationGroups is nil.
 	// After processing, Violations is nil and ViolationGroups is filled.
-	Violations      []Violation       `json:"violations,omitempty"`
-	ViolationGroups []*ViolationGroup `json:"violation_groups,omitempty"`
+	Violations      []Violation      `json:"violations,omitempty"`
+	ViolationGroups []ViolationGroup `json:"violation_groups,omitempty"`
 }
 
 // MetadataForConstraint appears in type ReportForConstraint.
