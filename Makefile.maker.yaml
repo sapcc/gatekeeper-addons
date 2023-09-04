@@ -13,6 +13,9 @@ binaries:
   - name:        doop-central
     fromPackage: ./doop-central
     installTo:   bin/
+  - name:        doop-api
+    fromPackage: ./doop-api
+    installTo:   bin/
   - name:        doop-image-checker
     fromPackage: ./doop-image-checker
     installTo:   bin/
