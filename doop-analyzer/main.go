@@ -35,6 +35,8 @@ import (
 	"github.com/sapcc/go-bits/must"
 	"github.com/sapcc/go-bits/osext"
 	"go.uber.org/automaxprocs/maxprocs"
+
+	"github.com/sapcc/gatekeeper-addons/internal/doop"
 )
 
 func usage() {
@@ -109,7 +111,7 @@ func sendReport(ctx context.Context, cfg Configuration, cs ClientSetInterface) {
 	start := time.Now()
 
 	report := must.Return(GatherReport(ctx, cfg, cs))
-	report.Process(cfg)
+	ProcessReport(&report, cfg)
 	must.Succeed(cfg.Swift.SendReport(ctx, report))
 
 	end := time.Now()
@@ -129,9 +131,9 @@ func taskCollectOnce(ctx context.Context, configPath string) {
 func taskProcessOnce(_ context.Context, configPath string) {
 	cfg := must.Return(ReadConfiguration(configPath))
 	cfg.ValidateRules().LogFatalIfError()
-	var report Report
+	var report doop.Report
 	must.Succeed(json.NewDecoder(os.Stdin).Decode(&report))
-	report.Process(cfg)
+	ProcessReport(&report, cfg)
 	printJSON(report)
 }
 

@@ -26,6 +26,8 @@ import (
 
 	"github.com/sapcc/go-bits/assert"
 	"github.com/sapcc/go-bits/regexpext"
+
+	"github.com/sapcc/gatekeeper-addons/internal/doop"
 )
 
 func TestProcessReport(t *testing.T) {
@@ -86,13 +88,13 @@ func TestProcessReport(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	var report Report
+	var report doop.Report
 	err = json.Unmarshal(buf, &report)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
 
-	report.Process(cfg)
+	ProcessReport(&report, cfg)
 
 	reportBuf, err := json.Marshal(report)
 	if err != nil {

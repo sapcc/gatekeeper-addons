@@ -31,6 +31,8 @@ import (
 	"github.com/gophercloud/utils/openstack/clientconfig"
 	"github.com/majewsky/schwift"
 	"github.com/majewsky/schwift/gopherschwift"
+
+	"github.com/sapcc/gatekeeper-addons/internal/doop"
 )
 
 // SwiftConfiguration appears in type Configuration. It also holds the methods
@@ -74,7 +76,7 @@ func (s *SwiftConfiguration) Connect() error {
 }
 
 // SendReport uploads a processed report to Swift.
-func (s *SwiftConfiguration) SendReport(ctx context.Context, report Report) error {
+func (s *SwiftConfiguration) SendReport(ctx context.Context, report doop.Report) error {
 	buf, err := json.Marshal(report)
 	if err != nil {
 		return fmt.Errorf("cannot encode report as JSON: %w", err)

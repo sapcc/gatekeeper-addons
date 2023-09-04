@@ -24,11 +24,13 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+
+	"github.com/sapcc/gatekeeper-addons/internal/doop"
 )
 
 // ExecuteRulesOnViolation mutates the given violation by applying all matching
 // rules to it.
-func ExecuteRulesOnViolation(rules []Rule, v *Violation) {
+func ExecuteRulesOnViolation(rules []Rule, v *doop.Violation) {
 	data := map[string]string{
 		"kind":      v.Kind,
 		"name":      v.Name,
@@ -87,13 +89,13 @@ func (r Rule) execute(data map[string]string) {
 	}
 }
 
-// Process applies the configured ProcessingRules and MergingRules to this report.
-func (r *Report) Process(cfg Configuration) {
+// ProcessReport applies the configured ProcessingRules and MergingRules to this report.
+func ProcessReport(r *doop.Report, cfg Configuration) {
 	for _, rt := range r.Templates {
 		for idx := range rt.Constraints {
 			//In this loop, we need to address via index instead of copy-by-value
 			//because the slice elements are not pointers.
-			rt.Constraints[idx].process(cfg)
+			processReportForConstraint(&rt.Constraints[idx], cfg)
 
 			//When running on a pod with strict CPU limits, Process() may take a very long time.
 			//To ensure that Prometheus metrics can still be scraped in the meantime,
@@ -103,7 +105,7 @@ func (r *Report) Process(cfg Configuration) {
 	}
 }
 
-func (rc *ReportForConstraint) process(cfg Configuration) {
+func processReportForConstraint(rc *doop.ReportForConstraint, cfg Configuration) {
 	//After GatherReport(), only rc.Violations will be filled. The goal of this
 	//function is to clear out rc.Violations and fill rc.ViolationGroups instead.
 	if len(rc.ViolationGroups) != 0 {
@@ -114,7 +116,7 @@ VIOLATION:
 	for _, v := range rc.Violations {
 		//apply processing rules first
 		ExecuteRulesOnViolation(cfg.ProcessingRules, &v) //nolint:gosec // called function does not retain the pointer
-		vg := ViolationGroup{Pattern: v.Cloned()}
+		vg := doop.ViolationGroup{Pattern: v.Cloned()}
 
 		//apply merging rules to obtain group pattern, then try to merge into an
 		//existing ViolationGroup if possible
@@ -127,7 +129,7 @@ VIOLATION:
 		}
 
 		//cannot merge -> remember new ViolationGroup
-		vg.Instances = []Violation{v.DifferenceTo(vg.Pattern)}
+		vg.Instances = []doop.Violation{v.DifferenceTo(vg.Pattern)}
 		rc.ViolationGroups = append(rc.ViolationGroups, &vg)
 	}
 
