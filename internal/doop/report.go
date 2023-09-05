@@ -19,7 +19,10 @@
 
 package doop
 
-import "sort"
+import (
+	"slices"
+	"strings"
+)
 
 // Report is the data structure that doop-analyzer produces.
 type Report struct {
@@ -35,8 +38,8 @@ type ReportForTemplate struct {
 
 // Sort sorts all lists in this report in the respective canonical order.
 func (r *ReportForTemplate) Sort() {
-	sort.Slice(r.Constraints, func(i, j int) bool {
-		return r.Constraints[i].Name < r.Constraints[j].Name
+	slices.SortFunc(r.Constraints, func(lhs, rhs ReportForConstraint) int {
+		return strings.Compare(lhs.Name, rhs.Name)
 	})
 	for idx := range r.Constraints {
 		r.Constraints[idx].Sort()
@@ -65,16 +68,12 @@ type MetadataForConstraint struct {
 
 // Sort sorts all lists in this report in the respective canonical order.
 func (r *ReportForConstraint) Sort() {
-	sort.Slice(r.ViolationGroups, func(i, j int) bool {
-		lhs := r.ViolationGroups[i].Pattern
-		rhs := r.ViolationGroups[j].Pattern
-		return lhs.CompareTo(rhs) < 0
+	slices.SortFunc(r.ViolationGroups, func(lhs, rhs ViolationGroup) int {
+		return lhs.Pattern.CompareTo(rhs.Pattern)
 	})
 	for _, vg := range r.ViolationGroups {
-		sort.Slice(vg.Instances, func(i, j int) bool {
-			lhs := vg.Instances[i]
-			rhs := vg.Instances[j]
-			return lhs.CompareTo(rhs) < 0
+		slices.SortFunc(vg.Instances, func(lhs, rhs Violation) int {
+			return lhs.CompareTo(rhs)
 		})
 	}
 }
@@ -88,8 +87,8 @@ type AggregatedReport struct {
 
 // Sort sorts all lists in this report in the respective canonical order.
 func (r *AggregatedReport) Sort() {
-	sort.Slice(r.Templates, func(i, j int) bool {
-		return r.Templates[i].Kind < r.Templates[j].Kind
+	slices.SortFunc(r.Templates, func(lhs, rhs ReportForTemplate) int {
+		return strings.Compare(lhs.Kind, rhs.Kind)
 	})
 	for idx := range r.Templates {
 		r.Templates[idx].Sort()
