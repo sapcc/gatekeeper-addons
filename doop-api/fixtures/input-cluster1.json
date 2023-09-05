@@ -1,0 +1,37 @@
+{
+  "cluster_identity": {
+    "number": "one"
+  },
+  "templates": [
+    {
+      "kind": "GkFirstTemplate",
+      "constraints": [
+        {
+          "name": "firstconstraint",
+          "metadata": {
+            "severity": "info",
+            "auditTimestamp": "2023-09-05T09:24:27Z"
+          },
+          "violation_groups": [
+            {
+              "pattern": {
+                "kind": "Pod",
+                "namespace": "test",
+                "name": "merge-violations-across-clusters",
+                "message": "this is from <cluster>",
+                "object_identity": {
+                  "type": "production"
+                }
+              },
+              "instances": [
+                {
+                  "message": "this is from cluster1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
