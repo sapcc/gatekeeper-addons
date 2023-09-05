@@ -20,7 +20,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -45,7 +44,7 @@ func (a API) handleGetViolations(w http.ResponseWriter, r *http.Request) {
 	if respondwith.ErrorText(w, err) {
 		return
 	}
-
-	//TODO dummy implementation
-	http.Error(w, fmt.Sprintf("There are %d reports.", len(reports)), http.StatusOK)
+	result := AggregateReports(reports, BuildFilterSet(r.URL.Query()))
+	result.Sort()
+	respondwith.JSON(w, http.StatusOK, result)
 }

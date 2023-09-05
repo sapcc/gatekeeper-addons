@@ -19,6 +19,8 @@
 
 package doop
 
+import "sort"
+
 // Report is the data structure that doop-analyzer produces.
 type Report struct {
 	ClusterIdentity map[string]string   `json:"cluster_identity"`
@@ -29,6 +31,16 @@ type Report struct {
 type ReportForTemplate struct {
 	Kind        string                `json:"kind"`
 	Constraints []ReportForConstraint `json:"constraints"`
+}
+
+// Sort sorts all lists in this report in the respective canonical order.
+func (r *ReportForTemplate) Sort() {
+	sort.Slice(r.Constraints, func(i, j int) bool {
+		return r.Constraints[i].Name < r.Constraints[j].Name
+	})
+	for idx := range r.Constraints {
+		r.Constraints[idx].Sort()
+	}
 }
 
 // ReportForConstraint appears in type ReportForTemplate.
@@ -47,5 +59,32 @@ type MetadataForConstraint struct {
 	TemplateSource   string `json:"template_source,omitempty"`
 	ConstraintSource string `json:"constraint_source,omitempty"`
 	Docstring        string `json:"docstring,omitempty"`
-	AuditTimestamp   string `json:"auditTimestamp"`
+	// AuditTimestamp is always present in type Report, but omitted in type AggregatedReport.
+	AuditTimestamp string `json:"auditTimestamp,omitempty"`
+}
+
+// Sort sorts all lists in this report in the respective canonical order.
+func (r *ReportForConstraint) Sort() {
+	sort.Slice(r.ViolationGroups, func(i, j int) bool {
+		lhs := r.ViolationGroups[i].Pattern
+		rhs := r.ViolationGroups[j].Pattern
+		return lhs.CompareTo(rhs) < 0
+	})
+}
+
+// AggregatedReport is the data structure that doop-api produces. It aggregates
+// multiple instances of type Report from different clusters.
+type AggregatedReport struct {
+	ClusterIdentities map[string]map[string]string `json:"cluster_identities"`
+	Templates         []ReportForTemplate          `json:"templates"`
+}
+
+// Sort sorts all lists in this report in the respective canonical order.
+func (r *AggregatedReport) Sort() {
+	sort.Slice(r.Templates, func(i, j int) bool {
+		return r.Templates[i].Kind < r.Templates[j].Kind
+	})
+	for idx := range r.Templates {
+		r.Templates[idx].Sort()
+	}
 }

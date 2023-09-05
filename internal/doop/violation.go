@@ -19,7 +19,10 @@
 
 package doop
 
-import "maps"
+import (
+	"maps"
+	"strings"
+)
 
 // ViolationGroup describes a set of one or more policy violations that follow a common pattern.
 type ViolationGroup struct {
@@ -36,6 +39,8 @@ type Violation struct {
 	Namespace      string            `json:"namespace,omitempty"`
 	Message        string            `json:"message,omitempty"`
 	ObjectIdentity map[string]string `json:"object_identity,omitempty"`
+	// This field is only set when this Violation appears as a ViolationGroup instance inside an AggregatedReport.
+	ClusterName string `json:"cluster,omitempty"`
 }
 
 // Cloned returns a deep copy of this Violation.
@@ -52,7 +57,8 @@ func (v Violation) IsEqualTo(other Violation) bool {
 		v.Name == other.Name &&
 		v.Namespace == other.Namespace &&
 		v.Message == other.Message &&
-		maps.Equal(v.ObjectIdentity, other.ObjectIdentity)
+		maps.Equal(v.ObjectIdentity, other.ObjectIdentity) &&
+		v.ClusterName == other.ClusterName
 }
 
 // DifferenceTo returns a copy of this violation, with all fields cleared out
@@ -74,5 +80,30 @@ func (v Violation) DifferenceTo(pattern Violation) Violation {
 	if maps.Equal(result.ObjectIdentity, pattern.ObjectIdentity) {
 		result.ObjectIdentity = nil
 	}
+	if result.ClusterName == pattern.ClusterName {
+		result.ClusterName = ""
+	}
 	return result
+}
+
+// CompareTo is a three-way compare between violations. As per the usual convention,
+// 0 means `v == other`, negative means `v < other`, and positive means `v > other`.
+func (v Violation) CompareTo(other Violation) int {
+	cmp := strings.Compare(v.Namespace, other.Namespace)
+	if cmp != 0 {
+		return cmp
+	}
+	cmp = strings.Compare(v.Name, other.Name)
+	if cmp != 0 {
+		return cmp
+	}
+	cmp = strings.Compare(v.Kind, other.Kind)
+	if cmp != 0 {
+		return cmp
+	}
+	cmp = strings.Compare(v.Message, other.Message)
+	if cmp != 0 {
+		return cmp
+	}
+	return strings.Compare(v.ClusterName, other.ClusterName)
 }
