@@ -27,6 +27,22 @@
               "pattern": {
                 "kind": "Pod",
                 "namespace": "test",
+                "name": "merge-violation-groups-inside-constraint",
+                "message": "this is in another violation group",
+                "object_identity": {
+                  "type": "production"
+                }
+              },
+              "instances": [
+                {
+                  "cluster": "cluster3"
+                }
+              ]
+            },
+            {
+              "pattern": {
+                "kind": "Pod",
+                "namespace": "test",
                 "name": "merge-violations-across-clusters",
                 "message": "this is from <cluster>",
                 "object_identity": {
@@ -41,22 +57,6 @@
                 {
                   "message": "this is from cluster2",
                   "cluster": "cluster2"
-                }
-              ]
-            },
-            {
-              "pattern": {
-                "kind": "Pod",
-                "namespace": "test",
-                "name": "merge-violation-groups-inside-constraint",
-                "message": "this is in another violation group",
-                "object_identity": {
-                  "type": "production"
-                }
-              },
-              "instances": [
-                {
-                  "cluster": "cluster3"
                 }
               ]
             }

@@ -70,6 +70,13 @@ func (r *ReportForConstraint) Sort() {
 		rhs := r.ViolationGroups[j].Pattern
 		return lhs.CompareTo(rhs) < 0
 	})
+	for _, vg := range r.ViolationGroups {
+		sort.Slice(vg.Instances, func(i, j int) bool {
+			lhs := vg.Instances[i]
+			rhs := vg.Instances[j]
+			return lhs.CompareTo(rhs) < 0
+		})
+	}
 }
 
 // AggregatedReport is the data structure that doop-api produces. It aggregates

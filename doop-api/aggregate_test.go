@@ -38,16 +38,19 @@ func TestAggregateOfOneCluster(t *testing.T) {
 	//test that aggregating results from only one cluster barely changes the input if no filter is applied
 	expected := mustParseJSON[doop.AggregatedReport](t, "fixtures/output-cluster1-only.json")
 	actual := AggregateReports(inputSet, BuildFilterSet(url.Values{}))
+	actual.Sort()
 	assert.DeepEqual(t, "AggregateReports", actual, expected)
 
 	//test a filter that does not change anything because it exactly matches what is in the report
 	filterStr := "cluster_identity.number=one&template_kind=GkFirstTemplate&constraint_name=firstconstraint&object_identity.type=production"
 	actual = AggregateReports(inputSet, BuildFilterSet(query(filterStr)))
+	actual.Sort()
 	assert.DeepEqual(t, "AggregateReports", actual, expected)
 
 	//test a filter that removes all clusters
 	filterStr = "cluster_identity.number=two"
 	actual = AggregateReports(inputSet, BuildFilterSet(query(filterStr)))
+	actual.Sort()
 	assert.DeepEqual(t, "AggregateReports", actual, doop.AggregatedReport{
 		ClusterIdentities: map[string]map[string]string{},
 		Templates:         nil,
@@ -62,6 +65,7 @@ func TestAggregateOfOneCluster(t *testing.T) {
 	}
 	for _, filterStr := range negativeFilters {
 		actual = AggregateReports(inputSet, BuildFilterSet(query(filterStr)))
+		actual.Sort()
 		assert.DeepEqual(t, "AggregateReports", actual, doop.AggregatedReport{
 			ClusterIdentities: map[string]map[string]string{
 				"cluster1": {"number": "one"},
@@ -86,6 +90,7 @@ func TestAggregateOfTwoClusters(t *testing.T) {
 	//test merging of structures on all levels of the report
 	expected := mustParseJSON[doop.AggregatedReport](t, "fixtures/output-both-clusters.json")
 	actual := AggregateReports(inputSet, BuildFilterSet(url.Values{}))
+	actual.Sort()
 	assert.DeepEqual(t, "AggregateReports", actual, expected)
 }
 
