@@ -28,6 +28,7 @@ import (
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/utils/openstack/clientconfig"
 	"github.com/majewsky/schwift/gopherschwift"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/go-api-declarations/bininfo"
 	"github.com/sapcc/go-bits/httpapi"
@@ -59,6 +60,7 @@ func main() {
 	downloader := NewDownloader(container)
 
 	//collect HTTP handlers
+	prometheus.MustRegister(NewMetricCollector(downloader))
 	handler := httpapi.Compose(
 		API{downloader},
 		httpapi.HealthCheckAPI{SkipRequestLog: true},
@@ -66,7 +68,7 @@ func main() {
 	)
 	mux := http.NewServeMux()
 	mux.Handle("/", handler)
-	mux.Handle("/metrics", promhttp.Handler()) //TODO custom metrics
+	mux.Handle("/metrics", promhttp.Handler())
 
 	//start HTTP server
 	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
