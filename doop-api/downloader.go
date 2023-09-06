@@ -56,21 +56,23 @@ func (d *Downloader) GetReports() (map[string]doop.Report, error) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
+	//NOTE: `objInfo` is the latest information from Swift about a report object.
+	//`objState` is what this process knows about a report object.
 	result := make(map[string]doop.Report, len(objInfos))
-	for _, oi := range objInfos {
-		name := oi.Object.Name()
-		os := d.objects[name]
+	for _, objInfo := range objInfos {
+		name := objInfo.Object.Name()
+		objState := d.objects[name]
 
-		if os.NeedsUpdate(oi) {
+		if objState.NeedsUpdate(objInfo) {
 			logg.Debug("pulling updated report for %s", name)
-			if os == nil {
-				os = &objectState{}
-				d.objects[name] = os
+			if objState == nil {
+				objState = &objectState{}
+				d.objects[name] = objState
 			}
-			os.SizeBytes = oi.SizeBytes
-			os.Etag = oi.Etag
-			os.LastModified = oi.LastModified
-			payloadBytes, err := oi.Object.Download(nil).AsByteSlice()
+			objState.SizeBytes = objInfo.SizeBytes
+			objState.Etag = objInfo.Etag
+			objState.LastModified = objInfo.LastModified
+			payloadBytes, err := objInfo.Object.Download(nil).AsByteSlice()
 			if err != nil {
 				return nil, fmt.Errorf("cannot download report for %s from Swift: %w", name, err)
 			}
@@ -79,10 +81,10 @@ func (d *Downloader) GetReports() (map[string]doop.Report, error) {
 			if err != nil {
 				return nil, fmt.Errorf("cannot decode report for %s: %w", name, err)
 			}
-			os.Payload = payload
+			objState.Payload = payload
 		}
 
-		result[name] = os.Payload
+		result[name] = objState.Payload
 	}
 
 	return result, nil
