@@ -19,6 +19,11 @@
 
 package doop
 
+import (
+	"slices"
+	"strings"
+)
+
 // Report is the data structure that doop-analyzer produces.
 type Report struct {
 	ClusterIdentity map[string]string   `json:"cluster_identity"`
@@ -29,6 +34,16 @@ type Report struct {
 type ReportForTemplate struct {
 	Kind        string                `json:"kind"`
 	Constraints []ReportForConstraint `json:"constraints"`
+}
+
+// Sort sorts all lists in this report in the respective canonical order.
+func (r *ReportForTemplate) Sort() {
+	slices.SortFunc(r.Constraints, func(lhs, rhs ReportForConstraint) int {
+		return strings.Compare(lhs.Name, rhs.Name)
+	})
+	for idx := range r.Constraints {
+		r.Constraints[idx].Sort()
+	}
 }
 
 // ReportForConstraint appears in type ReportForTemplate.
@@ -47,5 +62,35 @@ type MetadataForConstraint struct {
 	TemplateSource   string `json:"template_source,omitempty"`
 	ConstraintSource string `json:"constraint_source,omitempty"`
 	Docstring        string `json:"docstring,omitempty"`
-	AuditTimestamp   string `json:"auditTimestamp"`
+	// AuditTimestamp is always present in type Report, but omitted in type AggregatedReport.
+	AuditTimestamp string `json:"auditTimestamp,omitempty"`
+}
+
+// Sort sorts all lists in this report in the respective canonical order.
+func (r *ReportForConstraint) Sort() {
+	slices.SortFunc(r.ViolationGroups, func(lhs, rhs ViolationGroup) int {
+		return lhs.Pattern.CompareTo(rhs.Pattern)
+	})
+	for _, vg := range r.ViolationGroups {
+		slices.SortFunc(vg.Instances, func(lhs, rhs Violation) int {
+			return lhs.CompareTo(rhs)
+		})
+	}
+}
+
+// AggregatedReport is the data structure that doop-api produces. It aggregates
+// multiple instances of type Report from different clusters.
+type AggregatedReport struct {
+	ClusterIdentities map[string]map[string]string `json:"cluster_identities"`
+	Templates         []ReportForTemplate          `json:"templates"`
+}
+
+// Sort sorts all lists in this report in the respective canonical order.
+func (r *AggregatedReport) Sort() {
+	slices.SortFunc(r.Templates, func(lhs, rhs ReportForTemplate) int {
+		return strings.Compare(lhs.Kind, rhs.Kind)
+	})
+	for idx := range r.Templates {
+		r.Templates[idx].Sort()
+	}
 }

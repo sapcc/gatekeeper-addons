@@ -1,0 +1,92 @@
+{
+  "cluster_identities": {
+    "cluster1": {
+      "number": "one"
+    },
+    "cluster2": {
+      "number": "two"
+    },
+    "cluster3": {
+      "number": "three"
+    },
+    "cluster4": {
+      "number": "four"
+    }
+  },
+  "templates": [
+    {
+      "kind": "GkFirstTemplate",
+      "constraints": [
+        {
+          "name": "firstconstraint",
+          "metadata": {
+            "severity": "info"
+          },
+          "violation_groups": [
+            {
+              "pattern": {
+                "kind": "Pod",
+                "namespace": "test",
+                "name": "merge-violation-groups-inside-constraint",
+                "message": "this is in another violation group",
+                "object_identity": {
+                  "type": "production"
+                }
+              },
+              "instances": [
+                {
+                  "cluster": "cluster3"
+                }
+              ]
+            },
+            {
+              "pattern": {
+                "kind": "Pod",
+                "namespace": "test",
+                "name": "merge-violations-across-clusters",
+                "message": "this is from <cluster>",
+                "object_identity": {
+                  "type": "production"
+                }
+              },
+              "instances": [
+                {
+                  "message": "this is from cluster1",
+                  "cluster": "cluster1"
+                },
+                {
+                  "message": "this is from cluster2",
+                  "cluster": "cluster2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "secondconstraint",
+          "metadata": {
+            "severity": "info"
+          },
+          "violation_groups": [
+            {
+              "pattern": {
+                "kind": "Pod",
+                "namespace": "test",
+                "name": "merge-constraint-inside-templates",
+                "message": "this is in another constraint",
+                "object_identity": {
+                  "type": "production"
+                }
+              },
+              "instances": [
+                {
+                  "cluster": "cluster4"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

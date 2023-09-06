@@ -1,0 +1,35 @@
+{
+  "cluster_identity": {
+    "number": "four"
+  },
+  "templates": [
+    {
+      "kind": "GkFirstTemplate",
+      "constraints": [
+        {
+          "name": "secondconstraint",
+          "metadata": {
+            "severity": "info",
+            "auditTimestamp": "2023-09-05T09:24:30Z"
+          },
+          "violation_groups": [
+            {
+              "pattern": {
+                "kind": "Pod",
+                "namespace": "test",
+                "name": "merge-constraint-inside-templates",
+                "message": "this is in another constraint",
+                "object_identity": {
+                  "type": "production"
+                }
+              },
+              "instances": [
+                {}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
