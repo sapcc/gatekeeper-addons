@@ -81,6 +81,9 @@ func visitConstraintReport(target *doop.ReportForTemplate, cr doop.ReportForCons
 	if !f.MatchConstraintName(cr.Name) {
 		return
 	}
+	if !f.MatchSeverity(cr.Metadata.Severity) {
+		return
+	}
 
 	//the Metadata.AuditTimestamp field is only used to generate Prometheus metrics; it is not aggregated
 	metadata := cr.Metadata

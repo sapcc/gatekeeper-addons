@@ -30,6 +30,7 @@ Returns the full report with all violations, grouped as much as possible. The re
 | `object_identity.$KEY` | Only show violations for objects where `object_identity[$KEY]` is equal to the provided value. |
 | `template_kind` | Only show violations of constraints whose template kind is equal to the provided value. |
 | `constraint_name` | Only show violations of constraints whose name is equal to the provided value. |
+| `severity` | Only show violations of constraints whose `severity` label is equal to the provided value. |
 
 Each query variable can be given multiple times, in which case violations need to match any of the provided values.
 

@@ -29,6 +29,7 @@ type FilterSet struct {
 	clusterIdentity map[string]filter
 	templateKind    filter
 	constraintName  filter
+	severity        filter
 	objectIdentity  map[string]filter
 }
 
@@ -38,6 +39,7 @@ func BuildFilterSet(query url.Values) FilterSet {
 		clusterIdentity: buildMapFilter(query, "cluster_identity."),
 		templateKind:    filter(query["template_kind"]),
 		constraintName:  filter(query["constraint_name"]),
+		severity:        filter(query["severity"]),
 		objectIdentity:  buildMapFilter(query, "object_identity."),
 	}
 }
@@ -81,6 +83,11 @@ func (fs FilterSet) MatchTemplateKind(kind string) bool {
 // MatchConstraintName checks whether a constraint with the given name shall be included in the result.
 func (fs FilterSet) MatchConstraintName(name string) bool {
 	return fs.constraintName.match(name)
+}
+
+// MatchSeverity checks whether a constraint with the given severity shall be included in the result.
+func (fs FilterSet) MatchSeverity(severity string) bool {
+	return fs.severity.match(severity)
 }
 
 // A list of allowed values for a certain field. If the list is empty, all values are allowed.
