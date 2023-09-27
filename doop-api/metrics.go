@@ -152,7 +152,7 @@ func oldestAuditAgeForClusterReport(clusterName string, report doop.Report) floa
 	return result
 }
 
-func countViolationsForConstraint(templateKind string, constraintName string, rcs []doop.ReportForConstraint, oidKeys []string, rawViolationsDesc, groupedViolationsDesc *prometheus.Desc, ch chan<- prometheus.Metric) {
+func countViolationsForConstraint(templateKind, constraintName string, rcs []doop.ReportForConstraint, oidKeys []string, rawViolationsDesc, groupedViolationsDesc *prometheus.Desc, ch chan<- prometheus.Metric) {
 	//NOTE: This function uses "oid" as an abbreviation for "object identity".
 
 	//First map key is the relevant oid values, second map key is the cluster name.
