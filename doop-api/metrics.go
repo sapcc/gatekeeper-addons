@@ -105,7 +105,7 @@ func (mc *MetricCollector) Collect(ch chan<- prometheus.Metric) {
 	for clusterName, report := range reports {
 		ch <- prometheus.MustNewConstMetric(
 			auditAgeOldestDesc,
-			prometheus.GaugeValue, float64(oldestAuditTimestampForClusterReport(clusterName, report)),
+			prometheus.GaugeValue, oldestAuditAgeForClusterReport(clusterName, report),
 			clusterName,
 		)
 	}
@@ -119,8 +119,8 @@ func (mc *MetricCollector) Collect(ch chan<- prometheus.Metric) {
 	}
 }
 
-func oldestAuditTimestampForClusterReport(clusterName string, report doop.Report) int64 {
-	result := int64(-1)
+func oldestAuditAgeForClusterReport(clusterName string, report doop.Report) float64 {
+	result := -1.0
 	for _, rt := range report.Templates {
 		for _, rc := range rt.Constraints {
 			auditTimeStr := rc.Metadata.AuditTimestamp
@@ -136,9 +136,9 @@ func oldestAuditTimestampForClusterReport(clusterName string, report doop.Report
 				return 0
 			}
 
-			unixTime := auditTime.Unix()
-			if result == -1 || result > unixTime {
-				result = unixTime
+			auditAge := time.Since(auditTime).Seconds()
+			if result == -1 || result < auditAge {
+				result = auditAge
 			}
 		}
 	}
