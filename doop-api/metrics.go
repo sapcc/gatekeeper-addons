@@ -113,8 +113,15 @@ func (mc *MetricCollector) Collect(ch chan<- prometheus.Metric) {
 	//counting violation groups requires an aggregated report
 	fullReport := AggregateReports(reports, BuildFilterSet(url.Values{}))
 	for _, rt := range fullReport.Templates {
+		//there may be multiple constraints with the same name if metadata differs;
+		//to avoid reporting metrics with the same labelsets multiple times,
+		//we need to group by constraint name first
+		reportsByConstraintName := make(map[string][]doop.ReportForConstraint)
 		for _, rc := range rt.Constraints {
-			countViolationsForConstraint(rt.Kind, rc, mc.objectIdentityKeys, rawViolationsDesc, groupedViolationsDesc, ch)
+			reportsByConstraintName[rc.Name] = append(reportsByConstraintName[rc.Name], rc)
+		}
+		for constraintName, rcs := range reportsByConstraintName {
+			countViolationsForConstraint(rt.Kind, constraintName, rcs, mc.objectIdentityKeys, rawViolationsDesc, groupedViolationsDesc, ch)
 		}
 	}
 }
@@ -145,29 +152,32 @@ func oldestAuditAgeForClusterReport(clusterName string, report doop.Report) floa
 	return result
 }
 
-func countViolationsForConstraint(templateKind string, rc doop.ReportForConstraint, oidKeys []string, rawViolationsDesc, groupedViolationsDesc *prometheus.Desc, ch chan<- prometheus.Metric) {
+func countViolationsForConstraint(templateKind string, constraintName string, rcs []doop.ReportForConstraint, oidKeys []string, rawViolationsDesc, groupedViolationsDesc *prometheus.Desc, ch chan<- prometheus.Metric) {
 	//NOTE: This function uses "oid" as an abbreviation for "object identity".
 
 	//First map key is the relevant oid values, second map key is the cluster name.
-	//Since we do not know how many oid keys we will have in advance, we merge them all together into one string with "\0" as a field separator.
+	//Since we do not know how many oid keys we will have in advance,
+	//we merge them all together into one string with "\0" as a field separator.
 	rawCounts := make(map[string]map[string]int)
 	//No cluster name here, only the relevant oid values.
 	groupedCounts := make(map[string]int)
 
 	//count violations and violation groups
-	for _, vg := range rc.ViolationGroups {
-		oidValues := make([]string, len(oidKeys))
-		for idx, key := range oidKeys {
-			oidValues[idx] = vg.Pattern.ObjectIdentity[key]
-		}
-		oidValuesStr := strings.Join(oidValues, "\000")
+	for _, rc := range rcs {
+		for _, vg := range rc.ViolationGroups {
+			oidValues := make([]string, len(oidKeys))
+			for idx, key := range oidKeys {
+				oidValues[idx] = vg.Pattern.ObjectIdentity[key]
+			}
+			oidValuesStr := strings.Join(oidValues, "\000")
 
-		groupedCounts[oidValuesStr]++
-		if rawCounts[oidValuesStr] == nil {
-			rawCounts[oidValuesStr] = make(map[string]int)
-		}
-		for _, v := range vg.Instances {
-			rawCounts[oidValuesStr][v.ClusterName]++
+			groupedCounts[oidValuesStr]++
+			if rawCounts[oidValuesStr] == nil {
+				rawCounts[oidValuesStr] = make(map[string]int)
+			}
+			for _, v := range vg.Instances {
+				rawCounts[oidValuesStr][v.ClusterName]++
+			}
 		}
 	}
 
@@ -175,7 +185,7 @@ func countViolationsForConstraint(templateKind string, rc doop.ReportForConstrai
 	for oidValuesStr, count := range groupedCounts {
 		labels := make([]string, 2, 2+len(oidKeys))
 		labels[0] = templateKind
-		labels[1] = rc.Name
+		labels[1] = constraintName
 		labels = append(labels, strings.Split(oidValuesStr, "\000")...)
 		ch <- prometheus.MustNewConstMetric(
 			groupedViolationsDesc,
@@ -187,7 +197,7 @@ func countViolationsForConstraint(templateKind string, rc doop.ReportForConstrai
 	for oidValuesStr, subcounts := range rawCounts {
 		labels := make([]string, 3, 3+len(oidKeys))
 		labels[1] = templateKind
-		labels[2] = rc.Name
+		labels[2] = constraintName
 		labels = append(labels, strings.Split(oidValuesStr, "\000")...)
 		for clusterName, count := range subcounts {
 			labels[0] = clusterName
