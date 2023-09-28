@@ -61,14 +61,14 @@ func NewMetricCollector(downloader *Downloader) *MetricCollector {
 				Name: "doop_raw_violations",
 				Help: "Number of raw violations, grouped by constraint, source cluster and selected object identity labels.",
 			},
-			append([]string{"cluster", "template_kind", "constraint_name"}, objectIdentityLabels...),
+			append([]string{"cluster", "template_kind", "constraint_name", "severity"}, objectIdentityLabels...),
 		),
 		groupedViolationsGauge: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Name: "doop_grouped_violations",
 				Help: "Number of violation groups, grouped by constraint, source cluster and selected object identity labels.",
 			},
-			append([]string{"template_kind", "constraint_name"}, objectIdentityLabels...),
+			append([]string{"template_kind", "constraint_name", "severity"}, objectIdentityLabels...),
 		),
 		auditAgeOldestGauge: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
@@ -155,12 +155,12 @@ func oldestAuditAgeForClusterReport(clusterName string, report doop.Report) floa
 func countViolationsForConstraint(templateKind, constraintName string, rcs []doop.ReportForConstraint, oidKeys []string, rawViolationsDesc, groupedViolationsDesc *prometheus.Desc, ch chan<- prometheus.Metric) {
 	//NOTE: This function uses "oid" as an abbreviation for "object identity".
 
-	//First map key is the relevant oid values, second map key is the cluster name.
+	//First map key is severity, second map is the relevant oid values, third map key is the cluster name.
 	//Since we do not know how many oid keys we will have in advance,
 	//we merge them all together into one string with "\0" as a field separator.
-	rawCounts := make(map[string]map[string]int)
-	//No cluster name here, only the relevant oid values.
-	groupedCounts := make(map[string]int)
+	rawCounts := make(map[string]map[string]map[string]int)
+	//No cluster name here, only the severity and relevant oid values.
+	groupedCounts := make(map[string]map[string]int)
 
 	//count violations and violation groups
 	for _, rc := range rcs {
@@ -170,42 +170,56 @@ func countViolationsForConstraint(templateKind, constraintName string, rcs []doo
 				oidValues[idx] = vg.Pattern.ObjectIdentity[key]
 			}
 			oidValuesStr := strings.Join(oidValues, "\000")
+			severity := rc.Metadata.Severity
 
-			groupedCounts[oidValuesStr]++
-			if rawCounts[oidValuesStr] == nil {
-				rawCounts[oidValuesStr] = make(map[string]int)
+			if groupedCounts[severity] == nil {
+				groupedCounts[severity] = make(map[string]int)
+			}
+			groupedCounts[severity][oidValuesStr]++
+
+			if rawCounts[severity] == nil {
+				rawCounts[severity] = make(map[string]map[string]int)
+			}
+			if rawCounts[severity][oidValuesStr] == nil {
+				rawCounts[severity][oidValuesStr] = make(map[string]int)
 			}
 			for _, v := range vg.Instances {
-				rawCounts[oidValuesStr][v.ClusterName]++
+				rawCounts[severity][oidValuesStr][v.ClusterName]++
 			}
 		}
 	}
 
 	//emit metrics
-	for oidValuesStr, count := range groupedCounts {
-		labels := make([]string, 2, 2+len(oidKeys))
-		labels[0] = templateKind
-		labels[1] = constraintName
-		labels = append(labels, strings.Split(oidValuesStr, "\000")...)
-		ch <- prometheus.MustNewConstMetric(
-			groupedViolationsDesc,
-			prometheus.GaugeValue, float64(count),
-			labels...,
-		)
-	}
-
-	for oidValuesStr, subcounts := range rawCounts {
-		labels := make([]string, 3, 3+len(oidKeys))
-		labels[1] = templateKind
-		labels[2] = constraintName
-		labels = append(labels, strings.Split(oidValuesStr, "\000")...)
-		for clusterName, count := range subcounts {
-			labels[0] = clusterName
+	for severity, subcounts := range groupedCounts {
+		for oidValuesStr, count := range subcounts {
+			labels := make([]string, 3, 3+len(oidKeys))
+			labels[0] = templateKind
+			labels[1] = constraintName
+			labels[2] = severity
+			labels = append(labels, strings.Split(oidValuesStr, "\000")...)
 			ch <- prometheus.MustNewConstMetric(
-				rawViolationsDesc,
+				groupedViolationsDesc,
 				prometheus.GaugeValue, float64(count),
 				labels...,
 			)
+		}
+	}
+
+	for severity, subcounts := range rawCounts {
+		for oidValuesStr, subsubcounts := range subcounts {
+			labels := make([]string, 4, 4+len(oidKeys))
+			labels[1] = templateKind
+			labels[2] = constraintName
+			labels[3] = severity
+			labels = append(labels, strings.Split(oidValuesStr, "\000")...)
+			for clusterName, count := range subsubcounts {
+				labels[0] = clusterName
+				ch <- prometheus.MustNewConstMetric(
+					rawViolationsDesc,
+					prometheus.GaugeValue, float64(count),
+					labels...,
+				)
+			}
 		}
 	}
 }
