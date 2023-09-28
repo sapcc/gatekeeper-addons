@@ -28,4 +28,4 @@ LABEL source_repository="https://github.com/sapcc/gatekeeper-addons" \
 
 USER 4200:4200
 WORKDIR /home/appuser
-ENTRYPOINT [ "/usr/bin/doop-agent" ]
+ENTRYPOINT [ "/usr/bin/doop-analyzer" ]
