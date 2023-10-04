@@ -123,7 +123,7 @@ func visitViolationGroup(target *doop.ReportForConstraint, vg doop.ViolationGrou
 			for _, instance := range vg.Instances {
 				clonedInstance := instance.Cloned()
 				clonedInstance.ClusterName = clusterName
-				target.ViolationGroups[idx].Instances = append(candidate.Instances, clonedInstance)
+				target.ViolationGroups[idx].Instances = append(target.ViolationGroups[idx].Instances, clonedInstance)
 			}
 			return
 		}
