@@ -26,6 +26,7 @@ import (
 	"html"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/google/go-containerregistry/pkg/name"
@@ -133,7 +134,7 @@ func (a api) handleHeaders(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				clock := time.Now().Add(duration)
-				respHeader.Set(header, fmt.Sprintf("%d", clock.Unix()))
+				respHeader.Set(header, strconv.FormatInt(clock.Unix(), 10))
 			} else {
 				respHeader.Set(header, value)
 			}
