@@ -158,11 +158,12 @@ github.com/klauspost/compress/zstd/internal/xxhash
 github.com/mailru/easyjson/buffer
 github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
-# github.com/majewsky/schwift v1.2.0
-## explicit; go 1.16
+# github.com/majewsky/schwift v1.3.0
+## explicit; go 1.20
 github.com/majewsky/schwift
 github.com/majewsky/schwift/capabilities
 github.com/majewsky/schwift/gopherschwift
+github.com/majewsky/schwift/internal/errext
 # github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0
 ## explicit; go 1.19
 github.com/matttproud/golang_protobuf_extensions/v2/pbutil
