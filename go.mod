@@ -1,6 +1,6 @@
 module github.com/sapcc/gatekeeper-addons
 
-go 1.21
+go 1.22
 
 require (
 	github.com/gofrs/uuid/v5 v5.0.0
