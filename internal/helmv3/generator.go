@@ -24,6 +24,7 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -47,10 +48,10 @@ const (
 func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 	//check required values
 	if c.Metadata.Name == "" {
-		return nil, fmt.Errorf("missing required field: metadata.name")
+		return nil, errors.New("missing required field: metadata.name")
 	}
 	if c.Metadata.Status == "" {
-		return nil, fmt.Errorf("missing required field: metadata.status")
+		return nil, errors.New("missing required field: metadata.status")
 	}
 
 	//apply default values
@@ -70,8 +71,6 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 	if c.Metadata.Version > 1 {
 		mockInstallTime = mockUpgradeTime.Add(-24 * time.Hour).UTC()
 	}
-	mockStatusDesc := fmt.Sprintf("Moving into status %s", c.Metadata.Status)
-	mockChartDesc := fmt.Sprintf("Helm chart for %s", c.Metadata.Name)
 	mockSecretResourceVersion := strconv.FormatInt(23*mockUpgradeTime.Unix(), 10)
 	mockSecretUUID, err := uuid.NewV4()
 	if err != nil {
@@ -89,14 +88,14 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 			FirstDeployed: mockInstallTime.Format(time.RFC3339Nano),
 			LastDeployed:  mockUpgradeTime.Format(time.RFC3339Nano),
 			Deleted:       "",
-			Description:   mockStatusDesc,
+			Description:   "Moving into status " + c.Metadata.Status,
 			Status:        c.Metadata.Status,
 		},
 		Chart: releasePayloadChart{
 			Metadata: releasePayloadChartMetadata{
 				Name:         c.Metadata.Name,
 				Version:      mockChartVersion,
-				Description:  mockChartDesc,
+				Description:  "Helm chart for " + c.Metadata.Name,
 				APIVersion:   "v2",
 				Dependencies: []releasePayloadChartMetadataDependency{}, //filled below
 			},
