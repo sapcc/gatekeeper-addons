@@ -43,6 +43,7 @@ import (
 )
 
 func main() {
+	bininfo.HandleVersionArgument()
 	logg.ShowDebug = osext.GetenvBool("DOOP_IMAGE_CHECKER_DEBUG")
 	undoMaxprocs := must.Return(maxprocs.Set(maxprocs.Logger(logg.Debug)))
 	defer undoMaxprocs()

@@ -30,6 +30,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/sapcc/go-api-declarations/bininfo"
 	"github.com/sapcc/go-bits/httpext"
 	"github.com/sapcc/go-bits/logg"
 	"github.com/sapcc/go-bits/must"
@@ -45,6 +46,7 @@ func usage() {
 }
 
 func main() {
+	bininfo.HandleVersionArgument()
 	logg.ShowDebug = osext.GetenvBool("DOOP_ANALYZER_DEBUG")
 	undoMaxprocs, err := maxprocs.Set(maxprocs.Logger(logg.Debug))
 	if err != nil {

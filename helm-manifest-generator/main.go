@@ -23,6 +23,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/sapcc/go-api-declarations/bininfo"
 	"github.com/sapcc/go-bits/must"
 	"gopkg.in/yaml.v2"
 
@@ -30,9 +31,12 @@ import (
 )
 
 func main() {
+	bininfo.HandleVersionArgument()
+
 	buf := must.Return(io.ReadAll(os.Stdin))
 	var contents helmv3.ReleaseContents
 	must.Succeed(yaml.Unmarshal(buf, &contents))
+
 	secretObj := must.Return(contents.GenerateMockRelease())
 	buf = must.Return(yaml.Marshal(secretObj))
 	_ = must.Return(os.Stdout.Write(buf))
