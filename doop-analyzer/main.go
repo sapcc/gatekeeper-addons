@@ -48,10 +48,7 @@ func usage() {
 func main() {
 	bininfo.HandleVersionArgument()
 	logg.ShowDebug = osext.GetenvBool("DOOP_ANALYZER_DEBUG")
-	undoMaxprocs, err := maxprocs.Set(maxprocs.Logger(logg.Debug))
-	if err != nil {
-		logg.Fatal("cannot setup GOMAXPROCS: " + err.Error())
-	}
+	undoMaxprocs := must.Return(maxprocs.Set(maxprocs.Logger(logg.Debug)))
 	defer undoMaxprocs()
 
 	ctx := httpext.ContextWithSIGINT(context.Background(), 1*time.Second)
