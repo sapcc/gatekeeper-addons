@@ -21,8 +21,12 @@ RUN apk upgrade --no-cache --no-progress \
 COPY --from=builder /etc/ssl/certs/ /etc/ssl/certs/
 COPY --from=builder /etc/ssl/cert.pem /etc/ssl/cert.pem
 COPY --from=builder /pkg/ /usr/
-# make sure the binary can be executed
-RUN "/usr/bin/doop-analyzer" --version 2>/dev/null
+# make sure all binaries can be executed
+RUN doop-analyzer --version 2>/dev/null
+RUN doop-api --version 2>/dev/null
+RUN doop-image-checker --version 2>/dev/null
+RUN helm-manifest-generator --version 2>/dev/null
+RUN helm-manifest-parser --version 2>/dev/null
 
 ARG BININFO_BUILD_DATE BININFO_COMMIT_HASH BININFO_VERSION
 LABEL source_repository="https://github.com/sapcc/gatekeeper-addons" \
