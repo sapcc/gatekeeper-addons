@@ -3,6 +3,7 @@ module github.com/sapcc/gatekeeper-addons
 go 1.22
 
 require (
+	github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46
 	github.com/gofrs/uuid/v5 v5.0.0
 	github.com/google/go-containerregistry v0.19.0
 	github.com/gophercloud/gophercloud v1.9.0

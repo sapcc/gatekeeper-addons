@@ -22,6 +22,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/NYTimes/gziphandler"
 	"github.com/gorilla/mux"
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/respondwith"
@@ -34,7 +35,7 @@ type API struct {
 
 // AddTo implements the httpapi.API interface.
 func (a API) AddTo(r *mux.Router) {
-	r.Methods("GET").Path("/v2/violations").HandlerFunc(a.handleGetViolations)
+	r.Methods("GET").Path("/v2/violations").Handler(gziphandler.GzipHandler(http.HandlerFunc(a.handleGetViolations)))
 }
 
 func (a API) handleGetViolations(w http.ResponseWriter, r *http.Request) {
