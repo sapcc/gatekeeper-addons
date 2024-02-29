@@ -25,6 +25,7 @@ import (
 	"regexp"
 
 	"github.com/sapcc/gatekeeper-addons/internal/doop"
+	"github.com/sapcc/gatekeeper-addons/internal/util"
 )
 
 // GatherReport reads all constraint templates and configs and compiles a report.
@@ -101,7 +102,7 @@ func gatherReportForConstraint(c Constraint) doop.ReportForConstraint {
 			Name:           v.Name,
 			Namespace:      v.Namespace,
 			Message:        processedMessage,
-			ObjectIdentity: objectIdentity,
+			ObjectIdentity: util.NewCowMap[string, string](objectIdentity),
 		})
 	}
 

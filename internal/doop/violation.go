@@ -20,8 +20,10 @@
 package doop
 
 import (
-	"maps"
+	"encoding/json"
 	"strings"
+
+	"github.com/sapcc/gatekeeper-addons/internal/util"
 )
 
 // ViolationGroup describes a set of one or more policy violations that follow a common pattern.
@@ -32,6 +34,16 @@ type ViolationGroup struct {
 
 // Violation describes a single policy violation, or the common pattern within a ViolationGroup.
 type Violation struct {
+	Kind           string
+	Name           string
+	Namespace      string
+	Message        string
+	ObjectIdentity *util.CowMap[string, string]
+	// This field is only set when this Violation appears as a ViolationGroup instance inside an AggregatedReport.
+	ClusterName string
+}
+
+type serializedViolation struct {
 	// All fields are omitempty because we compress ViolationGroups by omitting all fields
 	// from instances that are identical to the respective fields in the pattern.
 	Kind           string            `json:"kind,omitempty"`
@@ -43,10 +55,41 @@ type Violation struct {
 	ClusterName string `json:"cluster,omitempty"`
 }
 
+// MarshalJSON implements the json.Marshaler interface.
+func (v Violation) MarshalJSON() ([]byte, error) {
+	return json.Marshal(serializedViolation{
+		Kind:           v.Kind,
+		Name:           v.Name,
+		Namespace:      v.Namespace,
+		Message:        v.Message,
+		ObjectIdentity: v.ObjectIdentity.GetAll(),
+		ClusterName:    v.ClusterName,
+	})
+}
+
+// UnmarshalJSON implements the json.Unmarshaler interface.
+func (v *Violation) UnmarshalJSON(buf []byte) error {
+	var s serializedViolation
+	err := json.Unmarshal(buf, &s)
+	if err != nil {
+		return err
+	}
+
+	*v = Violation{
+		Kind:           s.Kind,
+		Name:           s.Name,
+		Namespace:      s.Namespace,
+		Message:        s.Message,
+		ObjectIdentity: util.NewCowMap(s.ObjectIdentity),
+		ClusterName:    s.ClusterName,
+	}
+	return nil
+}
+
 // Cloned returns a deep copy of this Violation.
 func (v Violation) Cloned() Violation {
 	result := v
-	result.ObjectIdentity = maps.Clone(v.ObjectIdentity)
+	result.ObjectIdentity = v.ObjectIdentity.Clone()
 	return result
 }
 
@@ -57,7 +100,7 @@ func (v Violation) IsEqualTo(other Violation) bool {
 		v.Name == other.Name &&
 		v.Namespace == other.Namespace &&
 		v.Message == other.Message &&
-		maps.Equal(v.ObjectIdentity, other.ObjectIdentity) &&
+		v.ObjectIdentity.IsEqual(other.ObjectIdentity) &&
 		v.ClusterName == other.ClusterName
 }
 
@@ -77,8 +120,8 @@ func (v Violation) DifferenceTo(pattern Violation) Violation {
 	if result.Message == pattern.Message {
 		result.Message = ""
 	}
-	if maps.Equal(result.ObjectIdentity, pattern.ObjectIdentity) {
-		result.ObjectIdentity = nil
+	if result.ObjectIdentity.IsEqual(pattern.ObjectIdentity) {
+		result.ObjectIdentity = util.NewCowMap[string, string](nil)
 	}
 	if result.ClusterName == pattern.ClusterName {
 		result.ClusterName = ""
