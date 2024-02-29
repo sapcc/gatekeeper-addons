@@ -20,8 +20,9 @@
 package doop
 
 import (
-	"maps"
 	"strings"
+
+	"github.com/sapcc/gatekeeper-addons/internal/util"
 )
 
 // ViolationGroup describes a set of one or more policy violations that follow a common pattern.
@@ -34,11 +35,11 @@ type ViolationGroup struct {
 type Violation struct {
 	// All fields are omitempty because we compress ViolationGroups by omitting all fields
 	// from instances that are identical to the respective fields in the pattern.
-	Kind           string            `json:"kind,omitempty"`
-	Name           string            `json:"name,omitempty"`
-	Namespace      string            `json:"namespace,omitempty"`
-	Message        string            `json:"message,omitempty"`
-	ObjectIdentity map[string]string `json:"object_identity,omitempty"`
+	Kind           string                       `json:"kind,omitempty"`
+	Name           string                       `json:"name,omitempty"`
+	Namespace      string                       `json:"namespace,omitempty"`
+	Message        string                       `json:"message,omitempty"`
+	ObjectIdentity *util.CowMap[string, string] `json:"object_identity,omitempty"`
 	// This field is only set when this Violation appears as a ViolationGroup instance inside an AggregatedReport.
 	ClusterName string `json:"cluster,omitempty"`
 }
@@ -46,7 +47,7 @@ type Violation struct {
 // Cloned returns a deep copy of this Violation.
 func (v Violation) Cloned() Violation {
 	result := v
-	result.ObjectIdentity = maps.Clone(v.ObjectIdentity)
+	result.ObjectIdentity = v.ObjectIdentity.Clone()
 	return result
 }
 
@@ -57,7 +58,7 @@ func (v Violation) IsEqualTo(other Violation) bool {
 		v.Name == other.Name &&
 		v.Namespace == other.Namespace &&
 		v.Message == other.Message &&
-		maps.Equal(v.ObjectIdentity, other.ObjectIdentity) &&
+		v.ObjectIdentity.IsEqual(other.ObjectIdentity) &&
 		v.ClusterName == other.ClusterName
 }
 
@@ -77,8 +78,8 @@ func (v Violation) DifferenceTo(pattern Violation) Violation {
 	if result.Message == pattern.Message {
 		result.Message = ""
 	}
-	if maps.Equal(result.ObjectIdentity, pattern.ObjectIdentity) {
-		result.ObjectIdentity = nil
+	if result.ObjectIdentity.IsEqual(pattern.ObjectIdentity) {
+		result.ObjectIdentity = util.NewCowMap[string, string](nil)
 	}
 	if result.ClusterName == pattern.ClusterName {
 		result.ClusterName = ""

@@ -167,7 +167,7 @@ func countViolationsForConstraint(templateKind, constraintName string, rcs []doo
 		for _, vg := range rc.ViolationGroups {
 			oidValues := make([]string, len(oidKeys))
 			for idx, key := range oidKeys {
-				oidValues[idx] = vg.Pattern.ObjectIdentity[key]
+				oidValues[idx] = vg.Pattern.ObjectIdentity.Get(key)
 			}
 			oidValuesStr := strings.Join(oidValues, "\000")
 			severity := rc.Metadata.Severity

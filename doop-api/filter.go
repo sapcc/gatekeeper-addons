@@ -22,6 +22,8 @@ package main
 import (
 	"net/url"
 	"strings"
+
+	"github.com/sapcc/gatekeeper-addons/internal/util"
 )
 
 // FilterSet describes which clusters/templates/constraints/violations to filter out when aggregating reports.
@@ -66,9 +68,9 @@ func (fs FilterSet) MatchClusterIdentity(identity map[string]string) bool {
 }
 
 // MatchObjectIdentity checks whether a violation with the given object identity shall be included in the result.
-func (fs FilterSet) MatchObjectIdentity(identity map[string]string) bool {
+func (fs FilterSet) MatchObjectIdentity(identity *util.CowMap[string, string]) bool {
 	for key, filter := range fs.objectIdentity {
-		if !filter.match(identity[key]) {
+		if !filter.match(identity.Get(key)) {
 			return false
 		}
 	}

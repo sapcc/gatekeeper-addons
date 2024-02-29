@@ -37,7 +37,7 @@ func ExecuteRulesOnViolation(rules []Rule, v *doop.Violation) {
 		"namespace": v.Namespace,
 		"message":   v.Message,
 	}
-	for key, val := range v.ObjectIdentity {
+	for key, val := range v.ObjectIdentity.GetAll() {
 		data["object_identity."+key] = val
 	}
 
@@ -49,9 +49,11 @@ func ExecuteRulesOnViolation(rules []Rule, v *doop.Violation) {
 	v.Name = data["name"]
 	v.Namespace = data["namespace"]
 	v.Message = data["message"]
-	for key := range v.ObjectIdentity {
-		v.ObjectIdentity[key] = data["object_identity."+key]
-	}
+	v.ObjectIdentity.Update(func(oid map[string]string) {
+		for key := range oid {
+			oid[key] = data["object_identity."+key]
+		}
+	})
 }
 
 var placeholderRx = regexp.MustCompile(`\$[0-9][1-9]*`) // matches $0, $1, $2, etc.
