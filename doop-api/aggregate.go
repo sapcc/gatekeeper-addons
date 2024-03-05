@@ -19,7 +19,11 @@
 
 package main
 
-import "github.com/sapcc/gatekeeper-addons/internal/doop"
+import (
+	"slices"
+
+	"github.com/sapcc/gatekeeper-addons/internal/doop"
+)
 
 // AggregateReports assembles a set of individual reports into an AggregatedReport.
 func AggregateReports(reports map[string]doop.Report, f FilterSet) doop.AggregatedReport {
@@ -46,11 +50,11 @@ func visitClusterReport(target *doop.AggregatedReport, clusterReport doop.Report
 
 	target.ClusterIdentities[clusterName] = clusterReport.ClusterIdentity
 	for _, tr := range clusterReport.Templates {
-		visitTemplateReport(target, tr, clusterName, f)
+		visitTemplateReport(target, tr, f)
 	}
 }
 
-func visitTemplateReport(target *doop.AggregatedReport, tr doop.ReportForTemplate, clusterName string, f FilterSet) {
+func visitTemplateReport(target *doop.AggregatedReport, tr doop.ReportForTemplate, f FilterSet) {
 	if !f.MatchTemplateKind(tr.Kind) {
 		return
 	}
@@ -59,7 +63,7 @@ func visitTemplateReport(target *doop.AggregatedReport, tr doop.ReportForTemplat
 	for idx, candidate := range target.Templates {
 		if candidate.Kind == tr.Kind {
 			for _, cr := range tr.Constraints {
-				visitConstraintReport(&target.Templates[idx], cr, clusterName, f)
+				visitConstraintReport(&target.Templates[idx], cr, f)
 			}
 			return
 		}
@@ -70,14 +74,14 @@ func visitTemplateReport(target *doop.AggregatedReport, tr doop.ReportForTemplat
 		Kind: tr.Kind,
 	}
 	for _, cr := range tr.Constraints {
-		visitConstraintReport(&newReport, cr, clusterName, f)
+		visitConstraintReport(&newReport, cr, f)
 	}
 	if len(newReport.Constraints) > 0 {
 		target.Templates = append(target.Templates, newReport)
 	}
 }
 
-func visitConstraintReport(target *doop.ReportForTemplate, cr doop.ReportForConstraint, clusterName string, f FilterSet) {
+func visitConstraintReport(target *doop.ReportForTemplate, cr doop.ReportForConstraint, f FilterSet) {
 	if !f.MatchConstraintName(cr.Name) {
 		return
 	}
@@ -93,7 +97,7 @@ func visitConstraintReport(target *doop.ReportForTemplate, cr doop.ReportForCons
 	for idx, candidate := range target.Constraints {
 		if candidate.Name == cr.Name && candidate.Metadata == metadata {
 			for _, vg := range cr.ViolationGroups {
-				visitViolationGroup(&target.Constraints[idx], vg, clusterName, f)
+				visitViolationGroup(&target.Constraints[idx], vg, f)
 			}
 			return
 		}
@@ -105,14 +109,14 @@ func visitConstraintReport(target *doop.ReportForTemplate, cr doop.ReportForCons
 		Metadata: metadata,
 	}
 	for _, vg := range cr.ViolationGroups {
-		visitViolationGroup(&newReport, vg, clusterName, f)
+		visitViolationGroup(&newReport, vg, f)
 	}
 	if len(newReport.ViolationGroups) > 0 {
 		target.Constraints = append(target.Constraints, newReport)
 	}
 }
 
-func visitViolationGroup(target *doop.ReportForConstraint, vg doop.ViolationGroup, clusterName string, f FilterSet) {
+func visitViolationGroup(target *doop.ReportForConstraint, vg doop.ViolationGroup, f FilterSet) {
 	if !f.MatchObjectIdentity(vg.Pattern.ObjectIdentity) {
 		return
 	}
@@ -120,24 +124,14 @@ func visitViolationGroup(target *doop.ReportForConstraint, vg doop.ViolationGrou
 	//try to merge into existing ViolationGroup
 	for idx, candidate := range target.ViolationGroups {
 		if candidate.Pattern.IsEqualTo(vg.Pattern) {
-			for _, instance := range vg.Instances {
-				clonedInstance := instance.Cloned()
-				clonedInstance.ClusterName = clusterName
-				target.ViolationGroups[idx].Instances = append(target.ViolationGroups[idx].Instances, clonedInstance)
-			}
+			target.ViolationGroups[idx].Instances = append(target.ViolationGroups[idx].Instances, vg.Instances...)
 			return
 		}
 	}
 
 	//otherwise start a new ViolationGroup
-	newGroup := doop.ViolationGroup{
+	target.ViolationGroups = append(target.ViolationGroups, doop.ViolationGroup{
 		Pattern:   vg.Pattern.Cloned(),
-		Instances: make([]doop.Violation, len(vg.Instances)),
-	}
-	for idx, instance := range vg.Instances {
-		clonedInstance := instance.Cloned()
-		clonedInstance.ClusterName = clusterName
-		newGroup.Instances[idx] = clonedInstance
-	}
-	target.ViolationGroups = append(target.ViolationGroups, newGroup)
+		Instances: slices.Clone(vg.Instances),
+	})
 }

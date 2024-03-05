@@ -81,6 +81,7 @@ func (d *Downloader) GetReports() (map[string]doop.Report, error) {
 			if err != nil {
 				return nil, fmt.Errorf("cannot decode report for %s: %w", name, err)
 			}
+			payload.SetClusterName(name)
 			objState.Payload = payload
 		}
 

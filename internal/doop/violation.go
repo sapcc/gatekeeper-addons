@@ -40,6 +40,7 @@ type Violation struct {
 	Message        string            `json:"message,omitempty"`
 	ObjectIdentity map[string]string `json:"object_identity,omitempty"`
 	// This field is only set when this Violation appears as a ViolationGroup instance inside an AggregatedReport.
+	// It is written by Report.SetClusterName() at report loading time.
 	ClusterName string `json:"cluster,omitempty"`
 }
 

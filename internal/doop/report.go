@@ -30,6 +30,23 @@ type Report struct {
 	Templates       []ReportForTemplate `json:"templates"`
 }
 
+// SetClusterName sets the ClusterName field on all Violation objects in this Report.
+// This is used at report loading time to prepare the report for aggregation.
+// The self-return is used to shorten setup code in unit tests.
+func (r Report) SetClusterName(clusterName string) Report {
+	for _, t := range r.Templates {
+		for _, c := range t.Constraints {
+			for _, vg := range c.ViolationGroups {
+				for idx, v := range vg.Instances {
+					v.ClusterName = clusterName
+					vg.Instances[idx] = v
+				}
+			}
+		}
+	}
+	return r
+}
+
 // ReportForTemplate appears in type Report.
 type ReportForTemplate struct {
 	Kind        string                `json:"kind"`

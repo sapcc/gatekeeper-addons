@@ -32,7 +32,7 @@ import (
 
 func TestAggregateOfOneCluster(t *testing.T) {
 	inputSet := map[string]doop.Report{
-		"cluster1": mustParseJSON[doop.Report](t, "fixtures/input-cluster1.json"),
+		"cluster1": mustParseJSON[doop.Report](t, "fixtures/input-cluster1.json").SetClusterName("cluster1"),
 	}
 
 	//test that aggregating results from only one cluster barely changes the input if no filter is applied
@@ -78,13 +78,13 @@ func TestAggregateOfOneCluster(t *testing.T) {
 func TestAggregateOfTwoClusters(t *testing.T) {
 	//Each of these cluster reports has exactly one violation.
 	inputSet := map[string]doop.Report{
-		"cluster1": mustParseJSON[doop.Report](t, "fixtures/input-cluster1.json"),
+		"cluster1": mustParseJSON[doop.Report](t, "fixtures/input-cluster1.json").SetClusterName("cluster1"),
 		//this one can merge with cluster 1 on same violation group
-		"cluster2": mustParseJSON[doop.Report](t, "fixtures/input-cluster2.json"),
+		"cluster2": mustParseJSON[doop.Report](t, "fixtures/input-cluster2.json").SetClusterName("cluster2"),
 		//this one can merge with cluster 1 on different violation group, but same constraint
-		"cluster3": mustParseJSON[doop.Report](t, "fixtures/input-cluster3.json"),
+		"cluster3": mustParseJSON[doop.Report](t, "fixtures/input-cluster3.json").SetClusterName("cluster3"),
 		//this one can merge with cluster 1 on different constraint, but same template
-		"cluster4": mustParseJSON[doop.Report](t, "fixtures/input-cluster4.json"),
+		"cluster4": mustParseJSON[doop.Report](t, "fixtures/input-cluster4.json").SetClusterName("cluster4"),
 	}
 
 	//test merging of structures on all levels of the report
