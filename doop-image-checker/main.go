@@ -81,7 +81,7 @@ func main() {
 	}
 	handler := httpapi.Compose(apis...)
 
-	//during unit tests, we can set FAST_SHUTDOWN to avoid unnecessary waiting times
+	// during unit tests, we can set FAST_SHUTDOWN to avoid unnecessary waiting times
 	shutdownDelay := 10 * time.Second
 	if osext.GetenvBool("FAST_SHUTDOWN") {
 		shutdownDelay = 100 * time.Millisecond
@@ -101,21 +101,21 @@ func (a api) AddTo(r *mux.Router) {
 }
 
 func (a api) handleHeaders(w http.ResponseWriter, r *http.Request) {
-	//validate request format
+	// validate request format
 	imageRefStr := r.URL.Query().Get("image")
 	if imageRefStr == "" {
 		http.Error(w, `missing "image" query parameter`, http.StatusBadRequest)
 		return
 	}
 
-	//use cache if possible
+	// use cache if possible
 	hdr, ok := checkHeaderCache(imageRefStr)
 	if ok {
 		respondWithHeaderJSON(w, hdr)
 		return
 	}
 
-	//parse image reference
+	// parse image reference
 	ref, err := name.ParseReference(imageRefStr, name.WithDefaultTag("latest"))
 	if err != nil {
 		msg := fmt.Sprintf("while parsing image reference %q: %s", html.EscapeString(imageRefStr), err.Error())
@@ -142,10 +142,10 @@ func (a api) handleHeaders(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		var hc headerCapturer
-		//make request to Keppel's Registry API (we deliberately make a GET here in
-		//order to explicitly update the image's last_pulled_at timestamp);
-		//unfortunately we need to engage in some trickery to extract the
-		//X-Keppel-Vulnerability-Status header
+		// make request to Keppel's Registry API (we deliberately make a GET here in
+		// order to explicitly update the image's last_pulled_at timestamp);
+		// unfortunately we need to engage in some trickery to extract the
+		// X-Keppel-Vulnerability-Status header
 		_, err = remote.Image(ref, remote.WithTransport(&hc))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -154,7 +154,7 @@ func (a api) handleHeaders(w http.ResponseWriter, r *http.Request) {
 		respHeader = hc.Headers
 	}
 
-	//fill cache and return result
+	// fill cache and return result
 	fillHeaderCache(imageRefStr, respHeader)
 	respondWithHeaderJSON(w, respHeader)
 }

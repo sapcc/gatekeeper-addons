@@ -83,7 +83,7 @@ func gatherReportForConstraint(c Constraint) doop.ReportForConstraint {
 	}
 
 	for _, v := range c.Status.Violations {
-		//extract the object identity prefix from the violation message, if any
+		// extract the object identity prefix from the violation message, if any
 		processedMessage := v.Message
 		var objectIdentity map[string]string
 		match := objectIdentityRx.FindStringSubmatch(processedMessage)

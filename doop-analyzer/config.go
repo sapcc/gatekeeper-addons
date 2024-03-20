@@ -71,7 +71,7 @@ func ReadConfiguration(configPath string) (Configuration, error) {
 		return Configuration{}, fmt.Errorf("while parsing %s: %w", configPath, err)
 	}
 
-	//apply default values, check for universally required values
+	// apply default values, check for universally required values
 	if cfg.Metrics.ListenAddress == "" {
 		cfg.Metrics.ListenAddress = ":8080"
 	}

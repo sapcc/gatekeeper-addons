@@ -49,7 +49,7 @@ func main() {
 	wrap := httpext.WrapTransport(&http.DefaultTransport)
 	wrap.SetOverrideUserAgent(bininfo.Component(), bininfo.VersionOr("rolling"))
 
-	//initialize OpenStack/Swift client
+	// initialize OpenStack/Swift client
 	ao := must.Return(clientconfig.AuthOptions(nil))
 	ao.AllowReauth = true
 	provider := must.Return(openstack.NewClient(ao.IdentityEndpoint))
@@ -60,7 +60,7 @@ func main() {
 	container := must.Return(account.Container(containerName).EnsureExists())
 	downloader := NewDownloader(container)
 
-	//collect HTTP handlers
+	// collect HTTP handlers
 	prometheus.MustRegister(NewMetricCollector(downloader))
 	handler := httpapi.Compose(
 		API{downloader},
@@ -71,7 +71,7 @@ func main() {
 	mux.Handle("/", handler)
 	mux.Handle("/metrics", promhttp.Handler())
 
-	//start HTTP server
+	// start HTTP server
 	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
 	listenAddress := osext.GetenvOrDefault("DOOP_API_LISTEN_ADDRESS", ":8080")
 	must.Succeed(httpext.ListenAndServeContext(ctx, listenAddress, mux))

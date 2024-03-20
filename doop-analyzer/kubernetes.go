@@ -100,7 +100,7 @@ type ConstraintTemplate struct {
 		} `json:"crd"`
 	} `json:"spec"`
 	Status struct {
-		//TODO We could report Rego parse errors.
+		// TODO We could report Rego parse errors.
 		Created bool `json:"created"`
 	} `json:"status"`
 }
@@ -113,7 +113,7 @@ func (cs ClientSet) ListConstraintTemplates(ctx context.Context) ([]ConstraintTe
 		return nil, fmt.Errorf("cannot list ConstraintTemplates: %w", err)
 	}
 
-	//convert items from unstructured.Unstructured to ConstraintTemplate through a JSON roundtrip
+	// convert items from unstructured.Unstructured to ConstraintTemplate through a JSON roundtrip
 	result := make([]ConstraintTemplate, len(list.Items))
 	for idx, item := range list.Items {
 		jsonBytes, err := json.Marshal(item.Object)
@@ -150,7 +150,7 @@ type ConstraintViolation struct {
 
 // ListConstraints lists all constraints for a given template.
 func (cs ClientSet) ListConstraints(ctx context.Context, tmpl ConstraintTemplate) ([]Constraint, error) {
-	//The following will not work unless the respective CRD was created.
+	// The following will not work unless the respective CRD was created.
 	if !tmpl.Status.Created {
 		return nil, nil
 	}
@@ -161,7 +161,7 @@ func (cs ClientSet) ListConstraints(ctx context.Context, tmpl ConstraintTemplate
 		return nil, fmt.Errorf("cannot list constraints for %s: %w", tmpl.Spec.CRD.Spec.Names.Kind, err)
 	}
 
-	//convert items from unstructured.Unstructured to Constraint through a JSON roundtrip
+	// convert items from unstructured.Unstructured to Constraint through a JSON roundtrip
 	result := make([]Constraint, len(list.Items))
 	for idx, item := range list.Items {
 		jsonBytes, err := json.Marshal(item.Object)

@@ -35,19 +35,19 @@ func TestAggregateOfOneCluster(t *testing.T) {
 		"cluster1": mustParseJSON[doop.Report](t, "fixtures/input-cluster1.json").SetClusterName("cluster1"),
 	}
 
-	//test that aggregating results from only one cluster barely changes the input if no filter is applied
+	// test that aggregating results from only one cluster barely changes the input if no filter is applied
 	expected := mustParseJSON[doop.AggregatedReport](t, "fixtures/output-cluster1-only.json")
 	actual := AggregateReports(inputSet, BuildFilterSet(url.Values{}))
 	actual.Sort()
 	assert.DeepEqual(t, "AggregateReports", actual, expected)
 
-	//test a filter that does not change anything because it exactly matches what is in the report
+	// test a filter that does not change anything because it exactly matches what is in the report
 	filterStr := "cluster_identity.number=one&template_kind=GkFirstTemplate&constraint_name=firstconstraint&object_identity.type=production"
 	actual = AggregateReports(inputSet, BuildFilterSet(query(filterStr)))
 	actual.Sort()
 	assert.DeepEqual(t, "AggregateReports", actual, expected)
 
-	//test a filter that removes all clusters
+	// test a filter that removes all clusters
 	filterStr = "cluster_identity.number=two"
 	actual = AggregateReports(inputSet, BuildFilterSet(query(filterStr)))
 	actual.Sort()
@@ -56,8 +56,8 @@ func TestAggregateOfOneCluster(t *testing.T) {
 		Templates:         nil,
 	})
 
-	//test several filters that remove all violations because they mismatch on each other possible level
-	//(removing violations also removes all effectively empty objects above it)
+	// test several filters that remove all violations because they mismatch on each other possible level
+	// (removing violations also removes all effectively empty objects above it)
 	negativeFilters := []string{
 		"template_kind=GkSecondTemplate",
 		"constraint_name=secondconstraint",
@@ -76,18 +76,18 @@ func TestAggregateOfOneCluster(t *testing.T) {
 }
 
 func TestAggregateOfTwoClusters(t *testing.T) {
-	//Each of these cluster reports has exactly one violation.
+	// Each of these cluster reports has exactly one violation.
 	inputSet := map[string]doop.Report{
 		"cluster1": mustParseJSON[doop.Report](t, "fixtures/input-cluster1.json").SetClusterName("cluster1"),
-		//this one can merge with cluster 1 on same violation group
+		// this one can merge with cluster 1 on same violation group
 		"cluster2": mustParseJSON[doop.Report](t, "fixtures/input-cluster2.json").SetClusterName("cluster2"),
-		//this one can merge with cluster 1 on different violation group, but same constraint
+		// this one can merge with cluster 1 on different violation group, but same constraint
 		"cluster3": mustParseJSON[doop.Report](t, "fixtures/input-cluster3.json").SetClusterName("cluster3"),
-		//this one can merge with cluster 1 on different constraint, but same template
+		// this one can merge with cluster 1 on different constraint, but same template
 		"cluster4": mustParseJSON[doop.Report](t, "fixtures/input-cluster4.json").SetClusterName("cluster4"),
 	}
 
-	//test merging of structures on all levels of the report
+	// test merging of structures on all levels of the report
 	expected := mustParseJSON[doop.AggregatedReport](t, "fixtures/output-both-clusters.json")
 	actual := AggregateReports(inputSet, BuildFilterSet(url.Values{}))
 	actual.Sort()

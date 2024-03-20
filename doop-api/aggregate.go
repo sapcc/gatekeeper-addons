@@ -59,7 +59,7 @@ func visitTemplateReport(target *doop.AggregatedReport, tr doop.ReportForTemplat
 		return
 	}
 
-	//try to merge into existing ReportForTemplate
+	// try to merge into existing ReportForTemplate
 	for idx, candidate := range target.Templates {
 		if candidate.Kind == tr.Kind {
 			for _, cr := range tr.Constraints {
@@ -69,7 +69,7 @@ func visitTemplateReport(target *doop.AggregatedReport, tr doop.ReportForTemplat
 		}
 	}
 
-	//otherwise try to start a new ReportForTemplate
+	// otherwise try to start a new ReportForTemplate
 	newReport := doop.ReportForTemplate{
 		Kind: tr.Kind,
 	}
@@ -89,11 +89,11 @@ func visitConstraintReport(target *doop.ReportForTemplate, cr doop.ReportForCons
 		return
 	}
 
-	//the Metadata.AuditTimestamp field is only used to generate Prometheus metrics; it is not aggregated
+	// the Metadata.AuditTimestamp field is only used to generate Prometheus metrics; it is not aggregated
 	metadata := cr.Metadata
 	metadata.AuditTimestamp = ""
 
-	//try to merge into existing ReportForConstraint
+	// try to merge into existing ReportForConstraint
 	for idx, candidate := range target.Constraints {
 		if candidate.Name == cr.Name && candidate.Metadata == metadata {
 			for _, vg := range cr.ViolationGroups {
@@ -103,7 +103,7 @@ func visitConstraintReport(target *doop.ReportForTemplate, cr doop.ReportForCons
 		}
 	}
 
-	//otherwise try to start a new ReportForConstraint
+	// otherwise try to start a new ReportForConstraint
 	newReport := doop.ReportForConstraint{
 		Name:     cr.Name,
 		Metadata: metadata,
@@ -121,7 +121,7 @@ func visitViolationGroup(target *doop.ReportForConstraint, vg doop.ViolationGrou
 		return
 	}
 
-	//try to merge into existing ViolationGroup
+	// try to merge into existing ViolationGroup
 	for idx, candidate := range target.ViolationGroups {
 		if candidate.Pattern.IsEqualTo(vg.Pattern) {
 			target.ViolationGroups[idx].Instances = append(target.ViolationGroups[idx].Instances, vg.Instances...)
@@ -129,7 +129,7 @@ func visitViolationGroup(target *doop.ReportForConstraint, vg doop.ViolationGrou
 		}
 	}
 
-	//otherwise start a new ViolationGroup
+	// otherwise start a new ViolationGroup
 	target.ViolationGroups = append(target.ViolationGroups, doop.ViolationGroup{
 		Pattern:   vg.Pattern.Cloned(),
 		Instances: slices.Clone(vg.Instances),

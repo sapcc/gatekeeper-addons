@@ -34,8 +34,8 @@ import (
 )
 
 func TestGatherReport(t *testing.T) {
-	//This test runs the dummy Kubernetes objects in `fixtures/gatekeeper/*.yaml`
-	//through GatherReport and matches the result against `fixtures/report-before-processing.json`.
+	// This test runs the dummy Kubernetes objects in `fixtures/gatekeeper/*.yaml`
+	// through GatherReport and matches the result against `fixtures/report-before-processing.json`.
 
 	cfg := Configuration{
 		ClusterIdentity: map[string]string{"ci_key1": "ci_value1", "ci_key2": "ci_value2"},
@@ -64,9 +64,9 @@ func (mockClientSet) ListConstraints(ctx context.Context, tmpl ConstraintTemplat
 }
 
 func readItemListFromYAML[T any](path string) ([]T, error) {
-	//Because the datatypes Constraint and ConstraintTemplate only have
-	//annotations for JSON decoding, we need to take a slight detour
-	//from YAML -> map[any]any -> map[string]any -> JSON -> []T.
+	// Because the datatypes Constraint and ConstraintTemplate only have
+	// annotations for JSON decoding, we need to take a slight detour
+	// from YAML -> map[any]any -> map[string]any -> JSON -> []T.
 
 	buf, err := os.ReadFile(path)
 	if err != nil {

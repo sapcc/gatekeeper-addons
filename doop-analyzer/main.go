@@ -86,14 +86,14 @@ func taskRun(ctx context.Context, configPath string) {
 	cs := must.Return(NewClientSet(cfg))
 	must.Succeed(cfg.Swift.Connect())
 
-	//start HTTP server for Prometheus metrics
+	// start HTTP server for Prometheus metrics
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	go func() {
 		must.Succeed(httpext.ListenAndServeContext(ctx, cfg.Metrics.ListenAddress, mux))
 	}()
 
-	//send a report immediately, then once a minute
+	// send a report immediately, then once a minute
 	sendReport(ctx, cfg, cs)
 	ticker := time.NewTicker(1 * time.Minute)
 	for {

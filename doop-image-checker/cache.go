@@ -45,7 +45,7 @@ func checkHeaderCache(imageRefStr string) (http.Header, bool) {
 	}
 
 	if result.CheckedAt.Add(30 * time.Minute).Before(time.Now()) {
-		//clear old cache entry
+		// clear old cache entry
 		delete(cache, imageRefStr)
 		return nil, false
 	}

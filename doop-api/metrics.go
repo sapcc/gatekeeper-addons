@@ -45,7 +45,7 @@ type MetricCollector struct {
 func NewMetricCollector(downloader *Downloader) *MetricCollector {
 	objectIdentityKeys := strings.Fields(os.Getenv("DOOP_API_OBJECT_IDENTITY_LABELS"))
 
-	//the given key names may not be suitable as label names because of the restricted label name grammar
+	// the given key names may not be suitable as label names because of the restricted label name grammar
 	//-> sanitize all non-alphanumeric characters into underscores for the label names
 	objectIdentityLabels := make([]string, len(objectIdentityKeys))
 	rx := regexp.MustCompile(`[^a-zA-Z0-9]`)
@@ -97,7 +97,7 @@ func (mc *MetricCollector) Collect(ch chan<- prometheus.Metric) {
 	mc.auditAgeOldestGauge.Describe(descCh)
 	auditAgeOldestDesc := <-descCh
 
-	//using the individual reports, we can immediately calculate the audit age
+	// using the individual reports, we can immediately calculate the audit age
 	reports, err := mc.downloader.GetReports()
 	if err != nil {
 		logg.Error("could not download reports for metric computation: %s", err.Error())
@@ -110,12 +110,12 @@ func (mc *MetricCollector) Collect(ch chan<- prometheus.Metric) {
 		)
 	}
 
-	//counting violation groups requires an aggregated report
+	// counting violation groups requires an aggregated report
 	fullReport := AggregateReports(reports, BuildFilterSet(url.Values{}))
 	for _, rt := range fullReport.Templates {
-		//there may be multiple constraints with the same name if metadata differs;
-		//to avoid reporting metrics with the same labelsets multiple times,
-		//we need to group by constraint name first
+		// there may be multiple constraints with the same name if metadata differs;
+		// to avoid reporting metrics with the same labelsets multiple times,
+		// we need to group by constraint name first
 		reportsByConstraintName := make(map[string][]doop.ReportForConstraint)
 		for _, rc := range rt.Constraints {
 			reportsByConstraintName[rc.Name] = append(reportsByConstraintName[rc.Name], rc)
@@ -139,7 +139,7 @@ func oldestAuditAgeForClusterReport(clusterName string, report doop.Report) floa
 			if err != nil {
 				logg.Error("cannot parse audit timestamp %q for cluster %s: %s",
 					auditTimeStr, clusterName, err.Error())
-				//to ensure that the error is noticed, report a very old timestamp that likely triggers alerts
+				// to ensure that the error is noticed, report a very old timestamp that likely triggers alerts
 				return 0
 			}
 
@@ -155,14 +155,14 @@ func oldestAuditAgeForClusterReport(clusterName string, report doop.Report) floa
 func countViolationsForConstraint(templateKind, constraintName string, rcs []doop.ReportForConstraint, oidKeys []string, rawViolationsDesc, groupedViolationsDesc *prometheus.Desc, ch chan<- prometheus.Metric) {
 	//NOTE: This function uses "oid" as an abbreviation for "object identity".
 
-	//First map key is severity, second map is the relevant oid values, third map key is the cluster name.
-	//Since we do not know how many oid keys we will have in advance,
-	//we merge them all together into one string with "\0" as a field separator.
+	// First map key is severity, second map is the relevant oid values, third map key is the cluster name.
+	// Since we do not know how many oid keys we will have in advance,
+	// we merge them all together into one string with "\0" as a field separator.
 	rawCounts := make(map[string]map[string]map[string]int)
-	//No cluster name here, only the severity and relevant oid values.
+	// No cluster name here, only the severity and relevant oid values.
 	groupedCounts := make(map[string]map[string]int)
 
-	//count violations and violation groups
+	// count violations and violation groups
 	for _, rc := range rcs {
 		for _, vg := range rc.ViolationGroups {
 			oidValues := make([]string, len(oidKeys))
@@ -189,7 +189,7 @@ func countViolationsForConstraint(templateKind, constraintName string, rcs []doo
 		}
 	}
 
-	//emit metrics
+	// emit metrics
 	for severity, subcounts := range groupedCounts {
 		for oidValuesStr, count := range subcounts {
 			labels := make([]string, 3, 3+len(oidKeys))

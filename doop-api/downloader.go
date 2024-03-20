@@ -57,7 +57,7 @@ func (d *Downloader) GetReports() (map[string]doop.Report, error) {
 	defer d.mutex.Unlock()
 
 	//NOTE: `objInfo` is the latest information from Swift about a report object.
-	//`objState` is what this process knows about a report object.
+	// `objState` is what this process knows about a report object.
 	result := make(map[string]doop.Report, len(objInfos))
 	for _, objInfo := range objInfos {
 		name := objInfo.Object.Name()
@@ -99,7 +99,7 @@ type objectState struct {
 }
 
 func (os *objectState) NeedsUpdate(oi schwift.ObjectInfo) bool {
-	//if we don't have any state locally yet, we definitely need to update
+	// if we don't have any state locally yet, we definitely need to update
 	if os == nil {
 		return true
 	}

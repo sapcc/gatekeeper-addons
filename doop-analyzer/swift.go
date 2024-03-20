@@ -46,7 +46,7 @@ type SwiftConfiguration struct {
 
 // Connect initializes the Swift client.
 func (s *SwiftConfiguration) Connect() error {
-	//check provided configuration
+	// check provided configuration
 	if s.ContainerName == "" {
 		return errors.New("missing required configuration value: swift.container_name")
 	}
@@ -54,7 +54,7 @@ func (s *SwiftConfiguration) Connect() error {
 		return errors.New("missing required configuration value: swift.object_name")
 	}
 
-	//connect to OpenStack
+	// connect to OpenStack
 	provider, err := clientconfig.AuthenticatedClient(nil)
 	if err != nil {
 		return fmt.Errorf("cannot initialize OpenStack client: %w", err)

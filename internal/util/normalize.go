@@ -66,7 +66,7 @@ func normalizeKey(path string, k interface{}) (string, error) {
 	case string:
 		return k, nil
 	case int:
-		//has been observed in the wild in `.data` of a v1/Secret
+		// has been observed in the wild in `.data` of a v1/Secret
 		return strconv.Itoa(k), nil
 	default:
 		return "", fmt.Errorf("non-string key at %s: %T %v", path, k, k)

@@ -43,7 +43,7 @@ func TestParseManifests(t *testing.T) {
 		outStr, err := tc.Parser(bytes.TrimSpace(inBytes))
 		mustT(t, err)
 
-		//in order to diff(1) with `tc.OutputPath`, we need to apply the same indentation
+		// in order to diff(1) with `tc.OutputPath`, we need to apply the same indentation
 		var outBuf bytes.Buffer
 		mustT(t, json.Indent(&outBuf, []byte(outStr), "", "  "))
 		outBuf.WriteString("\n")

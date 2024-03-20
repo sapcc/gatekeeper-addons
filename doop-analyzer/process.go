@@ -57,7 +57,7 @@ func ExecuteRulesOnViolation(rules []Rule, v *doop.Violation) {
 var placeholderRx = regexp.MustCompile(`\$[0-9][1-9]*`) // matches $0, $1, $2, etc.
 
 func (r Rule) execute(data map[string]string) {
-	//check the `match` section: can we consider applying this rule?
+	// check the `match` section: can we consider applying this rule?
 	for fieldName, rx := range r.Match {
 		fieldValue, ok := data[fieldName]
 		if !ok || !rx.MatchString(fieldValue) {
@@ -65,7 +65,7 @@ func (r Rule) execute(data map[string]string) {
 		}
 	}
 
-	//check the `replace` section: can we perform a replacement?
+	// check the `replace` section: can we perform a replacement?
 	sourceFieldValue, ok := data[r.Replace.Source]
 	if !ok {
 		return
@@ -75,7 +75,7 @@ func (r Rule) execute(data map[string]string) {
 		return
 	}
 
-	//everything matches and the rule applies - perform every requested replacement
+	// everything matches and the rule applies - perform every requested replacement
 	for fieldName, valuePattern := range r.Replace.Target {
 		// in the replacement string (valuePattern), replace "$1" with match[1], "$2" with match[2], etc.
 		data[fieldName] = placeholderRx.ReplaceAllStringFunc(valuePattern, func(placeholder string) string {
@@ -93,44 +93,44 @@ func (r Rule) execute(data map[string]string) {
 func ProcessReport(r *doop.Report, cfg Configuration) {
 	for _, rt := range r.Templates {
 		for idx := range rt.Constraints {
-			//In this loop, we need to address via index instead of copy-by-value
-			//because the slice elements are not pointers.
+			// In this loop, we need to address via index instead of copy-by-value
+			// because the slice elements are not pointers.
 			processReportForConstraint(&rt.Constraints[idx], cfg)
 
-			//When running on a pod with strict CPU limits, Process() may take a very long time.
-			//To ensure that Prometheus metrics can still be scraped in the meantime,
-			//here are some explicit goroutine yields.
+			// When running on a pod with strict CPU limits, Process() may take a very long time.
+			// To ensure that Prometheus metrics can still be scraped in the meantime,
+			// here are some explicit goroutine yields.
 			runtime.Gosched()
 		}
 	}
 }
 
 func processReportForConstraint(rc *doop.ReportForConstraint, cfg Configuration) {
-	//After GatherReport(), only rc.Violations will be filled. The goal of this
-	//function is to clear out rc.Violations and fill rc.ViolationGroups instead.
+	// After GatherReport(), only rc.Violations will be filled. The goal of this
+	// function is to clear out rc.Violations and fill rc.ViolationGroups instead.
 	if len(rc.ViolationGroups) != 0 {
 		panic("Report.Process called on a report that has already been processed")
 	}
 
 VIOLATION:
 	for _, v := range rc.Violations {
-		//apply processing rules first
+		// apply processing rules first
 		ExecuteRulesOnViolation(cfg.ProcessingRules, &v) //nolint:gosec // called function does not retain the pointer
 		vg := doop.ViolationGroup{Pattern: v.Cloned()}
 
-		//apply merging rules to obtain group pattern, then try to merge into an
-		//existing ViolationGroup if possible
+		// apply merging rules to obtain group pattern, then try to merge into an
+		// existing ViolationGroup if possible
 		ExecuteRulesOnViolation(cfg.MergingRules, &vg.Pattern)
 		for idx, other := range rc.ViolationGroups {
 			if vg.Pattern.IsEqualTo(other.Pattern) {
 				//NOTE: The left-hand side of this assignment refers to `other.Instances`,
-				//but we cannot write it as such because `other` is a *copy* of the list element, not a reference to it.
-				rc.ViolationGroups[idx].Instances = append(other.Instances, v.DifferenceTo(vg.Pattern))
+				// but we cannot write it as such because `other` is a *copy* of the list element, not a reference to it.
+				rc.ViolationGroups[idx].Instances = append(other.Instances, v.DifferenceTo(vg.Pattern)) //nolint:gocritic // it is actually the same variable
 				continue VIOLATION
 			}
 		}
 
-		//cannot merge -> remember new ViolationGroup
+		// cannot merge -> remember new ViolationGroup
 		vg.Instances = []doop.Violation{v.DifferenceTo(vg.Pattern)}
 		rc.ViolationGroups = append(rc.ViolationGroups, vg)
 	}

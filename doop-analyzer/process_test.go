@@ -31,8 +31,8 @@ import (
 )
 
 func TestProcessReport(t *testing.T) {
-	//This test runs the report generated at the end of TestGatherReport() through Report.Process()
-	//and matches the result against `fixtures/report-after-processing.json`.
+	// This test runs the report generated at the end of TestGatherReport() through Report.Process()
+	// and matches the result against `fixtures/report-after-processing.json`.
 
 	cfg := Configuration{
 		ProcessingRules: []Rule{

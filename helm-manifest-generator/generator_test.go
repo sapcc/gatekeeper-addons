@@ -41,19 +41,19 @@ func TestRoundtrip(t *testing.T) {
 		inBytes, err := os.ReadFile(tc.InputPath)
 		must(t, err)
 
-		//generate mock release from input declaration
+		// generate mock release from input declaration
 		var inContents helmv3.ReleaseContents
 		must(t, yaml.Unmarshal(inBytes, &inContents))
 		secretObj, err := inContents.GenerateMockRelease()
 		must(t, err)
 
-		//roundtrip back into a declaration
+		// roundtrip back into a declaration
 		roundtrippedContents, err := helmv3.ParseRelease([]byte(secretObj.(map[string]interface{})["data"].(map[string]string)["release"]))
 		must(t, err)
 		roundtrippedBytes, err := yaml.Marshal(roundtrippedContents)
 		must(t, err)
 
-		//diff against expectation
+		// diff against expectation
 		must(t, os.WriteFile(tc.RoundtrippedPath+".actual", roundtrippedBytes, 0o666))
 		cmd := exec.Command("diff", "-u", tc.RoundtrippedPath, tc.RoundtrippedPath+".actual") //nolint:gosec // command only executed in tests
 		cmd.Stdout = os.Stdout

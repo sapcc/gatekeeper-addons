@@ -29,9 +29,9 @@ type ReleaseContents struct {
 	// This section is only used by helm-manifest-generator.
 	Metadata struct {
 		Name      string `yaml:"name"`
-		Namespace string `yaml:"namespace"` //default = release name
+		Namespace string `yaml:"namespace"` // default = release name
 		Status    string `yaml:"status"`
-		Version   uint   `yaml:"version"` //default = 1
+		Version   uint   `yaml:"version"` // default = 1
 	} `json:"-" yaml:"metadata"`
 }
 

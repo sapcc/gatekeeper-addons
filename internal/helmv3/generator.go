@@ -46,7 +46,7 @@ const (
 // a synthetic release object that is a good-enough approximation of an actual
 // Helm 3 release Secret to be used for unit tests.
 func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
-	//check required values
+	// check required values
 	if c.Metadata.Name == "" {
 		return nil, errors.New("missing required field: metadata.name")
 	}
@@ -54,7 +54,7 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 		return nil, errors.New("missing required field: metadata.status")
 	}
 
-	//apply default values
+	// apply default values
 	if c.Metadata.Namespace == "" {
 		c.Metadata.Namespace = c.Metadata.Name
 	}
@@ -65,7 +65,7 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 		c.Values = map[string]interface{}{}
 	}
 
-	//generate some plausible mock values
+	// generate some plausible mock values
 	mockUpgradeTime := time.Now().UTC()
 	mockInstallTime := mockUpgradeTime
 	if c.Metadata.Version > 1 {
@@ -77,7 +77,7 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 		return nil, fmt.Errorf("while generating UUID for Secret: %w", err)
 	}
 
-	//generate payload
+	// generate payload
 	normalizedValues, err := util.NormalizeRecursively(".Values", c.Values)
 	if err != nil {
 		return nil, err
@@ -97,23 +97,23 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 				Version:      mockChartVersion,
 				Description:  "Helm chart for " + c.Metadata.Name,
 				APIVersion:   "v2",
-				Dependencies: []releasePayloadChartMetadataDependency{}, //filled below
+				Dependencies: []releasePayloadChartMetadataDependency{}, // filled below
 			},
 			Lock: releasePayloadChartLock{
 				Generated:    mockInstallTime.Format(time.RFC3339Nano),
 				Digest:       mockLockDigest,
-				Dependencies: []releasePayloadChartLockDependency{}, //filled below
+				Dependencies: []releasePayloadChartLockDependency{}, // filled below
 			},
-			Templates: []releasePayloadChartTemplate{}, //filled below
+			Templates: []releasePayloadChartTemplate{}, // filled below
 		},
 		Config:    normalizedValues,
-		Values:    map[string]interface{}{}, //TODO if this is required in the future, we need to figure out how it is structured
-		Manifest:  "",                       //filled below
+		Values:    map[string]interface{}{}, // TODO if this is required in the future, we need to figure out how it is structured
+		Manifest:  "",                       // filled below
 		Version:   c.Metadata.Version,
 		Namespace: c.Metadata.Namespace,
 	}
 
-	//add manifest objects to payload
+	// add manifest objects to payload
 	addManifestObject := func(buf []byte, kind, name string) {
 		mockFileName := strings.ToLower(fmt.Sprintf("templates/%s-%s.yaml", kind, name))
 		payload.Chart.Templates = append(payload.Chart.Templates, releasePayloadChartTemplate{
@@ -144,12 +144,12 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 		}
 	}
 
-	//add owner-info to payload
+	// add owner-info to payload
 	if c.OwnerInfo != nil {
-		//when starting from a YAML-encoded ReleaseContents, `c.Items` will not
-		//contain the owner-info ConfigMap and we need to add it now; if we started
-		//from an actual Helm release manifest, `c.Items` will have the owner-info
-		//ConfigMap (among other things) and we should not duplicate it to avoid confusion
+		// when starting from a YAML-encoded ReleaseContents, `c.Items` will not
+		// contain the owner-info ConfigMap and we need to add it now; if we started
+		// from an actual Helm release manifest, `c.Items` will have the owner-info
+		// ConfigMap (among other things) and we should not duplicate it to avoid confusion
 		if !manifestHasOwnerInfo {
 			name := "owner-of-" + c.Metadata.Name
 			item := map[string]interface{}{
@@ -167,23 +167,23 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 			addManifestObject(buf, "ConfigMap", name)
 		}
 
-		//add chart dependency to owner-info
+		// add chart dependency to owner-info
 		payload.Chart.Metadata.Dependencies = append(payload.Chart.Metadata.Dependencies, releasePayloadChartMetadataDependency{
 			Name:       "owner-info",
-			Version:    "0.2.0", //TODO allow to configure
+			Version:    "0.2.0", // TODO allow to configure
 			Repository: "https://charts.eu-de-2.cloud.sap",
 			Enabled:    true,
 		})
 
-		//add lock dependency to owner-info
+		// add lock dependency to owner-info
 		payload.Chart.Lock.Dependencies = append(payload.Chart.Lock.Dependencies, releasePayloadChartLockDependency{
 			Name:       "owner-info",
-			Version:    "0.2.0", //TODO allow to configure
+			Version:    "0.2.0", // TODO allow to configure
 			Repository: "https://charts.eu-de-2.cloud.sap",
 		})
 	}
 
-	//pack payload
+	// pack payload
 	buf, err := json.Marshal(payload)
 	if err != nil {
 		return nil, fmt.Errorf("cannot serialize payload: %w", err)
@@ -194,7 +194,7 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 	}
 	packedPayload := base64.StdEncoding.EncodeToString([]byte(base64.StdEncoding.EncodeToString(buf)))
 
-	//wrap payload into a k8s Secret object
+	// wrap payload into a k8s Secret object
 	return map[string]interface{}{
 		"apiVersion": "v1",
 		"kind":       "Secret",

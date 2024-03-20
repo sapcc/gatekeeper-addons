@@ -56,7 +56,7 @@ func main() {
 	}
 	handler := httpapi.Compose(apis...)
 
-	//during unit tests, we can set FAST_SHUTDOWN to avoid unnecessary waiting times
+	// during unit tests, we can set FAST_SHUTDOWN to avoid unnecessary waiting times
 	shutdownDelay := 10 * time.Second
 	if osext.GetenvBool("FAST_SHUTDOWN") {
 		shutdownDelay = 100 * time.Millisecond
@@ -85,7 +85,7 @@ func (a api) handleAPI(path string, parser func([]byte) (string, error)) func(ht
 			return
 		}
 
-		//never read more than 4 MiB to avoid DoS
+		// never read more than 4 MiB to avoid DoS
 		in, err := io.ReadAll(io.LimitReader(r.Body, 4<<20))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -98,7 +98,7 @@ func (a api) handleAPI(path string, parser func([]byte) (string, error)) func(ht
 			return
 		}
 
-		//HTTP 200 responses are usually silent to avoid useless log spam (but 4xx/5xx responses are always logged)
+		// HTTP 200 responses are usually silent to avoid useless log spam (but 4xx/5xx responses are always logged)
 		if !a.LogAllRequests {
 			httpapi.SkipRequestLog(r)
 		}
