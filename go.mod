@@ -13,8 +13,8 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.19.0
-	github.com/sapcc/go-api-declarations v1.10.9
-	github.com/sapcc/go-bits v0.0.0-20240321130422-af7405f5e67d
+	github.com/sapcc/go-api-declarations v1.10.10
+	github.com/sapcc/go-bits v0.0.0-20240328092936-0e0b562825d4
 	go.uber.org/automaxprocs v1.5.3
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.29.1
@@ -55,7 +55,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc3 // indirect
 	github.com/prometheus/client_model v0.6.0 // indirect
-	github.com/prometheus/common v0.50.0 // indirect
+	github.com/prometheus/common v0.51.1 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/sirupsen/logrus v1.9.1 // indirect
