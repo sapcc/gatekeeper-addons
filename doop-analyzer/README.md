@@ -1,4 +1,4 @@
-## doop-analyzer
+# doop-analyzer
 
 Runs in a Kubernetes cluster alongside a Gatekeeper instance. Once a minute, all template errors and audit violations
 are collected and pushed into a Swift container for further processing by [doop-central](../doop-central/).
@@ -10,7 +10,7 @@ analysis steps that used to be performed by doop-central.
 
 To run the analyzer in a Kubernetes cluster, use
 
-```
+```bash
 doop-analyzer run <config-file>
 ```
 
@@ -81,7 +81,7 @@ For each violation, Gatekeeper only reports the object's kind, namespace and nam
 carry additional structured object attributes, doop-analyzer can recognize a JSON payload embedded as a prefix into the
 message like this:
 
-```
+```json
 {"key1":"value1","key2":"value2"} >> violation message
 ```
 

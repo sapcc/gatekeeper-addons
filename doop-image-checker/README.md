@@ -1,4 +1,4 @@
-## doop-image-checker
+# doop-image-checker
 
 This small helper program provides an HTTP endpoint that Rego expressions can call via the
 [`http.send` built-in](https://www.openpolicyagent.org/docs/latest/policy-reference/#http).
@@ -13,14 +13,14 @@ The helper itself is completely stateless. The only configuration for production
 address for the HTTP server:
 
 ```bash
-$ doop-image-checker 0.0.0.0:8080
+doop-image-checker 0.0.0.0:8080
 ```
 
 For testing purposes a second argument can be added which points to a yaml file containing mappings from image refs to headers.
 The headers `X-Keppel-Max-Layer-Created-At` and `X-Keppel-Min-Layer-Created-At` have special handling that they accept durations like `-1h`.
 
 ```bash
-$ doop-image-checker 0.0.0.0:8080 response-config.yaml
+doop-image-checker 0.0.0.0:8080 response-config.yaml
 ```
 
 `response-config.yaml`:

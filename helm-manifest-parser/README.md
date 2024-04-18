@@ -11,7 +11,7 @@ The helper itself is completely stateless. The only configuration is the listen 
 be supplied as the only command-line argument:
 
 ```bash
-$ helm-manifest-parser 0.0.0.0:8080
+helm-manifest-parser 0.0.0.0:8080
 ```
 
 Even though Helm manifests often contain secrets, there aren't really any security considerations for this component: It
