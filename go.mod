@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	github.com/NYTimes/gziphandler v1.1.1
-	github.com/gofrs/uuid/v5 v5.1.0
+	github.com/gofrs/uuid/v5 v5.2.0
 	github.com/google/go-containerregistry v0.19.1
 	github.com/gophercloud/gophercloud v1.11.0
 	github.com/gophercloud/utils v0.0.0-20231010081019-80377eca5d56
