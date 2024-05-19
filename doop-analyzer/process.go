@@ -115,7 +115,7 @@ func processReportForConstraint(rc *doop.ReportForConstraint, cfg Configuration)
 VIOLATION:
 	for _, v := range rc.Violations {
 		// apply processing rules first
-		ExecuteRulesOnViolation(cfg.ProcessingRules, &v) //nolint:gosec // called function does not retain the pointer
+		ExecuteRulesOnViolation(cfg.ProcessingRules, &v)
 		vg := doop.ViolationGroup{Pattern: v.Cloned()}
 
 		// apply merging rules to obtain group pattern, then try to merge into an
