@@ -20,12 +20,13 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/majewsky/schwift"
+	"github.com/majewsky/schwift/v2"
 	"github.com/sapcc/go-bits/logg"
 
 	"github.com/sapcc/gatekeeper-addons/internal/doop"
@@ -47,8 +48,8 @@ func NewDownloader(container *schwift.Container) *Downloader {
 }
 
 // GetReports returns all most recent doop-agent reports in their yet unparsed form.
-func (d *Downloader) GetReports() (map[string]doop.Report, error) {
-	objInfos, err := d.container.Objects().CollectDetailed()
+func (d *Downloader) GetReports(ctx context.Context) (map[string]doop.Report, error) {
+	objInfos, err := d.container.Objects().CollectDetailed(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot list reports in Swift: %w", err)
 	}
@@ -72,7 +73,7 @@ func (d *Downloader) GetReports() (map[string]doop.Report, error) {
 			objState.SizeBytes = objInfo.SizeBytes
 			objState.Etag = objInfo.Etag
 			objState.LastModified = objInfo.LastModified
-			payloadBytes, err := objInfo.Object.Download(nil).AsByteSlice()
+			payloadBytes, err := objInfo.Object.Download(ctx, nil).AsByteSlice()
 			if err != nil {
 				return nil, fmt.Errorf("cannot download report for %s from Swift: %w", name, err)
 			}

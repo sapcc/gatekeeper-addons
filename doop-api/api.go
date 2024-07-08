@@ -67,7 +67,7 @@ func (w chunkingWriter) Write(buf []byte) (int, error) {
 func (a API) handleGetViolations(w http.ResponseWriter, r *http.Request) {
 	httpapi.IdentifyEndpoint(r, "/v2/violations")
 
-	reports, err := a.Downloader.GetReports()
+	reports, err := a.Downloader.GetReports(r.Context())
 	if respondwith.ErrorText(w, err) {
 		return
 	}

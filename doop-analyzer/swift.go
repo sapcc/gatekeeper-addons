@@ -26,11 +26,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack"
-	"github.com/gophercloud/utils/openstack/clientconfig"
-	"github.com/majewsky/schwift"
-	"github.com/majewsky/schwift/gopherschwift"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack"
+	"github.com/gophercloud/utils/v2/openstack/clientconfig"
+	"github.com/majewsky/schwift/v2"
+	"github.com/majewsky/schwift/v2/gopherschwift"
 
 	"github.com/sapcc/gatekeeper-addons/internal/doop"
 )
@@ -45,7 +45,7 @@ type SwiftConfiguration struct {
 }
 
 // Connect initializes the Swift client.
-func (s *SwiftConfiguration) Connect() error {
+func (s *SwiftConfiguration) Connect(ctx context.Context) error {
 	// check provided configuration
 	if s.ContainerName == "" {
 		return errors.New("missing required configuration value: swift.container_name")
@@ -55,7 +55,7 @@ func (s *SwiftConfiguration) Connect() error {
 	}
 
 	// connect to OpenStack
-	provider, err := clientconfig.AuthenticatedClient(nil)
+	provider, err := clientconfig.AuthenticatedClient(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("cannot initialize OpenStack client: %w", err)
 	}
@@ -67,7 +67,7 @@ func (s *SwiftConfiguration) Connect() error {
 	if err != nil {
 		return fmt.Errorf("cannot initialize Swift account: %w", err)
 	}
-	swiftContainer, err := account.Container(s.ContainerName).EnsureExists()
+	swiftContainer, err := account.Container(s.ContainerName).EnsureExists(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot initialize Swift container: %w", err)
 	}
@@ -82,8 +82,7 @@ func (s *SwiftConfiguration) SendReport(ctx context.Context, report doop.Report)
 		return fmt.Errorf("cannot encode report as JSON: %w", err)
 	}
 
-	opts := schwift.RequestOptions{Context: ctx}
-	err = s.Object.Upload(bytes.NewReader(buf), nil, &opts)
+	err = s.Object.Upload(ctx, bytes.NewReader(buf), nil, nil)
 	if err != nil {
 		return fmt.Errorf("cannot upload report to Swift: %w", err)
 	}

@@ -24,10 +24,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack"
-	"github.com/gophercloud/utils/openstack/clientconfig"
-	"github.com/majewsky/schwift/gopherschwift"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack"
+	"github.com/gophercloud/utils/v2/openstack/clientconfig"
+	"github.com/majewsky/schwift/v2/gopherschwift"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/go-api-declarations/bininfo"
@@ -49,15 +49,17 @@ func main() {
 	wrap := httpext.WrapTransport(&http.DefaultTransport)
 	wrap.SetOverrideUserAgent(bininfo.Component(), bininfo.VersionOr("rolling"))
 
+	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
+
 	// initialize OpenStack/Swift client
 	ao := must.Return(clientconfig.AuthOptions(nil))
 	ao.AllowReauth = true
 	provider := must.Return(openstack.NewClient(ao.IdentityEndpoint))
-	must.Succeed(openstack.Authenticate(provider, *ao))
+	must.Succeed(openstack.Authenticate(ctx, provider, *ao))
 	client := must.Return(openstack.NewObjectStorageV1(provider, gophercloud.EndpointOpts{}))
 	account := must.Return(gopherschwift.Wrap(client, nil))
 	containerName := osext.MustGetenv("DOOP_API_SWIFT_CONTAINER")
-	container := must.Return(account.Container(containerName).EnsureExists())
+	container := must.Return(account.Container(containerName).EnsureExists(ctx))
 	downloader := NewDownloader(container)
 
 	// collect HTTP handlers
@@ -72,7 +74,6 @@ func main() {
 	mux.Handle("/metrics", promhttp.Handler())
 
 	// start HTTP server
-	ctx := httpext.ContextWithSIGINT(context.Background(), 10*time.Second)
 	listenAddress := osext.GetenvOrDefault("DOOP_API_LISTEN_ADDRESS", ":8080")
 	must.Succeed(httpext.ListenAndServeContext(ctx, listenAddress, mux))
 }
