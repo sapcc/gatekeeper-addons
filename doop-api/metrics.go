@@ -20,6 +20,7 @@
 package main
 
 import (
+	"context"
 	"net/url"
 	"os"
 	"regexp"
@@ -98,7 +99,7 @@ func (mc *MetricCollector) Collect(ch chan<- prometheus.Metric) {
 	auditAgeOldestDesc := <-descCh
 
 	// using the individual reports, we can immediately calculate the audit age
-	reports, err := mc.downloader.GetReports()
+	reports, err := mc.downloader.GetReports(context.Background()) // Prometheus does not give us a better ctx here :(
 	if err != nil {
 		logg.Error("could not download reports for metric computation: %s", err.Error())
 	}

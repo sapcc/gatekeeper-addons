@@ -84,7 +84,7 @@ func taskRun(ctx context.Context, configPath string) {
 
 	cfg := must.Return(ReadConfiguration(configPath))
 	cs := must.Return(NewClientSet(cfg))
-	must.Succeed(cfg.Swift.Connect())
+	must.Succeed(cfg.Swift.Connect(ctx))
 
 	// start HTTP server for Prometheus metrics
 	mux := http.NewServeMux()
