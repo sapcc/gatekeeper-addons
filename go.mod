@@ -7,7 +7,7 @@ require (
 	github.com/gofrs/uuid/v5 v5.2.0
 	github.com/google/go-containerregistry v0.20.2
 	github.com/gophercloud/gophercloud/v2 v2.1.0
-	github.com/gophercloud/utils/v2 v2.0.0-20240807081201-990d90b23c70
+	github.com/gophercloud/utils/v2 v2.0.0-20240809055823-c3c26a732379
 	github.com/gorilla/mux v1.8.1
 	github.com/majewsky/schwift/v2 v2.0.0
 	github.com/mitchellh/mapstructure v1.5.0
@@ -62,7 +62,7 @@ require (
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/oauth2 v0.21.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.23.0 // indirect
+	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/term v0.21.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
