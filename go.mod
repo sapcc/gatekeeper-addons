@@ -7,7 +7,7 @@ require (
 	github.com/gofrs/uuid/v5 v5.3.0
 	github.com/google/go-containerregistry v0.20.2
 	github.com/gophercloud/gophercloud/v2 v2.1.1
-	github.com/gophercloud/utils/v2 v2.0.0-20240912080913-c094a6e5b7da
+	github.com/gophercloud/utils/v2 v2.0.0-20240919072936-a66ae2ba6ef0
 	github.com/gorilla/mux v1.8.1
 	github.com/majewsky/schwift/v2 v2.0.0
 	github.com/mitchellh/mapstructure v1.5.0
