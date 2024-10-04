@@ -14,7 +14,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.20.4
 	github.com/sapcc/go-api-declarations v1.12.6
-	github.com/sapcc/go-bits v0.0.0-20240925150026-37945f71a03e
+	github.com/sapcc/go-bits v0.0.0-20241003120606-28dc119912ca
 	go.uber.org/automaxprocs v1.6.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.29.1
@@ -53,14 +53,14 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc3 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
-	github.com/prometheus/common v0.59.1 // indirect
+	github.com/prometheus/common v0.60.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/sirupsen/logrus v1.9.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/vbatts/tar-split v0.11.3 // indirect
 	golang.org/x/net v0.29.0 // indirect
-	golang.org/x/oauth2 v0.22.0 // indirect
+	golang.org/x/oauth2 v0.23.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/term v0.24.0 // indirect
