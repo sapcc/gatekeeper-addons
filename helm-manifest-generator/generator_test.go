@@ -48,7 +48,7 @@ func TestRoundtrip(t *testing.T) {
 		must(t, err)
 
 		// roundtrip back into a declaration
-		roundtrippedContents, err := helmv3.ParseRelease([]byte(secretObj.(map[string]interface{})["data"].(map[string]string)["release"]))
+		roundtrippedContents, err := helmv3.ParseRelease([]byte(secretObj.(map[string]any)["data"].(map[string]string)["release"])) //nolint:errcheck
 		must(t, err)
 		roundtrippedBytes, err := yaml.Marshal(roundtrippedContents)
 		must(t, err)
