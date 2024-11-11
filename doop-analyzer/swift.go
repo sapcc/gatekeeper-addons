@@ -26,11 +26,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gophercloud/gophercloud/v2"
 	"github.com/gophercloud/gophercloud/v2/openstack"
-	"github.com/gophercloud/utils/v2/openstack/clientconfig"
 	"github.com/majewsky/schwift/v2"
 	"github.com/majewsky/schwift/v2/gopherschwift"
+	"github.com/sapcc/go-bits/gophercloudext"
 
 	"github.com/sapcc/gatekeeper-addons/internal/doop"
 )
@@ -55,11 +54,11 @@ func (s *SwiftConfiguration) Connect(ctx context.Context) error {
 	}
 
 	// connect to OpenStack
-	provider, err := clientconfig.AuthenticatedClient(ctx, nil)
+	provider, eo, err := gophercloudext.NewProviderClient(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("cannot initialize OpenStack client: %w", err)
+		return err
 	}
-	client, err := openstack.NewObjectStorageV1(provider, gophercloud.EndpointOpts{})
+	client, err := openstack.NewObjectStorageV1(provider, eo)
 	if err != nil {
 		return fmt.Errorf("cannot initialize Swift client: %w", err)
 	}
