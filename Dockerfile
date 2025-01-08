@@ -23,10 +23,10 @@ COPY --from=builder /etc/ssl/cert.pem /etc/ssl/cert.pem
 COPY --from=builder /pkg/ /usr/
 # make sure all binaries can be executed
 RUN doop-analyzer --version 2>/dev/null
-RUN doop-api --version 2>/dev/null
-RUN doop-image-checker --version 2>/dev/null
-RUN helm-manifest-generator --version 2>/dev/null
-RUN helm-manifest-parser --version 2>/dev/null
+  && doop-api --version 2>/dev/null
+  && doop-image-checker --version 2>/dev/null
+  && helm-manifest-generator --version 2>/dev/null
+  && helm-manifest-parser --version 2>/dev/null
 
 ARG BININFO_BUILD_DATE BININFO_COMMIT_HASH BININFO_VERSION
 LABEL source_repository="https://github.com/sapcc/gatekeeper-addons" \
