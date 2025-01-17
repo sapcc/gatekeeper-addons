@@ -2,8 +2,6 @@ module github.com/sapcc/gatekeeper-addons
 
 go 1.23.0
 
-toolchain go1.23.5
-
 require (
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/gofrs/uuid/v5 v5.3.0
