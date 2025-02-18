@@ -40,7 +40,7 @@ func TestGatherReport(t *testing.T) {
 	cfg := Configuration{
 		ClusterIdentity: map[string]string{"ci_key1": "ci_value1", "ci_key2": "ci_value2"},
 	}
-	report, err := GatherReport(context.Background(), cfg, mockClientSet{})
+	report, err := GatherReport(t.Context(), cfg, mockClientSet{})
 	if err != nil {
 		t.Fatal(err.Error())
 	}
