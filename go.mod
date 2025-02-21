@@ -11,9 +11,9 @@ require (
 	github.com/majewsky/schwift/v2 v2.0.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.20.5
-	github.com/sapcc/go-api-declarations v1.13.2
-	github.com/sapcc/go-bits v0.0.0-20250213094036-fb2a5df7b9f3
+	github.com/prometheus/client_golang v1.21.0
+	github.com/sapcc/go-api-declarations v1.14.0
+	github.com/sapcc/go-bits v0.0.0-20250220135206-3e8d8756636d
 	go.uber.org/automaxprocs v1.6.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.29.1
