@@ -12,7 +12,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.21.1
-	github.com/sapcc/go-api-declarations v1.14.1
+	github.com/sapcc/go-api-declarations v1.14.2
 	github.com/sapcc/go-bits v0.0.0-20250320011137-5ec7b29ab444
 	go.uber.org/automaxprocs v1.6.0
 	gopkg.in/yaml.v2 v2.4.0
