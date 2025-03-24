@@ -51,6 +51,9 @@ func main() {
 	undoMaxprocs := must.Return(maxprocs.Set(maxprocs.Logger(logg.Debug)))
 	defer undoMaxprocs()
 
+	wrap := httpext.WrapTransport(&http.DefaultTransport)
+	wrap.SetOverrideUserAgent(bininfo.Component(), bininfo.VersionOr("rolling"))
+
 	ctx := httpext.ContextWithSIGINT(context.Background(), 1*time.Second)
 	if len(os.Args) != 3 {
 		usage()
