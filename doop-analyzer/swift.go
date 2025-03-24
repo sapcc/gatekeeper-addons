@@ -58,6 +58,7 @@ func (s *SwiftConfiguration) Connect(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	provider.UserAgent.Prepend("doop-analyzer")
 	client, err := openstack.NewObjectStorageV1(provider, eo)
 	if err != nil {
 		return fmt.Errorf("cannot initialize Swift client: %w", err)
