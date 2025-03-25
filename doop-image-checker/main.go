@@ -49,7 +49,7 @@ func main() {
 	defer undoMaxprocs()
 
 	argCount := len(os.Args)
-	if !(argCount == 2 || argCount == 3) {
+	if argCount != 2 && argCount != 3 {
 		logg.Fatal("usage: %s <listen-address> [response-config.yaml]", os.Args[0])
 	}
 
