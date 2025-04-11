@@ -11,9 +11,9 @@ require (
 	github.com/majewsky/schwift/v2 v2.0.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.21.1
+	github.com/prometheus/client_golang v1.22.0
 	github.com/sapcc/go-api-declarations v1.14.3
-	github.com/sapcc/go-bits v0.0.0-20250403123117-63238e6e6cfa
+	github.com/sapcc/go-bits v0.0.0-20250410003731-7b4174e5d933
 	go.uber.org/automaxprocs v1.6.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.29.1
@@ -43,8 +43,9 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/jpillora/longestcommon v0.0.0-20161227235612-adb9d91ee629 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.11 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/majewsky/gg v1.0.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
