@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 SAP SE
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # doop-image-checker
 
 This small helper program provides an HTTP endpoint that Rego expressions can call via the

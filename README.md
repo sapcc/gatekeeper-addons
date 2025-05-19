@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 SAP SE
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # gatekeeper-addons
 
 Custom addons for our setup of [Open Policy Agent's Gatekeeper](https://github.com/open-policy-agent/gatekeeper).

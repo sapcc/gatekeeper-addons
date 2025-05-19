@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 SAP SE
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # doop-analyzer
 
 Runs in a Kubernetes cluster alongside a Gatekeeper instance. Once a minute, all template errors and audit violations

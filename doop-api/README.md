@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 SAP SE
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # doop-api
 
 Takes in audit reports from multiple instances of [doop-analyzer](../doop-analyzer/) and presents them in a single API.

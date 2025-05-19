@@ -39,3 +39,12 @@ renovate:
   assignees:
     - majewsky
     - SuperSandro2000
+
+reuse:
+  annotations:
+    - paths:
+      - '*/fixtures/**/*.dat'
+      - '*/fixtures/**/*.json'
+      - '*/fixtures/**/*.yaml'
+      SPDX-FileCopyrightText: SAP SE or an SAP affiliate company
+      SPDX-License-Identifier: Apache-2.0

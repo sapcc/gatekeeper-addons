@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 SAP SE
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # helm-manifest-parser
 
 Gatekeeper's Rego implementation does not have enough library functions to parse Helm manifests: A GZip decompression

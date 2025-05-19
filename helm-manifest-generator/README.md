@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 SAP SE
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # helm-manifest-generator
 
 A test helper that generates synthetic Helm release objects from a declaration file in YAML syntax such as this:
