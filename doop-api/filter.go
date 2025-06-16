@@ -5,6 +5,7 @@ package main
 
 import (
 	"net/url"
+	"slices"
 	"strings"
 )
 
@@ -81,10 +82,5 @@ func (f filter) match(givenValue string) bool {
 	if len(f) == 0 {
 		return true
 	}
-	for _, allowedValue := range f {
-		if allowedValue == givenValue {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(f, givenValue)
 }
