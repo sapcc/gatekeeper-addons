@@ -32,8 +32,7 @@ func BuildFilterSet(query url.Values) FilterSet {
 func buildMapFilter(query url.Values, prefix string) map[string]filter {
 	result := make(map[string]filter)
 	for queryKey, values := range query {
-		if after, ok := strings.CutPrefix(queryKey, prefix); ok {
-			key := after
+		if key, ok := strings.CutPrefix(queryKey, prefix); ok {
 			result[key] = filter(values)
 		}
 	}
