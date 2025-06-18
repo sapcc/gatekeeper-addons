@@ -25,7 +25,8 @@ COPY --from=builder /etc/ssl/certs/ /etc/ssl/certs/
 COPY --from=builder /etc/ssl/cert.pem /etc/ssl/cert.pem
 COPY --from=builder /pkg/ /usr/
 # make sure all binaries can be executed
-RUN doop-analyzer --version 2>/dev/null \
+RUN set -x \
+  && doop-analyzer --version 2>/dev/null \
   && doop-api --version 2>/dev/null \
   && doop-image-checker --version 2>/dev/null \
   && helm-manifest-generator --version 2>/dev/null \
