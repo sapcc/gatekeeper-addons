@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/gofrs/uuid/v5 v5.3.2
-	github.com/google/go-containerregistry v0.20.5
+	github.com/google/go-containerregistry v0.20.6
 	github.com/gophercloud/gophercloud/v2 v2.7.0
 	github.com/gorilla/mux v1.8.1
 	github.com/majewsky/schwift/v2 v2.0.0
@@ -25,11 +25,11 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.16.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/cli v28.1.1+incompatible // indirect
+	github.com/docker/cli v28.2.2+incompatible // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.9.3 // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
-	github.com/go-logr/logr v1.4.2 // indirect
+	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
@@ -61,7 +61,7 @@ require (
 	github.com/vbatts/tar-split v0.12.1 // indirect
 	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
 	golang.org/x/text v0.25.0 // indirect
