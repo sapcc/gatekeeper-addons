@@ -14,10 +14,10 @@ import (
 // yaml.Unmarshal() into a generic map will create map[interface{}]interface{}
 // members which json.Marshal() cannot process. We need to convert these into
 // map[string]interface{} recursively before proceeding.
-func NormalizeRecursively(path string, in interface{}) (interface{}, error) {
+func NormalizeRecursively(path string, in any) (any, error) {
 	switch in := in.(type) {
-	case map[interface{}]interface{}:
-		out := make(map[string]interface{}, len(in))
+	case map[any]any:
+		out := make(map[string]any, len(in))
 		for k, v := range in {
 			kn, err := normalizeKey(path, k)
 			if err != nil {
@@ -30,8 +30,8 @@ func NormalizeRecursively(path string, in interface{}) (interface{}, error) {
 			out[kn] = vn
 		}
 		return out, nil
-	case []interface{}:
-		out := make([]interface{}, len(in))
+	case []any:
+		out := make([]any, len(in))
 		for idx, v := range in {
 			vn, err := NormalizeRecursively(fmt.Sprintf("%s[%d]", path, idx), v)
 			if err != nil {
@@ -45,7 +45,7 @@ func NormalizeRecursively(path string, in interface{}) (interface{}, error) {
 	}
 }
 
-func normalizeKey(path string, k interface{}) (string, error) {
+func normalizeKey(path string, k any) (string, error) {
 	switch k := k.(type) {
 	case string:
 		return k, nil

@@ -29,7 +29,7 @@ const (
 // GenerateMockRelease is kind of the reverse of ParseRelease(). It generates
 // a synthetic release object that is a good-enough approximation of an actual
 // Helm 3 release Secret to be used for unit tests.
-func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
+func (c ReleaseContents) GenerateMockRelease() (any, error) {
 	// check required values
 	if c.Metadata.Name == "" {
 		return nil, errors.New("missing required field: metadata.name")
@@ -46,7 +46,7 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 		c.Metadata.Version = 1
 	}
 	if c.Values == nil {
-		c.Values = map[string]interface{}{}
+		c.Values = map[string]any{}
 	}
 
 	// generate some plausible mock values
@@ -91,8 +91,8 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 			Templates: []releasePayloadChartTemplate{}, // filled below
 		},
 		Config:    normalizedValues,
-		Values:    map[string]interface{}{}, // TODO if this is required in the future, we need to figure out how it is structured
-		Manifest:  "",                       // filled below
+		Values:    map[string]any{}, // TODO if this is required in the future, we need to figure out how it is structured
+		Manifest:  "",               // filled below
 		Version:   c.Metadata.Version,
 		Namespace: c.Metadata.Namespace,
 	}
@@ -136,10 +136,10 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 		// ConfigMap (among other things) and we should not duplicate it to avoid confusion
 		if !manifestHasOwnerInfo {
 			name := "owner-of-" + c.Metadata.Name
-			item := map[string]interface{}{
+			item := map[string]any{
 				"apiVersion": "v1",
 				"kind":       "ConfigMap",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name,
 				},
 				"data": c.OwnerInfo,
@@ -179,10 +179,10 @@ func (c ReleaseContents) GenerateMockRelease() (interface{}, error) {
 	packedPayload := base64.StdEncoding.EncodeToString([]byte(base64.StdEncoding.EncodeToString(buf)))
 
 	// wrap payload into a k8s Secret object
-	return map[string]interface{}{
+	return map[string]any{
 		"apiVersion": "v1",
 		"kind":       "Secret",
-		"metadata": map[string]interface{}{
+		"metadata": map[string]any{
 			"creationTimestamp": mockUpgradeTime.Format(time.RFC3339),
 			"labels": map[string]string{
 				"modifiedAt": strconv.FormatInt(mockUpgradeTime.Unix(), 10),
