@@ -6,8 +6,8 @@ package helmv3
 // ReleaseContents is the data structure that helm-manifest-parser returns as
 // JSON, and which helm-manifest-generator takes in as YAML.
 type ReleaseContents struct {
-	Items     []interface{}     `json:"items" yaml:"items"`
-	Values    interface{}       `json:"values" yaml:"values"`
+	Items     []any             `json:"items" yaml:"items"`
+	Values    any               `json:"values" yaml:"values"`
 	OwnerInfo map[string]string `json:"owner_info" yaml:"owner-info"`
 
 	// This section is only used by helm-manifest-generator.
@@ -24,8 +24,8 @@ type releasePayload struct {
 	Name      string              `json:"name"`
 	Info      releasePayloadInfo  `json:"info"`
 	Chart     releasePayloadChart `json:"chart"`
-	Values    interface{}         `json:"values"`
-	Config    interface{}         `json:"config"`
+	Values    any                 `json:"values"`
+	Config    any                 `json:"config"`
 	Manifest  string              `json:"manifest"`
 	Version   uint                `json:"version"`
 	Namespace string              `json:"namespace"`

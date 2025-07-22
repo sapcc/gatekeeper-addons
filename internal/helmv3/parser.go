@@ -73,12 +73,12 @@ func gunzip(in []byte) ([]byte, error) {
 	return io.ReadAll(r)
 }
 
-func convertManifestToItemsList(in []byte) ([]interface{}, error) {
-	result := []interface{}{} // ensure that empty list is rendered as [] rather than null
+func convertManifestToItemsList(in []byte) ([]any, error) {
+	result := []any{} // ensure that empty list is rendered as [] rather than null
 
 	dec := yaml.NewDecoder(bytes.NewReader(in))
 	for idx := 0; ; idx++ {
-		var val interface{}
+		var val any
 		err := dec.Decode(&val)
 		if errors.Is(err, io.EOF) {
 			break
@@ -95,7 +95,7 @@ func convertManifestToItemsList(in []byte) ([]interface{}, error) {
 	return result, nil
 }
 
-func extractOwnerInfo(releaseName string, items []interface{}) (map[string]string, error) {
+func extractOwnerInfo(releaseName string, items []any) (map[string]string, error) {
 	configMapName := "owner-of-" + releaseName
 
 	// try to find the owner-info ConfigMap among all the manifest items
@@ -105,7 +105,7 @@ func extractOwnerInfo(releaseName string, items []interface{}) (map[string]strin
 			Metadata struct {
 				Name string `mapstructure:"name"`
 			} `mapstructure:"metadata"`
-			Data interface{} `mapstructure:"data"` // cannot use a specific type here because we don't know which Kind of object we have yet
+			Data any `mapstructure:"data"` // cannot use a specific type here because we don't know which Kind of object we have yet
 		}
 		err := mapstructure.Decode(item, &obj)
 		if err != nil {
