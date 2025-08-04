@@ -37,6 +37,10 @@ func main() {
 	apis := []httpapi.API{
 		api{logAllRequests},
 		httpapi.HealthCheckAPI{SkipRequestLog: true},
+		// Even though the request handler limits the request payload size to 4 MiB,
+		// we were seeing oomkills in prod on maxmemory = 128 MiB.
+		// In all likelihood, this is because of too many requests in flight at once.
+		httpapi.WithGlobalMiddleware(httpext.LimitConcurrentRequestsMiddleware(4)),
 	}
 	handler := httpapi.Compose(apis...)
 
