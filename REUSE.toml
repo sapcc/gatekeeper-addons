@@ -310,6 +310,14 @@ SPDX-License-Identifier = "BSD-3-Clause"
 
 [[annotations]]
 path = [
+  "vendor/github.com/grafana/regexp/**",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Other"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
+path = [
   "vendor/github.com/hashicorp/golang-lru/v2/**",
 ]
 precedence = "aggregate"
