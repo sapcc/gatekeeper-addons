@@ -4,7 +4,7 @@ go 1.25
 
 require (
 	github.com/NYTimes/gziphandler v1.1.1
-	github.com/gofrs/uuid/v5 v5.3.2
+	github.com/gofrs/uuid/v5 v5.4.0
 	github.com/google/go-containerregistry v0.20.6
 	github.com/gophercloud/gophercloud/v2 v2.8.0
 	github.com/gorilla/mux v1.8.1
