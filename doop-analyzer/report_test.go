@@ -11,14 +11,10 @@ import (
 	"testing"
 
 	"github.com/sapcc/go-bits/assert"
-	"github.com/sapcc/go-bits/logg"
-	"gopkg.in/yaml.v2"
-
-	"github.com/sapcc/gatekeeper-addons/internal/util"
 )
 
 func TestGatherReport(t *testing.T) {
-	// This test runs the dummy Kubernetes objects in `fixtures/gatekeeper/*.yaml`
+	// This test runs the dummy Kubernetes objects in `fixtures/gatekeeper/*.json`
 	// through GatherReport and matches the result against `fixtures/report-before-processing.json`.
 
 	cfg := Configuration{
@@ -39,37 +35,19 @@ func TestGatherReport(t *testing.T) {
 type mockClientSet struct{}
 
 func (mockClientSet) ListConstraintTemplates(ctx context.Context) ([]ConstraintTemplate, error) {
-	return readItemListFromYAML[ConstraintTemplate]("fixtures/gatekeeper/constrainttemplates.yaml")
+	return readItemListFromJSON[ConstraintTemplate]("fixtures/gatekeeper/constrainttemplates.json")
 }
 
 func (mockClientSet) ListConstraints(ctx context.Context, tmpl ConstraintTemplate) (result []Constraint, e error) {
-	path := fmt.Sprintf("fixtures/gatekeeper/%s.yaml", tmpl.Metadata.Name)
-	return readItemListFromYAML[Constraint](path)
+	path := fmt.Sprintf("fixtures/gatekeeper/%s.json", tmpl.Metadata.Name)
+	return readItemListFromJSON[Constraint](path)
 }
 
-func readItemListFromYAML[T any](path string) ([]T, error) {
-	// Because the datatypes Constraint and ConstraintTemplate only have
-	// annotations for JSON decoding, we need to take a slight detour
-	// from YAML -> map[any]any -> map[string]any -> JSON -> []T.
-
+func readItemListFromJSON[T any](path string) ([]T, error) {
 	buf, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	var data any
-	err = yaml.Unmarshal(buf, &data)
-	if err != nil {
-		return nil, err
-	}
-	items, err := util.NormalizeRecursively("data", data)
-	if err != nil {
-		return nil, err
-	}
-	buf, err = json.Marshal(items)
-	if err != nil {
-		return nil, err
-	}
-	logg.Info(string(buf))
 	var result struct {
 		Items []T `json:"items"`
 	}

@@ -21,10 +21,10 @@ import (
 // SwiftConfiguration appears in type Configuration. It also holds the methods
 // and state for talking to Swift.
 type SwiftConfiguration struct {
-	ContainerName string `yaml:"container_name"`
-	ObjectName    string `yaml:"object_name"`
+	ContainerName string `json:"container_name"`
+	ObjectName    string `json:"object_name"`
 	// filled by Connect()
-	Object *schwift.Object `yaml:"-"`
+	Object *schwift.Object `json:"-"`
 }
 
 // Connect initializes the Swift client.
