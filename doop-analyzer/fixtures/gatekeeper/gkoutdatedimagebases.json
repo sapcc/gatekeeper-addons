@@ -1,0 +1,87 @@
+{
+  "apiVersion": "v1",
+  "kind": "List",
+  "items": [
+    {
+      "apiVersion": "constraints.gatekeeper.sh/v1beta1",
+      "kind": "GkOutdatedImageBases",
+      "metadata": {
+        "annotations": {
+          "ccloud/support-group-datasource": "owner-info",
+          "constraint-source": "https://example.com/constraint-outdated-image-bases.json",
+          "docstring": "This checks finds containers whose images depend on very old base images, by checking the build timestamp of each layer.",
+          "template-source": "https://example.com/constrainttemplate-outdated-image-bases.json"
+        },
+        "generation": 2,
+        "labels": {
+          "severity": "info"
+        },
+        "name": "outdatedimagebases",
+        "uid": "b01eeb93-59b4-457b-9dcc-90792d1b66f3"
+      },
+      "status": {
+        "auditTimestamp": "2023-08-01T09:25:53Z",
+        "byPod": [
+          {
+            "constraintUID": "b01eeb93-59b4-457b-9dcc-90792d1b66f3",
+            "enforced": true,
+            "id": "gatekeeper-audit-7cd574ddbc-z4h4s",
+            "observedGeneration": 2,
+            "operations": [
+              "audit",
+              "status"
+            ]
+          },
+          {
+            "constraintUID": "b01eeb93-59b4-457b-9dcc-90792d1b66f3",
+            "enforced": true,
+            "id": "gatekeeper-controller-manager-69c46dc578-4vd9g",
+            "observedGeneration": 2,
+            "operations": [
+              "webhook"
+            ]
+          }
+        ],
+        "totalViolations": 4,
+        "violations": [
+          {
+            "enforcementAction": "dryrun",
+            "group": "",
+            "kind": "Pod",
+            "message": "{\"support_group\":\"containers\",\"service\":\"none\"} >> image dockerhubmirror.example.com/prom/node-exporter:v1.3.1 for container \"node-exporter\" uses a very old base image (oldest layer is 819 days old)",
+            "name": "kube-monitoring-prometheus-node-exporter-8944q",
+            "namespace": "kube-monitoring",
+            "version": "v1"
+          },
+          {
+            "enforcementAction": "dryrun",
+            "group": "",
+            "kind": "Pod",
+            "message": "{\"support_group\":\"containers\",\"service\":\"none\"} >> image dockerhubmirror.example.com/prom/node-exporter:v1.3.1 for container \"node-exporter\" uses a very old base image (oldest layer is 819 days old)",
+            "name": "kube-monitoring-prometheus-node-exporter-l67vv",
+            "namespace": "kube-monitoring",
+            "version": "v1"
+          },
+          {
+            "enforcementAction": "dryrun",
+            "group": "",
+            "kind": "Pod",
+            "message": "{\"support_group\":\"containers\",\"service\":\"none\"} >> image dockerhubmirror.example.com/prom/node-exporter:v1.3.1 for container \"node-exporter\" uses a very old base image (oldest layer is 819 days old)",
+            "name": "kube-monitoring-prometheus-node-exporter-t49jm",
+            "namespace": "kube-monitoring",
+            "version": "v1"
+          },
+          {
+            "enforcementAction": "dryrun",
+            "group": "",
+            "kind": "Pod",
+            "message": "{\"support_group\":\"containers\",\"service\":\"none\"} >> image dockerhubmirror.example.com/prom/node-exporter:v1.4.0 for container \"node-exporter\" uses a very old base image (oldest layer is 413 days old)",
+            "name": "kube-monitoring-prometheus-node-exporter-fz2rg",
+            "namespace": "kube-monitoring",
+            "version": "v1"
+          }
+        ]
+      }
+    }
+  ]
+}

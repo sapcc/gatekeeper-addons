@@ -4,42 +4,42 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 
 	"github.com/sapcc/go-bits/errext"
 	"github.com/sapcc/go-bits/regexpext"
-	"gopkg.in/yaml.v2"
 )
 
 // Configuration contains the contents of the config file.
 type Configuration struct {
-	ClusterIdentity map[string]string `yaml:"cluster_identity"`
+	ClusterIdentity map[string]string `json:"cluster_identity"`
 	Kubernetes      struct {
-		KubeconfigPath string `yaml:"kubeconfig"`
-		Context        string `yaml:"context"`
-	} `yaml:"kubernetes"`
+		KubeconfigPath string `json:"kubeconfig"`
+		Context        string `json:"context"`
+	} `json:"kubernetes"`
 	Metrics struct {
-		ListenAddress string `yaml:"listen_address"`
-	} `yaml:"metrics"`
-	MergingRules    []Rule             `yaml:"merging_rules"`
-	ProcessingRules []Rule             `yaml:"processing_rules"`
-	Swift           SwiftConfiguration `yaml:"swift"`
+		ListenAddress string `json:"listen_address"`
+	} `json:"metrics"`
+	MergingRules    []Rule             `json:"merging_rules"`
+	ProcessingRules []Rule             `json:"processing_rules"`
+	Swift           SwiftConfiguration `json:"swift"`
 }
 
 // Rule is a rule that can appear in `processing_rules` or `merging_rules`.
 type Rule struct {
-	Description string                             `yaml:"description"`
-	Match       map[string]regexpext.BoundedRegexp `yaml:"match"`
-	Replace     ReplaceRule                        `yaml:"replace"`
+	Description string                             `json:"description"`
+	Match       map[string]regexpext.BoundedRegexp `json:"match"`
+	Replace     ReplaceRule                        `json:"replace"`
 }
 
 // ReplaceRule appears in type Rule.
 type ReplaceRule struct {
-	Source  string                  `yaml:"source"`
-	Pattern regexpext.BoundedRegexp `yaml:"pattern"`
-	Target  map[string]string       `yaml:"target"`
+	Source  string                  `json:"source"`
+	Pattern regexpext.BoundedRegexp `json:"pattern"`
+	Target  map[string]string       `json:"target"`
 }
 
 // ReadConfiguration reads the config file at the given path.
@@ -50,7 +50,7 @@ func ReadConfiguration(configPath string) (Configuration, error) {
 	}
 
 	var cfg Configuration
-	err = yaml.UnmarshalStrict(buf, &cfg)
+	err = json.Unmarshal(buf, &cfg)
 	if err != nil {
 		return Configuration{}, fmt.Errorf("while parsing %s: %w", configPath, err)
 	}

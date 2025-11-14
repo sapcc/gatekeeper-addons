@@ -23,7 +23,6 @@ import (
 	"github.com/sapcc/go-bits/must"
 	"github.com/sapcc/go-bits/osext"
 	"go.uber.org/automaxprocs/maxprocs"
-	"gopkg.in/yaml.v2"
 )
 
 func main() {
@@ -34,7 +33,7 @@ func main() {
 
 	argCount := len(os.Args)
 	if argCount != 2 && argCount != 3 {
-		logg.Fatal("usage: %s <listen-address> [response-config.yaml]", os.Args[0])
+		logg.Fatal("usage: %s <listen-address> [response-config.json]", os.Args[0])
 	}
 
 	var config map[string]map[string]string
@@ -46,7 +45,7 @@ func main() {
 		}
 
 		config = make(map[string]map[string]string)
-		err = yaml.Unmarshal(bytes, config)
+		err = json.Unmarshal(bytes, &config)
 		if err != nil {
 			logg.Fatal(err.Error())
 		}
