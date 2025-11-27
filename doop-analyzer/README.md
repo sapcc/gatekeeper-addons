@@ -37,10 +37,10 @@ The analyzer itself is completely stateless, but some configuration must be prov
 
 - For uploading reports into Swift, the `run` subcommand requires OpenStack credentials which must be present in the
   usual `OS_...` environment variables.
-- The rest of the configuration is collected from a YAML configuration file whose path is given as positional argument
+- The rest of the configuration is collected from a JSON configuration file whose path is given as positional argument
   after the subcommand.
 
-The following fields are allowed in the YAML configuration file:
+The following fields are allowed in the JSON configuration file:
 
 | Field | Type | Description |
 | ----- | ---- | ----------- |
@@ -138,13 +138,19 @@ apply to Helm releases: As of Helm 3, Helm releases are stored in Secret objects
 `sh.helm.release.v1.${NAME}.v${VERSION}`. This implementation detail can be hidden from the user-visible violations by
 rewriting with the following processing rule:
 
-```yaml
-processing_rules:
-  - match: { kind: Secret }
-    replace:
-      source:  name
-      pattern: 'sh\.helm\.release\.v1\.(.*\.v\d+)'
-      target:  { kind: Helm 3 release, name: '$1' }
+```json
+{
+  "processing_rules": [
+    {
+      "match": { "kind": "Secret" },
+      "replace": {
+        "source": "name",
+        "pattern": "sh\\.helm\\.release\\.v1\\.(.*\\.v\\d+)",
+        "target": { "kind": "Helm 3 release", "name": "$1" }
+      }
+    }
+  ]
+}
 ```
 
 Applying this processing rule to a violation like this:
@@ -177,7 +183,7 @@ Each processing rule may contain the following fields:
 
 | Field | Type | Description |
 | ----- | ---- | ----------- |
-| `description` | string | A human-readable description of what this rule is about. This field is not interpreted by doop-analyzer at all, but it can be used for documentation purposes. Since it's a structured field instead of just a YAML comment, it is more likely to be preserved when editing rules in a specialized UI. |
+| `description` | string | A human-readable description of what this rule is about. This field is not interpreted by doop-analyzer at all, but it can be used for documentation purposes. Since it's a structured field instead of just a comment, it is more likely to be preserved when editing rules in a specialized UI. |
 | `match` | object of regexes | If given, the rule will only be applied if, for each key-value pair in this object, the violation has an attribute whose name matches the key and whose value matches the regex. (In the example above, the rule only applies to violations whose `kind` attribute matches the regex `Secret`.) See below for notes on attribute names and regex syntax. |
 | `replace.source` | string | *Required.* The attribute name within the violation whose value will be matched for this rule's replacement. See below for notes on attribute names. |
 | `replace.pattern` | regex | *Required.* The rule will apply if the value from the `replace.source` attribute matches this regex. (In the example above, the rule performs a replacement if its regex matches the violation's `name` attribute.) See below for notes on regex syntax. |
@@ -230,13 +236,19 @@ pods of a DaemonSet:
 
 Using the following merging rule:
 
-```yaml
-merging_rules:
-- match: { kind: Pod }
-  replace:
-    source:  name
-    pattern: '(.*)-[a-z0-9]{5}'
-    target:  { name: '$1-<variable>' }
+```json
+{
+  "merging_rules": [
+    {
+      "match": { "kind": "Pod" },
+      "replace": {
+        "source": "name",
+        "pattern": "(.*)-[a-z0-9]{5}",
+        "target": { "name": "$1-<variable>" }
+      }
+    }
+  ]
+}
 ```
 
 These violations are merged into a violation group like this:

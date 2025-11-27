@@ -21,24 +21,27 @@ address for the HTTP server:
 doop-image-checker 0.0.0.0:8080
 ```
 
-For testing purposes a second argument can be added which points to a yaml file containing mappings from image refs to headers.
+For testing purposes a second argument can be added which points to a json file containing mappings from image refs to headers.
 The headers `X-Keppel-Max-Layer-Created-At` and `X-Keppel-Min-Layer-Created-At` have special handling that they accept durations like `-1h`.
 
 ```bash
-doop-image-checker 0.0.0.0:8080 response-config.yaml
+doop-image-checker 0.0.0.0:8080 response-config.json
 ```
 
-`response-config.yaml`:
+`response-config.json`:
 
-```yaml
-keppel.example.com/vulnerability:medium:
-  X-Keppel-Max-Layer-Created-At: "-1h"
-  X-Keppel-Min-Layer-Created-At: "-1h"
-  X-Keppel-Vulnerability-Status: Medium
-keppel.example.com/vulnerability:old:
-  # older than slightly over a year (~13 months)
-  X-Keppel-Max-Layer-Created-At: "-10000h"
-  X-Keppel-Min-Layer-Created-At: "-10000h"
+```json
+{
+  "keppel.example.com/vulnerability:medium": {
+    "X-Keppel-Max-Layer-Created-At": "-1h",
+    "X-Keppel-Min-Layer-Created-At": "-1h",
+    "X-Keppel-Vulnerability-Status": "Medium"
+  },
+  "keppel.example.com/vulnerability:old": {
+    "X-Keppel-Max-Layer-Created-At": "-10000h",
+    "X-Keppel-Min-Layer-Created-At": "-10000h"
+  }
+}
 ```
 
 ## API

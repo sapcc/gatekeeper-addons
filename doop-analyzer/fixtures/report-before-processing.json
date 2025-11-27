@@ -11,8 +11,8 @@
           "name": "outdatedimagebases",
           "metadata": {
             "severity": "info",
-            "template_source": "https://example.com/constrainttemplate-outdated-image-bases.yaml",
-            "constraint_source": "https://example.com/constraint-outdated-image-bases.yaml",
+            "template_source": "https://example.com/constrainttemplate-outdated-image-bases.json",
+            "constraint_source": "https://example.com/constraint-outdated-image-bases.json",
             "docstring": "This checks finds containers whose images depend on very old base images, by checking the build timestamp of each layer.",
             "auditTimestamp": "2023-08-01T09:25:53Z"
           },
@@ -68,8 +68,8 @@
           "name": "ownerinfoonhelmreleases",
           "metadata": {
             "severity": "error",
-            "template_source": "https://example.com/constrainttemplate-owner-info-on-helm-releases.yaml",
-            "constraint_source": "https://example.com/constraint-owner-info-on-helm-releases.yaml",
+            "template_source": "https://example.com/constrainttemplate-owner-info-on-helm-releases.json",
+            "constraint_source": "https://example.com/constraint-owner-info-on-helm-releases.json",
             "docstring": "This check finds Helm releases that do not define owner info.",
             "auditTimestamp": "2023-08-01T11:35:53Z"
           },
