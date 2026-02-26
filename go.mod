@@ -13,7 +13,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
 	github.com/sapcc/go-api-declarations v1.19.0
-	github.com/sapcc/go-bits v0.0.0-20260219121224-1c2b75dbf776
+	github.com/sapcc/go-bits v0.0.0-20260226170120-c20f89b66c3c
 	go.uber.org/automaxprocs v1.6.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.33.8
