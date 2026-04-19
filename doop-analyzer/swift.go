@@ -11,9 +11,9 @@ import (
 	"fmt"
 
 	"github.com/gophercloud/gophercloud/v2/openstack"
-	"github.com/majewsky/schwift/v2"
-	"github.com/majewsky/schwift/v2/gopherschwift"
 	"github.com/sapcc/go-bits/gophercloudext"
+	"go.xyrillian.de/schwift/v2"
+	"go.xyrillian.de/schwift/v2/gopherschwift"
 
 	"github.com/sapcc/gatekeeper-addons/internal/doop"
 )

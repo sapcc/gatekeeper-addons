@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/gophercloud/gophercloud/v2/openstack"
-	"github.com/majewsky/schwift/v2/gopherschwift"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/go-api-declarations/bininfo"
@@ -21,6 +20,7 @@ import (
 	"github.com/sapcc/go-bits/must"
 	"github.com/sapcc/go-bits/osext"
 	"go.uber.org/automaxprocs/maxprocs"
+	"go.xyrillian.de/schwift/v2/gopherschwift"
 )
 
 func main() {
