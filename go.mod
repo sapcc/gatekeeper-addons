@@ -8,13 +8,13 @@ require (
 	github.com/google/go-containerregistry v0.21.5
 	github.com/gophercloud/gophercloud/v2 v2.12.0
 	github.com/gorilla/mux v1.8.1
-	github.com/majewsky/schwift/v2 v2.0.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
 	github.com/sapcc/go-api-declarations v1.21.0
 	github.com/sapcc/go-bits v0.0.0-20260417095247-780e38e22ec4
 	go.uber.org/automaxprocs v1.6.0
+	go.xyrillian.de/schwift/v2 v2.1.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.33.11
 	k8s.io/client-go v0.33.11
