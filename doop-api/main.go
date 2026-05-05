@@ -37,6 +37,7 @@ func main() {
 	// initialize OpenStack/Swift client
 	provider, eo, err := gophercloudext.NewProviderClient(ctx, nil)
 	must.Succeed(err)
+	eo.Type = osext.GetenvOrDefault("DOOP_API_SWIFT_SERVICE_TYPE", "object-store")
 	client := must.Return(openstack.NewObjectStorageV1(provider, eo))
 	account := must.Return(gopherschwift.Wrap(client, nil))
 	containerName := osext.MustGetenv("DOOP_API_SWIFT_CONTAINER")

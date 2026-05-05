@@ -53,6 +53,7 @@ The following fields are allowed in the JSON configuration file:
 | `processing_rules` | list of objects | A sequence of rules that will be applied to each violation in order to normalize its attributes. [See below](#rule-based-rewriting) for details. Only needed for `run` and `process-once`. |
 | `swift.container_name` | string | Name of Swift container in which to upload report. Only needed for `run`. |
 | `swift.object_name` | string | Object name with which report will be uploaded in Swift. Only needed for `run`. |
+| `swift.service_type` | string | Service type for Swift in the Keystone service catalog. Defaults to `object-store` for native Swift, but can be set to e.g. `object-store-ceph` to use Ceph's Swift-compatible API. |
 
 ### Kubernetes API permissions
 

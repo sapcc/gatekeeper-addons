@@ -18,6 +18,7 @@ The central itself is completely stateless, but some configuration must be provi
 | -------- | ------- | ----------- |
 | `DOOP_API_LISTEN_ADDRESS` | `:8080` | Listen address for the HTTP server where the API is exposed. |
 | `DOOP_API_SWIFT_CONTAINER` | *(required)* | Name of the Swift container where reports were uploaded to. |
+| `DOOP_API_SWIFT_SERVICE_TYPE` | `object-store` | Service type for Swift in the Keystone service catalog. Not needed when using native Swift, but can be set to e.g. `object-store-ceph` to use Ceph's Swift-compatible API. |
 | `DOOP_API_OBJECT_IDENTITY_LABELS` | *(empty)* | Whitespace-separated list of keys whose values will be carried over from `object_identity` into the label set of the violation count metrics (see below). |
 | `OS_...` | *(required)* | A full set of OpenStack auth environment variables, with permissions for reading from the Swift container. See [documentation for openstackclient][os-env] for details. |
 

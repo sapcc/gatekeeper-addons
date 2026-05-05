@@ -5,6 +5,7 @@ package main
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -21,6 +22,7 @@ import (
 // SwiftConfiguration appears in type Configuration. It also holds the methods
 // and state for talking to Swift.
 type SwiftConfiguration struct {
+	ServiceType   string `json:"service_type"`
 	ContainerName string `json:"container_name"`
 	ObjectName    string `json:"object_name"`
 	// filled by Connect()
@@ -42,6 +44,7 @@ func (s *SwiftConfiguration) Connect(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	eo.Type = cmp.Or(s.ServiceType, "object-store")
 	client, err := openstack.NewObjectStorageV1(provider, eo)
 	if err != nil {
 		return fmt.Errorf("cannot initialize Swift client: %w", err)
