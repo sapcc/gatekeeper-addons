@@ -16,7 +16,7 @@ import (
 	"github.com/sapcc/gatekeeper-addons/internal/doop"
 )
 
-// Downloader pulls doop-agent reports from Swift.
+// Downloader pulls doop-analyzer reports from Swift.
 type Downloader struct {
 	container *schwift.Container
 	objects   map[string]*objectState
@@ -31,7 +31,7 @@ func NewDownloader(container *schwift.Container) *Downloader {
 	}
 }
 
-// GetReports returns all most recent doop-agent reports in their yet unparsed form.
+// GetReports returns all most recent doop-analyzer reports in their yet unparsed form.
 func (d *Downloader) GetReports(ctx context.Context) (map[string]doop.Report, error) {
 	objInfos, err := d.container.Objects().CollectDetailed(ctx)
 	if err != nil {

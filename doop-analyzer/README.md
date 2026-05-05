@@ -6,10 +6,10 @@ SPDX-License-Identifier: Apache-2.0
 # doop-analyzer
 
 Runs in a Kubernetes cluster alongside a Gatekeeper instance. Once a minute, all template errors and audit violations
-are collected and pushed into a Swift container for further processing by [doop-central](../doop-central/).
+are collected and pushed into a Swift container for further processing by [doop-api](../doop-api/).
 
 This is the successor to doop-agent. The main difference is that it takes on some of the more computationally expensive
-analysis steps that used to be performed by doop-central.
+analysis steps that used to be performed by doop-api.
 
 ## Usage
 

@@ -12,7 +12,7 @@ The API endpoints of doop-api start in `/v2/` to distinguish it from its predece
 
 ## Usage
 
-The central itself is completely stateless, but some configuration must be provided in environment variables:
+The doop-api itself is completely stateless, but some configuration must be provided in environment variables:
 
 | Variable | Default | Explanation |
 | -------- | ------- | ----------- |
