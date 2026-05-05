@@ -6,10 +6,10 @@ SPDX-License-Identifier: Apache-2.0
 # doop-analyzer
 
 Runs in a Kubernetes cluster alongside a Gatekeeper instance. Once a minute, all template errors and audit violations
-are collected and pushed into a Swift container for further processing by [doop-central](../doop-central/).
+are collected and pushed into a Swift container for further processing by [doop-api](../doop-api/).
 
 This is the successor to doop-agent. The main difference is that it takes on some of the more computationally expensive
-analysis steps that used to be performed by doop-central.
+analysis steps that used to be performed by doop-api.
 
 ## Usage
 
@@ -53,6 +53,7 @@ The following fields are allowed in the JSON configuration file:
 | `processing_rules` | list of objects | A sequence of rules that will be applied to each violation in order to normalize its attributes. [See below](#rule-based-rewriting) for details. Only needed for `run` and `process-once`. |
 | `swift.container_name` | string | Name of Swift container in which to upload report. Only needed for `run`. |
 | `swift.object_name` | string | Object name with which report will be uploaded in Swift. Only needed for `run`. |
+| `swift.service_type` | string | Service type for Swift in the Keystone service catalog. Defaults to `object-store` for native Swift, but can be set to e.g. `object-store-ceph` to use Ceph's Swift-compatible API. |
 
 ### Kubernetes API permissions
 
