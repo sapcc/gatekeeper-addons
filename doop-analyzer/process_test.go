@@ -8,8 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/sapcc/go-bits/assert"
+	"github.com/sapcc/go-bits/must"
 	"github.com/sapcc/go-bits/regexpext"
+	"go.xyrillian.de/gg/jsonmatch"
 
 	"github.com/sapcc/gatekeeper-addons/internal/doop"
 )
@@ -84,5 +85,11 @@ func TestProcessReport(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	assert.JSONFixtureFile("fixtures/report-after-processing.json").AssertResponseBody(t, "Report.Process", reportBuf)
+
+	expectedBuf := must.ReturnT(os.ReadFile("fixtures/report-after-processing.json"))(t)
+	var expectedData jsonmatch.Object
+	must.SucceedT(t, json.Unmarshal(expectedBuf, &expectedData))
+	for _, diff := range expectedData.DiffAgainst(reportBuf) {
+		t.Error(diff.String())
+	}
 }

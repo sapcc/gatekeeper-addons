@@ -10,7 +10,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/sapcc/go-bits/assert"
+	"github.com/sapcc/go-bits/must"
+	"go.xyrillian.de/gg/jsonmatch"
 )
 
 func TestGatherReport(t *testing.T) {
@@ -29,7 +30,13 @@ func TestGatherReport(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	assert.JSONFixtureFile("fixtures/report-before-processing.json").AssertResponseBody(t, "GatherReport", reportBuf)
+
+	expectedBuf := must.ReturnT(os.ReadFile("fixtures/report-before-processing.json"))(t)
+	var expectedData jsonmatch.Object
+	must.SucceedT(t, json.Unmarshal(expectedBuf, &expectedData))
+	for _, diff := range expectedData.DiffAgainst(reportBuf) {
+		t.Error(diff.String())
+	}
 }
 
 type mockClientSet struct{}
