@@ -181,14 +181,6 @@ SPDX-License-Identifier = "MIT"
 
 [[annotations]]
 path = [
-  "vendor/github.com/containerd/stargz-snapshotter/estargz/**",
-]
-precedence = "override"
-SPDX-FileCopyrightText = "Other"
-SPDX-License-Identifier = "Apache-2.0"
-
-[[annotations]]
-path = [
   "vendor/github.com/davecgh/go-spew/**",
 ]
 precedence = "override"
@@ -397,14 +389,6 @@ SPDX-License-Identifier = "MIT"
 
 [[annotations]]
 path = [
-  "vendor/github.com/mitchellh/go-homedir/**",
-]
-precedence = "override"
-SPDX-FileCopyrightText = "Other"
-SPDX-License-Identifier = "MIT"
-
-[[annotations]]
-path = [
   "vendor/github.com/modern-go/concurrent/**",
 ]
 precedence = "override"
@@ -546,14 +530,6 @@ path = [
 precedence = "override"
 SPDX-FileCopyrightText = "Other"
 SPDX-License-Identifier = "MIT"
-
-[[annotations]]
-path = [
-  "vendor/github.com/vbatts/tar-split/**",
-]
-precedence = "override"
-SPDX-FileCopyrightText = "Other"
-SPDX-License-Identifier = "BSD-3-Clause"
 
 [[annotations]]
 path = [
