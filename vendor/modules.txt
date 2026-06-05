@@ -209,7 +209,7 @@ github.com/x448/float16
 go.uber.org/automaxprocs/internal/cgroups
 go.uber.org/automaxprocs/internal/runtime
 go.uber.org/automaxprocs/maxprocs
-# go.xyrillian.de/gg v1.8.1
+# go.xyrillian.de/gg v1.9.0
 ## explicit; go 1.24
 go.xyrillian.de/gg/jsonmatch
 go.xyrillian.de/gg/option
