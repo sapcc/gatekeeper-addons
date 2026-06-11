@@ -11,8 +11,8 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
-	github.com/sapcc/go-api-declarations v1.22.0
-	github.com/sapcc/go-bits v0.0.0-20260604151206-e698d422ff96
+	github.com/sapcc/go-api-declarations v1.23.0
+	github.com/sapcc/go-bits v0.0.0-20260611141223-328f49772fed
 	go.uber.org/automaxprocs v1.6.0
 	go.xyrillian.de/gg v1.9.0
 	go.xyrillian.de/schwift/v2 v2.1.0
@@ -57,10 +57,10 @@ require (
 	github.com/x448/float16 v0.8.4 // indirect
 	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
-	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/sync v0.21.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/term v0.43.0 // indirect
-	golang.org/x/text v0.37.0 // indirect
+	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
