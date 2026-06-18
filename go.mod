@@ -11,10 +11,10 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
-	github.com/sapcc/go-api-declarations v1.23.0
-	github.com/sapcc/go-bits v0.0.0-20260611141223-328f49772fed
+	github.com/sapcc/go-api-declarations v1.24.0
+	github.com/sapcc/go-bits v0.0.0-20260618170412-b440edfb4e25
 	go.uber.org/automaxprocs v1.6.0
-	go.xyrillian.de/gg v1.9.0
+	go.xyrillian.de/gg v1.9.1
 	go.xyrillian.de/schwift/v2 v2.1.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.33.12
@@ -49,17 +49,17 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.68.1 // indirect
+	github.com/prometheus/common v0.69.0 // indirect
 	github.com/prometheus/procfs v0.17.0 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.4 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
-	golang.org/x/term v0.43.0 // indirect
+	golang.org/x/term v0.44.0 // indirect
 	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
