@@ -9,7 +9,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/sapcc/go-bits/assert"
+	"go.xyrillian.de/gg/assert"
 
 	"github.com/sapcc/gatekeeper-addons/internal/doop"
 )
@@ -23,19 +23,19 @@ func TestAggregateOfOneCluster(t *testing.T) {
 	expected := mustParseJSON[doop.AggregatedReport](t, "fixtures/output-cluster1-only.json")
 	actual := AggregateReports(inputSet, BuildFilterSet(url.Values{}))
 	actual.Sort()
-	assert.DeepEqual(t, "AggregateReports", actual, expected)
+	assert.Equal(t, actual, expected)
 
 	// test a filter that does not change anything because it exactly matches what is in the report
 	filterStr := "cluster_identity.number=one&template_kind=GkFirstTemplate&constraint_name=firstconstraint&object_identity.type=production"
 	actual = AggregateReports(inputSet, BuildFilterSet(query(filterStr)))
 	actual.Sort()
-	assert.DeepEqual(t, "AggregateReports", actual, expected)
+	assert.Equal(t, actual, expected)
 
 	// test a filter that removes all clusters
 	filterStr = "cluster_identity.number=two"
 	actual = AggregateReports(inputSet, BuildFilterSet(query(filterStr)))
 	actual.Sort()
-	assert.DeepEqual(t, "AggregateReports", actual, doop.AggregatedReport{
+	assert.Equal(t, actual, doop.AggregatedReport{
 		ClusterIdentities: map[string]map[string]string{},
 		Templates:         nil,
 	})
@@ -48,13 +48,15 @@ func TestAggregateOfOneCluster(t *testing.T) {
 		"object_identity.type=qa",
 	}
 	for _, filterStr := range negativeFilters {
-		actual = AggregateReports(inputSet, BuildFilterSet(query(filterStr)))
-		actual.Sort()
-		assert.DeepEqual(t, "AggregateReports", actual, doop.AggregatedReport{
-			ClusterIdentities: map[string]map[string]string{
-				"cluster1": {"number": "one"},
-			},
-			Templates: nil,
+		t.Run("filter="+filterStr, func(t *testing.T) {
+			actual = AggregateReports(inputSet, BuildFilterSet(query(filterStr)))
+			actual.Sort()
+			assert.Equal(t, actual, doop.AggregatedReport{
+				ClusterIdentities: map[string]map[string]string{
+					"cluster1": {"number": "one"},
+				},
+				Templates: nil,
+			})
 		})
 	}
 }
@@ -75,7 +77,7 @@ func TestAggregateOfTwoClusters(t *testing.T) {
 	expected := mustParseJSON[doop.AggregatedReport](t, "fixtures/output-both-clusters.json")
 	actual := AggregateReports(inputSet, BuildFilterSet(url.Values{}))
 	actual.Sort()
-	assert.DeepEqual(t, "AggregateReports", actual, expected)
+	assert.Equal(t, actual, expected)
 }
 
 func query(input string) url.Values {
