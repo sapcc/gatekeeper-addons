@@ -181,7 +181,6 @@ github.com/prometheus/procfs/internal/util
 github.com/sapcc/go-api-declarations/bininfo
 # github.com/sapcc/go-bits v0.0.0-20260618170412-b440edfb4e25
 ## explicit; go 1.26
-github.com/sapcc/go-bits/assert
 github.com/sapcc/go-bits/errext
 github.com/sapcc/go-bits/gophercloudext
 github.com/sapcc/go-bits/httpapi
@@ -193,9 +192,6 @@ github.com/sapcc/go-bits/osext
 github.com/sapcc/go-bits/regexpext
 github.com/sapcc/go-bits/respondwith
 github.com/sapcc/go-bits/syncext
-# github.com/sergi/go-diff v1.4.0
-## explicit; go 1.13
-github.com/sergi/go-diff/diffmatchpatch
 # github.com/sirupsen/logrus v1.9.4
 ## explicit; go 1.17
 github.com/sirupsen/logrus
@@ -210,8 +206,10 @@ github.com/x448/float16
 go.uber.org/automaxprocs/internal/cgroups
 go.uber.org/automaxprocs/internal/runtime
 go.uber.org/automaxprocs/maxprocs
-# go.xyrillian.de/gg v1.9.1
-## explicit; go 1.24
+# go.xyrillian.de/gg v1.10.1
+## explicit; go 1.26
+go.xyrillian.de/gg/assert
+go.xyrillian.de/gg/internal/path
 go.xyrillian.de/gg/jsonmatch
 go.xyrillian.de/gg/option
 # go.xyrillian.de/schwift/v2 v2.1.0
