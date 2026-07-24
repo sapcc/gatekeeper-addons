@@ -10,12 +10,12 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.24.0
+	github.com/prometheus/client_golang v1.24.1
 	github.com/sapcc/go-api-declarations v1.24.0
 	github.com/sapcc/go-bits v0.0.0-20260723170232-89c8670b5841
 	go.uber.org/automaxprocs v1.6.0
 	go.xyrillian.de/gg v1.11.1
-	go.xyrillian.de/schwift/v2 v2.1.0
+	go.xyrillian.de/schwift/v2 v2.2.1
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.33.13
 	k8s.io/client-go v0.33.13
