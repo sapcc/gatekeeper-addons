@@ -4,8 +4,8 @@ go 1.26
 
 require (
 	github.com/NYTimes/gziphandler v1.1.1
-	github.com/gofrs/uuid/v5 v5.5.0
-	github.com/google/go-containerregistry v0.21.7
+	github.com/gofrs/uuid/v5 v5.5.1
+	github.com/google/go-containerregistry v0.21.8
 	github.com/gophercloud/gophercloud/v2 v2.13.0
 	github.com/gorilla/mux v1.8.1
 	github.com/mitchellh/mapstructure v1.5.0
@@ -14,7 +14,7 @@ require (
 	github.com/sapcc/go-api-declarations v1.24.0
 	github.com/sapcc/go-bits v0.0.0-20260730170321-f6f727520601
 	go.uber.org/automaxprocs v1.6.0
-	go.xyrillian.de/gg v1.11.1
+	go.xyrillian.de/gg v1.13.0
 	go.xyrillian.de/schwift/v2 v2.2.1
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.33.13
@@ -25,7 +25,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/cli v29.5.3+incompatible // indirect
+	github.com/docker/cli v29.6.2+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.9.3 // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
