@@ -7,7 +7,7 @@ github.com/beorn7/perks/quantile
 # github.com/cespare/xxhash/v2 v2.3.0
 ## explicit; go 1.11
 github.com/cespare/xxhash/v2
-# github.com/davecgh/go-spew v1.1.1
+# github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 ## explicit
 github.com/davecgh/go-spew/spew
 # github.com/docker/cli v29.6.2+incompatible
@@ -119,7 +119,7 @@ github.com/jpillora/longestcommon
 # github.com/json-iterator/go v1.1.12
 ## explicit; go 1.12
 github.com/json-iterator/go
-# github.com/klauspost/compress v1.19.1
+# github.com/klauspost/compress v1.19.2
 ## explicit; go 1.24
 github.com/klauspost/compress
 github.com/klauspost/compress/fse
@@ -179,7 +179,7 @@ github.com/prometheus/procfs/internal/util
 # github.com/sapcc/go-api-declarations v1.24.0
 ## explicit; go 1.26
 github.com/sapcc/go-api-declarations/bininfo
-# github.com/sapcc/go-bits v0.0.0-20260806170240-4bbc84d224db
+# github.com/sapcc/go-bits v0.0.0-20260813170327-ea1a14435d35
 ## explicit; go 1.26
 github.com/sapcc/go-bits/errext
 github.com/sapcc/go-bits/gophercloudext
@@ -240,7 +240,7 @@ golang.org/x/sys/windows
 # golang.org/x/term v0.45.0
 ## explicit; go 1.25.0
 golang.org/x/term
-# golang.org/x/text v0.40.0
+# golang.org/x/text v0.41.0
 ## explicit; go 1.25.0
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
