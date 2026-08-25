@@ -1,6 +1,6 @@
 module github.com/sapcc/gatekeeper-addons
 
-go 1.26
+go 1.27
 
 require (
 	github.com/NYTimes/gziphandler v1.1.1
