@@ -13,8 +13,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"uuid"
 
-	"github.com/gofrs/uuid/v5"
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v2"
 
@@ -56,10 +56,7 @@ func (c ReleaseContents) GenerateMockRelease() (any, error) {
 		mockInstallTime = mockUpgradeTime.Add(-24 * time.Hour).UTC()
 	}
 	mockSecretResourceVersion := strconv.FormatInt(23*mockUpgradeTime.Unix(), 10)
-	mockSecretUUID, err := uuid.NewV4()
-	if err != nil {
-		return nil, fmt.Errorf("while generating UUID for Secret: %w", err)
-	}
+	mockSecretUUID := uuid.NewV4()
 
 	// generate payload
 	normalizedValues, err := util.NormalizeRecursively(".Values", c.Values)
