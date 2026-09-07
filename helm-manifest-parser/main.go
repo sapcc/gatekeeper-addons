@@ -11,7 +11,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/sapcc/go-api-declarations/bininfo"
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
@@ -58,8 +57,8 @@ type api struct {
 	LogAllRequests bool
 }
 
-func (a api) AddTo(r *mux.Router) {
-	r.Methods("POST").Path("/v3").HandlerFunc(a.handleAPI("/v3", helm3parse))
+func (a api) AddTo(c *httpapi.Composer) {
+	c.Router().Methods("POST").Path("/v3").HandlerFunc(a.handleAPI("/v3", helm3parse))
 }
 
 func (a api) handleAPI(path string, parser func([]byte) (string, error)) func(http.ResponseWriter, *http.Request) {
