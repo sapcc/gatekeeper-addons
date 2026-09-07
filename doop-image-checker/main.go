@@ -15,7 +15,6 @@ import (
 
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
-	"github.com/gorilla/mux"
 	"github.com/sapcc/go-api-declarations/bininfo"
 	"github.com/sapcc/go-bits/httpapi"
 	"github.com/sapcc/go-bits/httpext"
@@ -79,8 +78,8 @@ type api struct {
 }
 
 // AddTo implements the httpapi.API interface.
-func (a api) AddTo(r *mux.Router) {
-	r.Methods("GET").Path("/v1/headers").HandlerFunc(a.handleHeaders)
+func (a api) AddTo(c *httpapi.Composer) {
+	c.Router().Methods("GET").Path("/v1/headers").HandlerFunc(a.handleHeaders)
 }
 
 func (a api) handleHeaders(w http.ResponseWriter, r *http.Request) {
