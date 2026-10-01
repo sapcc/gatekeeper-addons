@@ -61,8 +61,8 @@ github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnr
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
 github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
-github.com/klauspost/compress v1.20.0 h1:a3C1ke2ohxFymNlb2HWAHjDeKCI90scRskErZkR0ezA=
-github.com/klauspost/compress v1.20.0/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+github.com/klauspost/compress v1.20.1 h1:T7kKElXUMXrUJ2E9QhQhxFtcK5rPyLdsGZvdbLMPdiQ=
+github.com/klauspost/compress v1.20.1/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
 github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
@@ -109,8 +109,8 @@ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0t
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
 github.com/sapcc/go-api-declarations v1.25.1 h1:Lrbf8TZY/ARg0J9IrlrObqnXjrzSzmYKQd/L/a71Lsg=
 github.com/sapcc/go-api-declarations v1.25.1/go.mod h1:bJkK8wphzlmUmN5lxBv8BbfxUXMOkW+UiC10xBHXsFs=
-github.com/sapcc/go-bits v0.0.0-20260924170438-e0aa5c665ed9 h1:kiBHnl3JAkhVLYu8zJmTdAN6jQEDoJAIn6N2wfpQxEs=
-github.com/sapcc/go-bits v0.0.0-20260924170438-e0aa5c665ed9/go.mod h1:N5yzjZM9RPw2WEr/8MfvhdUKWp1N9iB+fz4SkzBqFpQ=
+github.com/sapcc/go-bits v0.0.0-20261001170337-e86369bc8beb h1:ktN0Dt6DaXCkzSYG2ebxONJtuNAbKEF4XxWRRNZq03k=
+github.com/sapcc/go-bits v0.0.0-20261001170337-e86369bc8beb/go.mod h1:N5yzjZM9RPw2WEr/8MfvhdUKWp1N9iB+fz4SkzBqFpQ=
 github.com/sirupsen/logrus v1.9.4 h1:TsZE7l11zFCLZnZ+teH4Umoq5BhEIfIzfRDZ1Uzql2w=
 github.com/sirupsen/logrus v1.9.4/go.mod h1:ftWc9WdOfJ0a92nsE2jF5u5ZwH8Bv2zdeOC42RjbV2g=
 github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
